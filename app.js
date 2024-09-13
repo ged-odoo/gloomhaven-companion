@@ -39,8 +39,8 @@ function newGameState() {
 // -----------------------------------------------------------------------------
 class CharacterCard extends Component {
     static template = xml`
-        <div class="card">
-        <div class="card-row d-flex space-between p-1">
+        <div class="card" t-on-click="toggleDisplay">
+            <div class="card-row d-flex space-between p-1">
                 <span class="text-bold"><t t-esc="props.hero.name"/></span>
                 <span><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
             </div>
@@ -52,13 +52,40 @@ class CharacterCard extends Component {
             <div class="card-row d-flex space-between p-1">
                 <span>Status: none</span>
             </div>
+            <div t-if="state.fullDisplay" t-on-click.stop="">
+                <div class="card-row p-1">
+                    Max card number: <t t-esc="props.hero.maxCard"/>
+                </div>
+                <div class="card-row p-1">
+                    <span class="button m-1 p-1 px-2" t-on-click="()=>props.hero.hp--">-</span>
+                    <span>HP: <t t-esc="props.hero.hp"/></span>
+                    <span class="button m-1 p-1 px-2" t-on-click="()=>props.hero.hp++">-</span>
+                </div>
+            </div>
         </div>
     `;
+
+    setup() {
+        this.state = useState({ fullDisplay: false });
+    }
 
     get heroClass() {
         return CLASS_NAME[this.props.hero.class];
     }
+
+    toggleDisplay() {
+        this.state.fullDisplay = !this.state.fullDisplay;
+    }
 }
+
+// name: this.state.name,
+// class: this.state.class,
+// level: this.state.level,
+// hp: maxHp,
+// maxHp: maxHp,
+// xp: this.state.xp,
+// maxCard: MAX_CARD_MAP[this.state.class],
+// gold: this.state.gold,
 
 // -----------------------------------------------------------------------------
 // MARK: Character Builder
@@ -67,7 +94,7 @@ class CharacterCard extends Component {
 class CharacterBuilder extends Component {
     static template = xml`
         <div class="topmenu">
-            <div t-on-click="props.onCancel">Back</div>
+            <div t-on-click="props.backToMainScreen">Back</div>
         </div>
         <h2>Create your hero</h2>
         <div class="formcontrol">
@@ -211,10 +238,22 @@ class MainMenu extends Component {
             <div t-on-click="props.backToMainScreen">Back</div>
         </div>
         <h2>Configuration</h2>
-        <div class="formcontrol">
+        <div class="formcontrol d-flex space-between">
             <div>Scenario Level </div>
             <div>
-                <input type="number" t-model.number="props.game.level"/>
+                <span class="button m-1 p-1 px-2" t-on-click="()=>props.game.level--">-</span>
+                <input type="number" class="width-50" t-model.number="props.game.level"/>
+                <span class="button m-1 p-1 px-2" t-on-click="()=>props.game.level++">+</span>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="button p-2 m-1" >
+                Save to local storage [not done yet]
+            </div>
+        </div>
+        <div class="d-flex" >
+            <div class="button p-2 m-1" >
+                Restore from local storage [not done yet]
             </div>
         </div>
         <div class="d-flex">
