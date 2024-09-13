@@ -52,12 +52,16 @@
         }
 
         .card {
-            border-bottom: 1px solid gray;
+            border-bottom: 2px solid gray;
             padding: 10px 0px;
         }
 
         .d-flex {
             display: flex;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
         }
 
         .flex-end {
@@ -68,10 +72,21 @@
             justify-content: space-between;
         }
 
+        .flex-center {
+            justify-content: center;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
         .text-bold {
             font-weight: bold;
         }
 
+        .text-red {
+            color: darkred;
+        }
         .mx-1 {
             margin-left: 4px;
             margin-right: 4px;
@@ -84,6 +99,10 @@
 
         .me-2 {
             margin-right: 8px;
+        }
+
+        .mt-2 {
+            margin-top: 8px;
         }
 
         .px-1 {
@@ -108,11 +127,16 @@
             padding-right: 8px;
         }
 
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
         .button {
             background-color: #335d5e;
             color: white;
             border: 1px solid black;
-            border-radius: 2px;
+            border-radius: 3px;
         }
 
         .button.disabled {
@@ -128,10 +152,44 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            border-radius: 3px;
         }
 
         .width-50 {
             width: 50px;
+        }
+        .width-100 {
+            width: 100px;
+        }
+
+        .height-35 {
+            height: 35px;
+        }
+
+        .height-30 {
+            height: 30px;
+        }
+
+        .border-top-gray {
+            border-top: 1px solid #bbb;
+        }
+
+        .border-radius-2 {
+            border-radius: 2px;
+        }
+
+        .form-advanced {
+            margin: 0 8px;
+            row-gap: 10px;
+            padding-top:8px;
+        }
+
+        .background-gray {
+            background-color: #eee;
+        }
+
+        .background-darker {
+            background-color: rgba(0,0,0,0.1);
         }
     </style>
     <script src="app.js"></script> 
