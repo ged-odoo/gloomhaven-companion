@@ -1,1190 +1,5 @@
 const { Component, mount, xml, useState } = owl;
 
-// -----------------------------------------------------------------------------
-// MARK: Data
-// -----------------------------------------------------------------------------
-
-const CLASS_NAME = {
-    void_warden: "Guardienne du Néant",
-    red_guard: "Guarde Rouge",
-};
-
-const MAX_HP_MAP = {
-    void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
-    red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
-};
-
-const MAX_CARD_MAP = {
-    void_warden: 11,
-    red_guard: 10,
-};
-
-const ENEMIES = [
-    {
-        id: "reanimated_corpse",
-        name: "Cadavre Réanimé",
-        normalHp: [5, 7, 9, 10, 11, 13, 14, 16],
-        eliteHp: [10, 11, 14, 14, 16, 18, 23, 29],
-        normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-        eliteMove: [1, 1, 1, 2, 2, 2, 2, 2],
-        normalAttack: [3, 3, 3, 4, 4, 4, 4, 5],
-        eliteAttack: [3, 4, 4, 5, 5, 6, 6, 6],
-        normalModifiers: [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "empoisonnement",
-            "empoisonnement",
-        ],
-        eliteModifiers: [
-            "",
-            "",
-            "",
-            "",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "Empoisonnement",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "Étreinte putride",
-                initiative: 21,
-                recycled: false,
-                effects: [
-                    "Déplacement +1",
-                    "Confusion, immobilisation (cible un adversaire adjacents)",
-                    "consume terre: cible subit aussi 2 dégats",
-                ],
-            },
-            {
-                id: 2,
-                name: "Claque violente",
-                initiative: 32,
-                recycled: false,
-                effects: [
-                    "Attaque +2, poussée 1",
-                    "Si attaque est effectuée, le cadavre réanimé subit 1 dégat",
-                ],
-            },
-            {
-                id: 3,
-                name: "Assaut précipité",
-                initiative: 47,
-                recycled: false,
-                effects: ["Déplacement +1", "Attaque -1"],
-            },
-            {
-                id: 4,
-                name: "Rien de particulier",
-                initiative: 68,
-                recycled: true,
-                effects: ["Déplacement +0", "Attaque +0"],
-            },
-            {
-                id: 5,
-                name: "Rien de particulier",
-                initiative: 68,
-                recycled: true,
-                effects: ["Déplacement +0", "Attaque +0"],
-            },
-            {
-                id: 6,
-                name: "Émission de gaz",
-                initiative: 71,
-                recycled: false,
-                effects: [
-                    "Déplacement +0",
-                    "Attaque +1",
-                    "Empoisonnement (cible tous adversaires adjacents)",
-                    "Infuse terre",
-                ],
-            },
-            {
-                id: 7,
-                name: "Coup calculé",
-                initiative: 81,
-                recycled: false,
-                effects: ["Déplacement -1", "Attaque +1"],
-            },
-            {
-                id: 8,
-                name: "Charge téméraire",
-                initiative: 91,
-                recycled: false,
-                effects: [
-                    "Déplacement -2",
-                    "Si ce déplacement est effectué, cadavre subit 1 dégat",
-                ],
-            },
-        ],
-    },
-    {
-        id: "chaos_demon",
-        name: "Démon du Chaos",
-        normalHp: [7, 8, 11, 12, 15, 16, 20, 22],
-        eliteHp: [10, 12, 14, 18, 21, 26, 30, 35],
-        normalMove: [3, 3, 3, 3, 4, 4, 4, 4],
-        eliteMove: [4, 4, 4, 5, 5, 5, 5, 5],
-        normalAttack: [2, 3, 3, 4, 4, 5, 5, 6],
-        eliteAttack: [3, 4, 5, 5, 6, 6, 7, 8],
-        normalModifiers: [
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-        ],
-        eliteModifiers: [
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "blood_demon",
-        name: "Diablotin de Sang",
-        normalHp: [3, 4, 5, 5, 7, 8, 9, 12],
-        eliteHp: [4, 6, 7, 10, 11, 13, 17, 21],
-        normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
-        eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-        normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
-        eliteAttack: [2, 2, 2, 2, 3, 3, 4, 4],
-        normalModifiers: [
-            "",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-        ],
-        eliteModifiers: [
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-            "confusion",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "black_imp",
-        name: "Diablotin Noir",
-        normalHp: [3, 4, 5, 5, 7, 9, 10, 13],
-        eliteHp: [4, 6, 8, 8, 11, 14, 15, 19],
-        normalMove: [1, 1, 1, 1, 1, 1, 1, 1],
-        eliteMove: [1, 1, 1, 1, 1, 1, 1, 1],
-        normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
-        eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-        normalModifiers: [
-            "",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-        ],
-        eliteModifiers: [
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement, attaquants gagnent désavantage",
-            "empoisonnement, attaquants gagnent désavantage",
-            "empoisonnement, attaquants gagnent désavantage",
-            "empoisonnement, attaquants gagnent désavantage",
-            "empoisonnement, attaquants gagnent désavantage",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "vermling_scout",
-        name: "Éclaireur Vermling",
-        normalHp: [2, 3, 3, 5, 6, 8, 10, 13],
-        eliteHp: [4, 5, 5, 7, 8, 11, 13, 17],
-        normalMove: [3, 3, 3, 3, 3, 3, 4, 4],
-        eliteMove: [3, 3, 4, 4, 4, 4, 5, 5],
-        normalAttack: [1, 1, 2, 2, 3, 3, 3, 3],
-        eliteAttack: [2, 2, 3, 3, 4, 4, 4, 4],
-        normalModifiers: ["", "", "", "", "", "", "", ""],
-        eliteModifiers: ["", "", "", "", "", "", "", ""],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "reanimated_spirit",
-        name: "Esprit Réanimé",
-        normalHp: [3, 4, 5, 6, 6, 8, 9, 12],
-        eliteHp: [5, 5, 7, 8, 8, 11, 13, 17],
-        normalMove: [2, 2, 3, 3, 3, 3, 3, 3],
-        eliteMove: [3, 3, 4, 4, 4, 4, 4, 4],
-        normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-        eliteAttack: [3, 3, 3, 4, 4, 4, 5, 5],
-        normalModifiers: [
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 2",
-        ],
-        eliteModifiers: [
-            "Bouclier 1",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 3",
-            "Bouclier 3",
-            "Bouclier 3",
-            "Bouclier 3",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "stone_golem",
-        name: "Golem de Pierre",
-        normalHp: [10, 10, 11, 11, 12, 13, 16, 16],
-        eliteHp: [10, 11, 13, 14, 16, 18, 20, 21],
-        normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-        eliteMove: [2, 2, 2, 2, 2, 3, 3, 3],
-        normalAttack: [3, 3, 4, 4, 4, 5, 5, 5],
-        eliteAttack: [4, 4, 5, 5, 6, 6, 7, 7],
-        normalModifiers: [
-            "",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 3",
-        ],
-        eliteModifiers: [
-            "Bouclier 1",
-            "Bouclier 2",
-            "Bouclier 2",
-            "Bouclier 3",
-            "Bouclier 3",
-            "Bouclier 3",
-            "Bouclier 3",
-            "Bouclier 4",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "Progression éprouvante",
-                initiative: 28,
-                recycled: false,
-                effects: [
-                    "Déplacement +1",
-                    "Attack +1",
-                    "Si la capacité de déplacement a été effectuée, le golem subit 1 dégat",
-                ],
-            },
-            {
-                id: 2,
-                name: "Assaut précipité",
-                initiative: 51,
-                recycled: true,
-                effects: ["Déplacement +1", "Attack -1"],
-            },
-            {
-                id: 3,
-                name: "Marteler le sol",
-                initiative: 83,
-                recycled: false,
-                effects: [
-                    "Déplacement +0",
-                    "Attack -1 (cible tous les adversaires adjacents",
-                ],
-            },
-            {
-                id: 4,
-                name: "Coup calculé",
-                initiative: 90,
-                recycled: true,
-                effects: ["Déplacement -1", "Attack +1"],
-            },
-            {
-                id: 5,
-                name: "Réaction runique",
-                initiative: 10,
-                recycled: false,
-                effects: [
-                    "Chaque fois qu'un héro attaque le golem, le héro subit 3 dégats",
-                ],
-            },
-            {
-                id: 6,
-                name: "Attraction runique",
-                initiative: 28,
-                recycled: false,
-                effects: [
-                    "Déplacement +1",
-                    "Attaque -2 (portée 3), traction 2, immobilisation",
-                ],
-            },
-            {
-                id: 7,
-                name: "Rien de particulier",
-                initiative: 64,
-                recycled: false,
-                effects: ["Déplacement +0", "Attaque +0"],
-            },
-            {
-                id: 8,
-                name: "Lancer sacrificiel",
-                initiative: 72,
-                recycled: false,
-                effects: [
-                    "Attaque +1 (portée 3). Si attaque est effectuée, le golem subit 2 dégats",
-                ],
-            },
-        ],
-    },
-    {
-        id: "blood_monster",
-        name: "Monstruosité de Sang",
-        normalHp: [7, 9, 10, 12, 12, 13, 17, 20],
-        eliteHp: [12, 12, 15, 18, 18, 20, 23, 23],
-        normalMove: [2, 2, 2, 3, 3, 3, 3, 3],
-        eliteMove: [2, 2, 2, 3, 3, 3, 3, 3],
-        normalAttack: [2, 2, 3, 3, 3, 4, 4, 5],
-        eliteAttack: [3, 3, 4, 4, 4, 5, 6, 6],
-        normalModifiers: [
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 4 dégats, Bouclier 1",
-        ],
-        eliteModifiers: [
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 4 dégats, Bouclier 1",
-            "à sa mort, tous les personnages adjacents subissent 4 dégats, Bouclier 2",
-            "à sa mort, tous les personnages adjacents subissent 5 dégats, Bouclier 2",
-            "à sa mort, tous les personnages adjacents subissent 5 dégats, Bouclier 2",
-            "à sa mort, tous les personnages adjacents subissent 5 dégats, Bouclier 3",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "rat_monster",
-        name: "Monstruosité ratine",
-        normalHp: [4, 4, 5, 6, 8, 10, 12, 12],
-        eliteHp: [6, 7, 8, 10, 12, 13, 14, 16],
-        normalMove: [1, 1, 2, 2, 2, 3, 3, 3],
-        eliteMove: [1, 1, 1, 2, 2, 2, 3, 3],
-        normalAttack: [1, 2, 2, 3, 3, 3, 3, 4],
-        eliteAttack: [2, 2, 3, 3, 3, 4, 4, 5],
-        normalModifiers: [
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats",
-        ],
-        eliteModifiers: [
-            "à sa mort, tous les personnages adjacents subissent 1 dégats",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 2 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 3 dégats, avantage",
-            "à sa mort, tous les personnages adjacents subissent 4 dégats, avantage",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "vermling_bandit",
-        name: "Pillard Vermling",
-        normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
-        eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
-        normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
-        eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
-        normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
-        eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
-        normalModifiers: ["", "", "", "", "", "", "", ""],
-        eliteModifiers: ["", "", "", "", "", "", "", ""],
-        actions: [
-            {
-                id: 1,
-                name: "Fosse à pointes",
-                initiative: 20,
-                recycled: false,
-                effects: [
-                    "Attaque +0 (portée 4)",
-                    "Créez un piège 3 dégats sur l'hexaxone vide adjacent le plus proche d'un adversaire",
-                ],
-            },
-            {
-                id: 2,
-                name: "Panser les blessures",
-                initiative: 30,
-                recycled: true,
-                effects: ["Déplacement +1", "Soin 3 sur lui-même"],
-            },
-            {
-                id: 3,
-                name: "Lancer précis",
-                initiative: 36,
-                recycled: false,
-                effects: ["Déplacement +0", "Attaque -1, portée 4"],
-            },
-            {
-                id: 4,
-                name: "Rien de particulier",
-                initiative: 50,
-                recycled: false,
-                effects: ["Déplacement +0", "Attaque +0"],
-            },
-            {
-                id: 5,
-                name: "Doubles dagues",
-                initiative: 59,
-                recycled: false,
-                effects: ["Attaque +0 (portée 3, cible 2)"],
-            },
-            {
-                id: 6,
-                name: "Parade",
-                initiative: 70,
-                recycled: false,
-                effects: ["Déplacement +0", "Attaque -1, désarmement"],
-            },
-            {
-                id: 7,
-                name: "Méchant épieu",
-                initiative: 77,
-                recycled: false,
-                effects: ["Déplacement -1", "Attaque +0, portée 3, blessure"],
-            },
-            {
-                id: 8,
-                name: "Hurlements repoussants",
-                initiative: 85,
-                recycled: true,
-                effects: [
-                    "Poussée 1, ciblez tous les adversaires adjacents",
-                    "Attaque +1, portée 2",
-                ],
-            },
-        ],
-    },
-    {
-        id: "black_vase",
-        name: "Vase noire",
-        normalHp: [4, 5, 7, 8, 9, 10, 12, 16],
-        eliteHp: [8, 9, 11, 11, 13, 15, 16, 18],
-        normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-        eliteMove: [1, 1, 1, 2, 2, 3, 3, 3],
-        normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-        eliteAttack: [2, 2, 3, 3, 4, 4, 4, 5],
-        normalModifiers: [
-            "",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1, empoisonnement",
-            "Bouclier 1, empoisonnement",
-        ],
-        eliteModifiers: [
-            "",
-            "Bouclier 1",
-            "Bouclier 1",
-            "Bouclier 1, empoisonnement",
-            "Bouclier 1, empoisonnement",
-            "Bouclier 1, empoisonnement",
-            "Bouclier 2, empoisonnement",
-            "Bouclier 2, empoisonnement",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "giant_viper",
-        name: "Vipère géante",
-        normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
-        eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
-        normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
-        eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-        normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
-        eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-        normalModifiers: [
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-        ],
-        eliteModifiers: [
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-            "empoisonnement",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 2,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 3,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 4,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 5,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 6,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 7,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-            {
-                id: 8,
-                name: "",
-                initiative: 0,
-                recycled: false,
-                effects: [],
-            },
-        ],
-    },
-    {
-        id: "zealot",
-        name: "Zélote",
-        normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
-        eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
-        normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
-        eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-        normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
-        eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
-        normalModifiers: [
-            "",
-            "",
-            "",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-        ],
-        eliteModifiers: [
-            "",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-            "blessure",
-        ],
-        actions: [
-            {
-                id: 1,
-                name: "Fouet de damnation",
-                initiative: 19,
-                recycled: false,
-                effects: [
-                    "Déplacement +1, saut",
-                    "Attaque -1, malédiction",
-                    "infuse air",
-                ],
-            },
-            {
-                id: 2,
-                name: "Drain de vie",
-                initiative: 27,
-                recycled: true,
-                effects: [
-                    "Déplacement +0",
-                    "Attaque -1 (portée 2)",
-                    "Soin X sur lui-même (X=montant dégat attaque)",
-                    "infuse Obscurité",
-                ],
-            },
-            {
-                id: 3,
-                name: "Assaut précipité",
-                initiative: 35,
-                recycled: false,
-                effects: ["Déplacement +1", "Attaque -1"],
-            },
-            {
-                id: 4,
-                name: "Sang bouillant",
-                initiative: 46,
-                recycled: false,
-                effects: [
-                    "Attaque -1, portée 2, cible 2, confusion",
-                    "Consume feu: +2 portée",
-                ],
-            },
-            {
-                id: 5,
-                name: "Rien de particulier",
-                initiative: 50,
-                recycled: false,
-                effects: ["Déplacement +0", "Attaque +0"],
-            },
-            {
-                id: 6,
-                name: "Coup calculé",
-                initiative: 0,
-                recycled: false,
-                effects: ["Déplacement -1", "Attaque +1"],
-            },
-            {
-                id: 7,
-                name: "Fléau infame",
-                initiative: 77,
-                recycled: false,
-                effects: [
-                    "Déplacement -1",
-                    "Attaque -1, empoisonnement (cible 2 hexes adjacents voisins",
-                    "Consume air: +1 attaque",
-                ],
-            },
-            {
-                id: 8,
-                name: "Flamme impie",
-                initiative: 0,
-                recycled: true,
-                effects: ["Attaque +1, portée 3", "Infuse feu"],
-            },
-        ],
-    },
-];
-
-const ENEMIES_MAP = {};
-for (let enemies of ENEMIES) {
-    ENEMIES_MAP[enemies.id] = enemies;
-}
 function newGameState() {
     return {
         heros: [],
@@ -1212,7 +27,7 @@ class CharacterCard extends Component {
                 <span><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
             </div>
             <div class="card-row d-flex space-between p-1">
-                <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <t t-esc="props.hero.hp"/> / <t t-esc="props.hero.maxHp"/></span>
+                <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <span class="text-bold" t-esc="props.hero.hp"/> / <span class="text-bold" t-esc="props.hero.maxHp"/></span>
                 <span>XP: <t t-esc="props.hero.xp"/></span>
                 <span>Gold: <t t-esc="props.hero.gold"/></span>
             </div>
@@ -1350,21 +165,33 @@ class CharacterCard extends Component {
 // -----------------------------------------------------------------------------
 class EnemyCard extends Component {
     static template = xml`
-        <div class="card" style="background-color:#fff0f0" t-on-click="toggleDisplay">
+        <div class="card" t-attf-style="background-color:{{props.enemy.boss ? '#f3dcdc' : '#fff0f0'}}" t-on-click="toggleDisplay">
             <div class="card-row d-flex space-between p-1">
                 <span class="text-bold">
                     <t t-if="props.enemy.elite">Elite </t>
-                    <t t-esc="props.enemy.name"/>[<t t-esc="props.enemy.id"/>]
+                    <t t-esc="props.enemy.name"/>
+                    <t t-if="props.enemy.boss"> [BOSS]</t>
+                    <t t-if="!props.enemy.boss"> [<t t-esc="props.enemy.id"/>]</t>
                 </span>
-                <span t-att-class="{'text-red': props.enemy.hp lt 1}">HP: <t t-esc="props.enemy.hp"/> / <t t-esc="props.enemy.maxHp"/></span>
+                <span t-att-class="{'text-red': props.enemy.hp lt 1}">HP: <span class="text-bold" t-esc="props.enemy.hp"/> / <span class="text-bold" t-esc="props.enemy.maxHp"/></span>
 
             </div>
             <div class="card-row d-flex space-between p-1">
-                <span>Move: <t t-esc="props.enemy.move"/></span>
-                <span>Attack: <t t-esc="props.enemy.attack"/></span>
+                <span>Move: <span class="text-bold" t-esc="props.enemy.move"/></span>
+                <span>Attack: <span class="text-bold" t-esc="props.enemy.attack"/></span>
             </div>
+            <div class="card-row p-1" t-if="props.enemy.boss">
+                <span class="text-bold">Special 1</span> <span><t t-esc="props.enemy.special1"/></span>
+            </div>
+            <div class="card-row p-1" t-if="props.enemy.boss">
+                <span class="text-bold">Special 2</span> <span><t t-esc="props.enemy.special2"/></span>
+            </div>
+            
             <div class="card-row d-flex space-between p-1" t-if="props.enemy.modifiers">
                 <span>Modificateurs: <t t-esc="props.enemy.modifiers"/></span>
+            </div>
+            <div class="card-row d-flex space-between p-1" t-if="props.enemy.immunities">
+                <span>Immunités: <t t-esc="props.enemy.immunities"/></span>
             </div>
             <div class="card-row d-flex space-between p-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
@@ -1672,16 +499,16 @@ class EnemyBuilder extends Component {
             <select t-model="state.type">
                 <option value="">Select a type</option>
                 <t t-foreach="enemies" t-as="enemy" t-key="enemy.id">
-                    <option t-att-value="enemy.id"><t t-esc="enemy.name"/></option>
+                    <option t-att-value="enemy.id"><t t-esc="enemy.name"/><t t-if="enemy.boss"> (BOSS)</t></option>
                 </t>
             </select>
         </div>
-        <div class="formcontrol">
+        <div class="formcontrol" t-if="!isBoss()">
             <div>Id </div>
             <div><input type="number" t-model.number="state.id"/>
             </div>
         </div>
-        <div class="formcontrol">
+        <div class="formcontrol" t-if="!isBoss()">
             <div>Elite </div>
             <div><input type="checkbox" t-model="state.elite"/>
             </div>
@@ -1703,32 +530,75 @@ class EnemyBuilder extends Component {
     }
 
     get isDisabled() {
-        return !(this.state.type && this.state.id);
+        const isEnabled = (this.state.type && this.state.id) || this.isBoss();
+        return !isEnabled;
     }
 
     create() {
-        const enemy = ENEMIES.find((e) => e.id === this.state.type);
+        const enemy = ENEMIES_MAP[this.state.type];
         const level = this.props.game.level;
-        const hpArray = this.state.elite ? enemy.eliteHp : enemy.normalHp;
-        const moveArray = this.state.elite ? enemy.eliteMove : enemy.normalMove;
-        const attackArray = this.state.elite
-            ? enemy.eliteAttack
-            : enemy.normalAttack;
-        const modifiersArray = this.state.elite
-            ? enemy.eliteModifiers
-            : enemy.normalModifiers;
-        const maxHp = hpArray[level];
+        const A = this.props.game.heros.length;
+        // hp computation
+        let maxHp;
+        if (enemy.boss) {
+            maxHp = enemy.hp[level](A);
+        } else {
+            const hpArray = this.state.elite ? enemy.eliteHp : enemy.normalHp;
+            maxHp = hpArray[level];
+        }
+        // move computation
+        let move;
+        if (enemy.boss) {
+            move = enemy.move[level];
+        } else {
+            const moveArray = this.state.elite
+                ? enemy.eliteMove
+                : enemy.normalMove;
+            move = moveArray[level];
+        }
+        // attack computation
+        let attack;
+        if (enemy.boss) {
+            attack = enemy.attack[level](A);
+        } else {
+            const attackArray = this.state.elite
+                ? enemy.eliteAttack
+                : enemy.normalAttack;
+            attack = attackArray[level];
+        }
+        // modifiers computation
+        let modifiers = "";
+        if (!enemy.boss) {
+            const modifiersArray = this.state.elite
+                ? enemy.eliteModifiers
+                : enemy.normalModifiers;
+            modifiers = modifiersArray[level];
+        }
+        // boss specific values
+        let immunities = "";
+        let special1 = "";
+        let special2 = "";
+        if (enemy.boss) {
+            immunities = enemy.immunities.join(", ");
+            special1 = enemy.special1[level](A);
+            special2 = enemy.special2[level](A);
+        }
+
         this.props.onCreate({
             _id: nextId++,
             type: this.state.type,
             name: enemy.name,
             id: this.state.id,
             elite: this.state.elite,
+            boss: !!enemy.boss,
             hp: maxHp,
-            maxHp: maxHp,
-            move: moveArray[level],
-            attack: attackArray[level],
-            modifiers: modifiersArray[level],
+            maxHp,
+            move,
+            attack,
+            modifiers,
+            immunities,
+            special1,
+            special2,
             status: {
                 poisoned: false,
                 wound: false,
@@ -1738,6 +608,13 @@ class EnemyBuilder extends Component {
                 renforced: false,
             },
         });
+    }
+
+    isBoss() {
+        if (!this.state.type) {
+            return false;
+        }
+        return !!ENEMIES_MAP[this.state.type].boss;
     }
 }
 
