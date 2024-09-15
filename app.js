@@ -631,7 +631,7 @@ class Scenario extends Component {
         <div t-att-class="{card: !(game.enemies.length and game.round)}">
             <div class="card-row m-2 d-flex space-between align-center">
                 <span class="text-bold">Round <t t-esc="game.round"/></span>
-                <span class="button p-1" t-on-click="incrementRound">
+                <span class="button p-1" t-att-class="{disabled: !game.heros.length }" t-on-click="incrementRound">
                     <t t-if="game.round">Next round</t>
                     <t t-else="">Start</t>
                 </span>
