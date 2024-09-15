@@ -23,16 +23,16 @@ function newGameState() {
 class CharacterCard extends Component {
     static template = xml`
         <div class="card" style="background-color: #ebfceb;" t-on-click="toggleDisplay">
-            <div class="card-row d-flex space-between p-1">
+            <div class="card-row d-flex space-between px-2 py-1">
                 <span class="text-bold"><t t-esc="props.hero.name"/></span>
                 <span><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
             </div>
-            <div class="card-row d-flex space-between p-1">
+            <div class="card-row d-flex space-between px-2 py-1">
                 <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <span class="text-bold" t-esc="props.hero.hp"/> / <span class="text-bold" t-esc="props.hero.maxHp"/></span>
                 <span>XP: <t t-esc="props.hero.xp"/></span>
                 <span>Gold: <t t-esc="props.hero.gold"/></span>
             </div>
-            <div class="card-row d-flex space-between p-1" t-if="statuses">
+            <div class="card-row d-flex space-between px-2 py-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
             </div>
             <div t-if="state.fullDisplay" t-on-click.stop="" class="form-advanced p-1 d-flex space-between flex-wrap border-top-gray">
@@ -167,44 +167,44 @@ class CharacterCard extends Component {
 class EnemyCard extends Component {
     static template = xml`
         <div class="card" t-attf-style="background-color:{{props.enemy.boss ? '#f3dcdc' : '#fff0f0'}}" t-on-click="toggleDisplay">
-            <div class="card-row d-flex space-between p-1">
+            <div class="card-row d-flex space-between px-2 py-1">
                 <span class="text-bold">
                     <t t-if="props.enemy.elite">Elite </t>
                     <t t-esc="props.enemy.name"/>
                     <t t-if="props.enemy.boss"> [BOSS]</t>
-                    <t t-if="!props.enemy.boss"> [<t t-esc="props.enemy.id"/>]</t>
+                    <t t-if="!props.enemy.boss and props.enemy.id"> [<t t-esc="props.enemy.id"/>]</t>
                 </span>
-                <span t-att-class="{'text-red': props.enemy.hp lt 1}">HP: <span class="text-bold" t-esc="props.enemy.hp"/> / <span class="text-bold" t-esc="props.enemy.maxHp"/></span>
 
             </div>
-            <div class="card-row d-flex space-between p-1">
+            <div class="card-row d-flex space-between px-2 py-1">
+                <span t-att-class="{'text-red': props.enemy.hp lt 1}">HP: <span class="text-bold" t-esc="props.enemy.hp"/> / <span class="text-bold" t-esc="props.enemy.maxHp"/></span>
                 <span>Move: <span class="text-bold" t-esc="props.enemy.move"/></span>
                 <span>Attack: <span class="text-bold" t-esc="props.enemy.attack"/></span>
             </div>
-            <div class="card-row p-1" t-if="props.enemy.boss">
+            <div class="card-row px-2 py-1" t-if="props.enemy.boss">
                 <span class="text-bold">Special 1</span> <span><t t-esc="props.enemy.special1"/></span>
             </div>
-            <div class="card-row p-1" t-if="props.enemy.boss">
+            <div class="card-row px-2 py-1" t-if="props.enemy.boss">
                 <span class="text-bold">Special 2</span> <span><t t-esc="props.enemy.special2"/></span>
             </div>
             
-            <div class="card-row d-flex space-between p-1" t-if="props.enemy.modifiers">
+            <div class="card-row d-flex space-between px-2 py-1" t-if="props.enemy.modifiers">
                 <span>Modificateurs: <t t-esc="props.enemy.modifiers"/></span>
             </div>
-            <div class="card-row d-flex space-between p-1" t-if="props.enemy.immunities">
+            <div class="card-row d-flex space-between px-2 py-1" t-if="props.enemy.immunities">
                 <span>Immunités: <t t-esc="props.enemy.immunities"/></span>
             </div>
-            <div class="card-row d-flex space-between p-1" t-if="statuses">
+            <div class="card-row d-flex space-between px-2 py-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray p-1 d-flex space-between flex-wrap mt-2">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray px-2 py-1 d-flex space-between flex-wrap mt-2">
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp--">-</span>
                     <span>HP: <t t-esc="props.enemy.hp"/></span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp++">+</span>
                 </div>
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex space-between flex-wrap mt-2">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="px-2 py-1 d-flex space-between flex-wrap mt-2">
                 <div 
                     class="width-100 border-radius-2 height-35 d-flex flex-center align-center" 
                     t-att-class="{'background-darker text-bold': hasStatus('poisoned')}"
@@ -248,8 +248,24 @@ class EnemyCard extends Component {
                     renforcement
                 </div>
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex space-between flex-wrap mt-2">
-                <div class="card-row p-1 m-1">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="px-2 py-1 d-flex space-between flex-wrap mt-2">
+                <div>
+                    <t t-if="!props.enemy.boss">
+                    <span>Id </span>
+                    <select t-model.number="props.enemy.id">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>
+                    </t>
+                </div>
+                <div class="card-row px-2 py-1 m-1">
                     <span class="button p-2" t-on-click="remove">Remove this enemy</span>
                 </div>
             </div>
@@ -312,28 +328,29 @@ class EnemyCard extends Component {
 
 class EnemyActions extends Component {
     static template = xml`
-        <div class="card">
-            <h3 class="px-1 my-1">Monster actions</h3>
+        <div class="card p-1">
             <div class="d-flex align-center flex-column">
                 <t t-foreach="enemyTypes" t-as="type" t-key="type">
                     <t t-set="actions" t-value="enemyActions(type)"/>
                     <div class="enemy-action">
-                        <div class="py-1">
+                        <div class="p-2 d-flex space-between" style="background-color: #eee;">
                             <span class="text-bold"><t t-esc="enemyName(type)"/></span>
-                        (deck: <t t-esc="actions.deck.length"/> cartes)
+                            <span class="text-smaller">deck: <t t-esc="actions.deck.length"/> cartes</span>
                         </div>
-                        <div class="d-flex" t-if="actions.active === false">
-                            <span class="button p-2" t-on-click="() => this.selectAction(type)">Choisir action</span>
+                        <div class="d-flex flex-end" t-if="actions.active === false">
+                            <span class="button m-2 p-1" t-on-click="() => this.selectAction(type)">Choisir action</span>
                         </div>
-                        <div t-if="actions.active" class="text-smaller">
+                        <div t-if="actions.active" class="p-1" >
                             <t t-set="action" t-value="activeAction(type)"/>
                             <div>
                                 <span class="text-bold"><t t-esc="action.initiative"/></span>
-                                <span><t t-esc="action.name"/><t t-if="action.recycled"> (recyclage)</t></span>
+                                <span class="mx-1"><t t-esc="action.name"/><t t-if="action.recycled"> <span class="text-bold">♲</span></t></span>
                             </div>
-                            <div t-foreach="action.effects" t-as="effect" t-key="effect">
-                                <t t-esc="effect"/>
-                            </div>
+                            <ul class="my-1 text-smaller text-italic">
+                                <li t-foreach="action.effects" t-as="effect" t-key="effect">
+                                    <t t-esc="effect"/>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </t>
@@ -397,46 +414,47 @@ class EnemyActions extends Component {
 class CharacterBuilder extends Component {
     static template = xml`
         <div class="topmenu">
-            <div t-on-click="props.backToMainScreen">Back</div>
+            <div class="mx-1" t-on-click="props.backToMainScreen">Back</div>
         </div>
-        <h2>Create your hero</h2>
-        <div class="formcontrol">
-            <div>Name </div>
-            <div><input t-model="state.name" placeholder="Character name"/>
+        <h2 class="p-2">Create your hero</h2>
+        <div class="p-2">
+            <div class="d-flex space-between align-center">
+                <div>Name </div>
+                <input class="width-150" t-model="state.name" placeholder="Character name"/>
             </div>
-        </div>
-        <div class="formcontrol">
-            <div>Class </div>
-            <div>
-                <select t-model="state.class">
-                    <option value="">Select a class</option>
-                    <option value="void_warden">Guardienne du Néant</option>
-                    <option value="red_guard">Guarde Rouge</option>
+            <div class="formcontrol">
+                <div>Class </div>
+                <div>
+                    <select t-model="state.class">
+                        <option value="">Select a class</option>
+                        <option value="void_warden">Guardienne du Néant</option>
+                        <option value="red_guard">Guarde Rouge</option>
+                    </select>
+                </div>
+            </div>
+            <div class="formcontrol">
+                <div>Level </div>
+                <select t-model.number="state.level">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
                 </select>
             </div>
-        </div>
-        <div class="formcontrol">
-            <div>Level </div>
-            <select t-model.number="state.level">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-            </select>
-        </div>
-        <div class="formcontrol">
-            <div>XP </div>
-            <div><input type="number" t-model.number="state.xp"/>
+            <div class="formcontrol">
+                <div>XP </div>
+                <div><input type="number" t-model.number="state.xp"/>
+                </div>
             </div>
-        </div>
-        <div class="formcontrol">
-            <div>Gold </div>
-            <div><input type="number" t-model.number="state.gold"/>
+            <div class="formcontrol">
+                <div>Gold </div>
+                <div><input type="number" t-model.number="state.gold"/>
+                </div>
             </div>
         </div>
         <div class="d-flex flex-end">
@@ -490,7 +508,7 @@ class CharacterBuilder extends Component {
 class EnemyBuilder extends Component {
     static template = xml`
         <div class="topmenu">
-            <div t-on-click="props.backToMainScreen">Back</div>
+            <div class="mx-1" t-on-click="props.backToMainScreen">Back</div>
         </div>
         <h2>Create an enemy</h2>
         <div class="formcontrol">
@@ -513,7 +531,7 @@ class EnemyBuilder extends Component {
             </div>
         </div>
         <div class="d-flex flex-end">
-            <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: isDisabled}">
+            <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: !state.type}">
                 Add Enemy
             </div>
         </div>
@@ -526,11 +544,6 @@ class EnemyBuilder extends Component {
             elite: false,
         });
         this.enemies = ENEMIES;
-    }
-
-    get isDisabled() {
-        const isEnabled = (this.state.type && this.state.id) || this.isBoss();
-        return !isEnabled;
     }
 
     create() {
@@ -622,8 +635,8 @@ class EnemyBuilder extends Component {
 // -----------------------------------------------------------------------------
 class Scenario extends Component {
     static template = xml`
-        <div class="card">
-            <div class="card-row p-1 d-flex space-between">
+        <div t-att-class="{card: !(game.enemies.length and game.round)}">
+            <div class="card-row m-2 d-flex space-between align-center">
                 <span class="text-bold">Round <t t-esc="game.round"/></span>
                 <span class="button p-1" t-on-click="incrementRound">
                     <t t-if="game.round">Next round</t>
@@ -641,7 +654,7 @@ class Scenario extends Component {
                     Air <t t-esc="game.air"/>
                 </div>
             </div>
-            <div class="card-row px-1 d-flex space-between" t-if="game.round">
+            <div class="card-row p-1 d-flex space-between" t-if="game.round">
                 <div class="element-card" t-att-class="{'text-bold': game.earth > 0}" t-on-click="() => this.updateElement('earth')">
                     Terre <t t-esc="game.earth"/>
                 </div>
@@ -703,10 +716,10 @@ class Scenario extends Component {
 class MainMenu extends Component {
     static template = xml`
         <div class="topmenu">
-            <div t-on-click="props.backToMainScreen">Back</div>
+            <div class="mx-1" t-on-click="props.backToMainScreen">Back</div>
         </div>
-        <h2>Configuration</h2>
-        <div class="formcontrol d-flex space-between">
+        <h2 class="p-2">Configuration</h2>
+        <div class="p-2 d-flex space-between align-center">
             <div>Scenario Level </div>
             <div>
                 <span class="button m-1 p-1 px-2" t-on-click="()=>props.game.level--">-</span>
@@ -714,12 +727,12 @@ class MainMenu extends Component {
                 <span class="button m-1 p-1 px-2" t-on-click="()=>props.game.level++">+</span>
             </div>
         </div>
-        <div class="d-flex">
+        <div class="d-flex ">
             <div class="button p-2 m-1" t-on-click="save">
                 Save to local storage
             </div>
         </div>
-        <div class="d-flex" >
+        <div class="d-flex " >
             <div class="button p-2 m-1" t-on-click="restore">
                 Restore from local storage
             </div>
@@ -784,18 +797,18 @@ class App extends Component {
                     </div>
                 </div>
                 <Scenario game="game"/>
-                <t t-foreach="game.heros" t-as="hero" t-key="hero_index">
-                    <CharacterCard hero="hero" game="game"/>
-                </t>
                 <t t-if="game.round and game.enemies.length">
                     <EnemyActions game="game"/>
+                </t>
+                <t t-foreach="game.heros" t-as="hero" t-key="hero_index">
+                    <CharacterCard hero="hero" game="game"/>
                 </t>
                 <t t-foreach="game.enemies" t-as="enemy" t-key="enemy._id">
                     <EnemyCard enemy="enemy" game="game"/>
                 </t>
                 <t t-if="!game.heros.length and !game.enemies.length">
                     <div class="nocontent">
-                        Add hero and/or monster
+                        Add heros and/or monsters, then start the game
                     </div>
                 </t>
             </t>
