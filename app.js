@@ -2,6 +2,7 @@ const { Component, mount, xml, useState } = owl;
 
 function newGameState() {
     return {
+        nextId: 1,
         heros: [],
         enemies: [],
         level: 1, // scenario level
@@ -486,8 +487,6 @@ class CharacterBuilder extends Component {
 // MARK: Enemy Builder
 // -----------------------------------------------------------------------------
 
-let nextId = 1;
-
 class EnemyBuilder extends Component {
     static template = xml`
         <div class="topmenu">
@@ -585,7 +584,7 @@ class EnemyBuilder extends Component {
         }
 
         this.props.onCreate({
-            _id: nextId++,
+            _id: this.props.game.nextId++,
             type: this.state.type,
             name: enemy.name,
             id: this.state.id,
@@ -716,13 +715,13 @@ class MainMenu extends Component {
             </div>
         </div>
         <div class="d-flex">
-            <div class="button p-2 m-1" >
-                Save to local storage [not done yet]
+            <div class="button p-2 m-1" t-on-click="save">
+                Save to local storage
             </div>
         </div>
         <div class="d-flex" >
-            <div class="button p-2 m-1" >
-                Restore from local storage [not done yet]
+            <div class="button p-2 m-1" t-on-click="restore">
+                Restore from local storage
             </div>
         </div>
         <div class="d-flex">
@@ -733,7 +732,27 @@ class MainMenu extends Component {
     `;
 
     reset() {
-        Object.assign(this.props.game, newGameState());
+        if (confirm("Are you sure that you want to reset the game?")) {
+            Object.assign(this.props.game, newGameState());
+            this.props.backToMainScreen();
+        }
+    }
+
+    save() {
+        const state = JSON.stringify(this.props.game);
+        localStorage.setItem("game_state", state);
+        this.props.backToMainScreen();
+        alert("Game saved!");
+    }
+
+    restore() {
+        const dataStr = localStorage.getItem("game_state");
+        if (!dataStr) {
+            return;
+        }
+        const data = JSON.parse(dataStr);
+        Object.assign(this.props.game, data);
+        this.props.backToMainScreen();
     }
 }
 
