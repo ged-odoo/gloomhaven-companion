@@ -38,17 +38,17 @@ class CharacterCard extends Component {
             <div t-if="state.fullDisplay" t-on-click.stop="" class="form-advanced p-1 d-flex space-between flex-wrap border-top-gray">
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.hp--">-</span>
-                    <span>HP: <t t-esc="props.hero.hp"/></span>
+                    <span>HP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.hp++">+</span>
                 </div>
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.xp--">-</span>
-                    <span>XP: <t t-esc="props.hero.xp"/></span>
+                    <span>XP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.xp++">+</span>
                 </div>
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="decreaseGold">-</span>
-                    <span>Gold: <t t-esc="props.hero.gold"/></span>
+                    <span>Gold</span>
                     <span class="button m-1 p-2 px-3" t-on-click="increaseGold">+</span>
                 </div>
             <!-- <div> -->
@@ -200,7 +200,7 @@ class EnemyCard extends Component {
             <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray px-2 py-1 d-flex space-between flex-wrap mt-2">
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp--">-</span>
-                    <span>HP: <t t-esc="props.enemy.hp"/></span>
+                    <span>HP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp++">+</span>
                 </div>
             </div>
@@ -417,48 +417,42 @@ class CharacterBuilder extends Component {
             <div class="mx-1" t-on-click="props.backToMainScreen">Back</div>
         </div>
         <h2 class="p-2">Create your hero</h2>
-        <div class="p-2">
-            <div class="d-flex space-between align-center">
-                <div>Name </div>
-                <input class="width-150" t-model="state.name" placeholder="Character name"/>
-            </div>
-            <div class="formcontrol">
-                <div>Class </div>
-                <div>
-                    <select t-model="state.class">
-                        <option value="">Select a class</option>
-                        <option value="void_warden">Guardienne du Néant</option>
-                        <option value="red_guard">Guarde Rouge</option>
-                    </select>
-                </div>
-            </div>
-            <div class="formcontrol">
-                <div>Level </div>
-                <select t-model.number="state.level">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                </select>
-            </div>
-            <div class="formcontrol">
-                <div>XP </div>
-                <div><input type="number" t-model.number="state.xp"/>
-                </div>
-            </div>
-            <div class="formcontrol">
-                <div>Gold </div>
-                <div><input type="number" t-model.number="state.gold"/>
-                </div>
-            </div>
+        <div class="d-flex align-center mx-2 my-3">
+            <div class="width-50 text-right">Name </div>
+            <input class="mx-2" t-model="state.name" placeholder="Character name"/>
         </div>
-        <div class="d-flex flex-end">
-            <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: isDisabled}">
+        <div class="d-flex align-center mx-2 my-3">
+            <div class="width-50 text-right">Class </div>
+            <select class="mx-2" t-model="state.class">
+                <option value="">Select a class</option>
+                <option value="void_warden">Guardienne du Néant</option>
+                <option value="red_guard">Guarde Rouge</option>
+            </select>
+        </div>
+        <div class="d-flex align-center mx-2 my-3">
+            <div class="width-50 text-right">Level </div>
+            <select class="mx-2" t-model.number="state.level">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+        </div>
+        <div class="d-flex align-center mx-2 my-3">
+            <div class="width-50 text-right">XP </div>
+            <input class="mx-2" type="number" t-model.number="state.xp"/>
+        </div>
+        <div class="d-flex align-center mx-2 my-3">
+            <div class="width-50 text-right">Gold </div>
+            <input  class="mx-2" type="number" t-model.number="state.gold"/>
+        </div>
+        <div class="d-flex flex-end p-1">
+            <div class="button p-2 m-2" t-on-click="create" t-att-class="{disabled: isDisabled}">
                 Add Hero
             </div>
         </div>
@@ -510,25 +504,24 @@ class EnemyBuilder extends Component {
         <div class="topmenu">
             <div class="mx-1" t-on-click="props.backToMainScreen">Back</div>
         </div>
-        <h2>Create an enemy</h2>
-        <div class="formcontrol">
-            <div>Type </div>
-            <select t-model="state.type">
+        <h2 class="p-2">Add an enemy</h2>
+        <div class="d-flex m-2 align-center">
+            <div class="width-50 text-right">Type </div>
+            <select class=" mx-2" t-model="state.type">
                 <option value="">Select a type</option>
                 <t t-foreach="enemies" t-as="enemy" t-key="enemy.id">
                     <option t-att-value="enemy.id"><t t-esc="enemy.name"/><t t-if="enemy.boss"> (BOSS)</t></option>
                 </t>
             </select>
         </div>
-        <div class="formcontrol" t-if="!isBoss()">
-            <div>Id </div>
-            <div><input type="number" t-model.number="state.id"/>
-            </div>
-        </div>
-        <div class="formcontrol" t-if="!isBoss()">
-            <div>Elite </div>
+        <div class="d-flex m-2 align-center" t-if="!isBoss()">
+            <div class="width-50 text-right">Elite </div>
             <div><input type="checkbox" t-model="state.elite"/>
             </div>
+        </div>
+        <div class="d-flex m-2 align-center" t-if="!isBoss()">
+            <div class="width-50 text-right">Id </div>
+            <input class="mx-2" type="number" t-model.number="state.id"/>
         </div>
         <div class="d-flex flex-end">
             <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: !state.type}">
@@ -644,25 +637,25 @@ class Scenario extends Component {
                 </span>
             </div>
             <div class="card-row px-1 d-flex space-between" t-if="game.round">
-                <div class="element-card" t-att-class="{'text-bold': game.fire > 0}" t-on-click="() => this.updateElement('fire')">
-                    Feu <t t-esc="game.fire"/>
+                <div class="element-card" t-att-class="{'text-bold': game.fire > 1, 'text-gray': !game.fire}" t-on-click="() => this.updateElement('fire')">
+                    Feu <t t-if="game.fire" t-esc="game.fire"/>
                 </div>
-                <div class="element-card" t-att-class="{'text-bold': game.ice > 0}" t-on-click="() => this.updateElement('ice')">
-                    Glace <t t-esc="game.ice"/>
+                <div class="element-card" t-att-class="{'text-bold': game.ice > 1, 'text-gray': !game.ice}" t-on-click="() => this.updateElement('ice')">
+                    Glace <t t-if="game.ice" t-esc="game.ice"/>
                 </div>
-                <div class="element-card" t-att-class="{'text-bold': game.air > 0}" t-on-click="() => this.updateElement('air')">
-                    Air <t t-esc="game.air"/>
+                <div class="element-card" t-att-class="{'text-bold': game.air > 1, 'text-gray': !game.air}" t-on-click="() => this.updateElement('air')">
+                    Air <t t-if="game.air" t-esc="game.air"/>
                 </div>
             </div>
             <div class="card-row p-1 d-flex space-between" t-if="game.round">
-                <div class="element-card" t-att-class="{'text-bold': game.earth > 0}" t-on-click="() => this.updateElement('earth')">
-                    Terre <t t-esc="game.earth"/>
+                <div class="element-card" t-att-class="{'text-bold': game.earth > 1, 'text-gray': !game.earth}" t-on-click="() => this.updateElement('earth')">
+                    Terre <t t-if="game.earth" t-esc="game.earth"/>
                 </div>
-                <div class="element-card" t-att-class="{'text-bold': game.light > 0}" t-on-click="() => this.updateElement('light')">
-                    Lumière <t t-esc="game.light"/>
+                <div class="element-card" t-att-class="{'text-bold': game.light > 1, 'text-gray': !game.light}" t-on-click="() => this.updateElement('light')">
+                    Lumière <t t-if="game.light" t-esc="game.light"/>
                 </div>
-                <div class="element-card" t-att-class="{'text-bold': game.darkness > 0}" t-on-click="() => this.updateElement('darkness')">
-                    Obscurité <t t-esc="game.darkness"/>
+                <div class="element-card" t-att-class="{'text-bold': game.darkness > 1, 'text-gray': !game.darkness}" t-on-click="() => this.updateElement('darkness')">
+                    Obscurité <t t-if="game.darkness" t-esc="game.darkness"/>
                 </div>
             </div>
         </div>
