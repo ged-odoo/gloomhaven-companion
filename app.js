@@ -22,7 +22,7 @@ function newGameState() {
 // -----------------------------------------------------------------------------
 class CharacterCard extends Component {
     static template = xml`
-        <div class="card" style="background-color: #ebfceb;" t-on-click="toggleDisplay">
+        <div class="m-1 border-radius-4 border-gray" style="background-color: #ebfceb;" t-on-click="toggleDisplay">
             <div class="card-row d-flex space-between px-2 py-1">
                 <span class="text-bold"><t t-esc="props.hero.name"/></span>
                 <span><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
@@ -166,10 +166,10 @@ class CharacterCard extends Component {
 // -----------------------------------------------------------------------------
 class EnemyCard extends Component {
     static template = xml`
-        <div class="card" t-attf-style="background-color:{{props.enemy.boss ? '#f3dcdc' : '#fff0f0'}}" t-on-click="toggleDisplay">
+        <div class="m-1 border-gray border-radius-4" t-attf-style="background-color:{{props.enemy.boss ? '#f3dcdc' : '#fff0f0'}}" t-on-click="toggleDisplay">
             <div class="card-row d-flex space-between px-2 py-1">
                 <span class="text-bold">
-                    <t t-if="props.enemy.elite">Elite </t>
+                    <span t-if="props.enemy.elite" style="font-variant: smallcaps;">Elite </span>
                     <t t-esc="props.enemy.name"/>
                     <t t-if="props.enemy.boss"> [BOSS]</t>
                     <t t-if="!props.enemy.boss and props.enemy.id"> [<t t-esc="props.enemy.id"/>]</t>
@@ -197,7 +197,7 @@ class EnemyCard extends Component {
             <div class="card-row d-flex space-between px-2 py-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray px-2 py-1 d-flex space-between flex-wrap mt-2">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray px-2 py-1 pt-2 d-flex space-between flex-wrap">
                 <div class="card-row p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp--">-</span>
                     <span>HP</span>
@@ -265,7 +265,7 @@ class EnemyCard extends Component {
                     </select>
                     </t>
                 </div>
-                <div class="card-row px-2 py-1 m-1">
+                <div class="card-row p-2 m-1">
                     <span class="button p-2" t-on-click="remove">Remove this enemy</span>
                 </div>
             </div>
@@ -328,7 +328,7 @@ class EnemyCard extends Component {
 
 class EnemyActions extends Component {
     static template = xml`
-        <div class="card p-1">
+        <div class="p-1">
             <div class="d-flex align-center flex-column">
                 <t t-foreach="enemyTypes" t-as="type" t-key="type">
                     <t t-set="actions" t-value="enemyActions(type)"/>
