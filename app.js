@@ -23,41 +23,36 @@ function newGameState() {
 class CharacterCard extends Component {
     static template = xml`
         <div class="m-1 border-radius-4 border-gray" style="background-color: #ebfceb;" t-on-click="toggleDisplay">
-            <div class="card-row d-flex space-between px-2 py-1">
+            <div class="d-flex space-between px-2 py-1">
                 <span class="text-bold"><t t-esc="props.hero.name"/></span>
-                <span><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
+                <span class=""><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
             </div>
-            <div class="card-row d-flex space-between px-2 py-1">
+            <div class="d-flex space-between px-2 py-1">
                 <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <span class="text-bold" t-esc="props.hero.hp"/> / <span class="text-bold" t-esc="props.hero.maxHp"/></span>
-                <span>XP: <t t-esc="props.hero.xp"/></span>
-                <span>Gold: <t t-esc="props.hero.gold"/></span>
+                <span>XP: <span class="text-bold" t-esc="props.hero.xp"/></span>
+                <span>Gold: <span class="text-bold" t-esc="props.hero.gold"/></span>
             </div>
-            <div class="card-row d-flex space-between px-2 py-1" t-if="statuses">
+            <div class="d-flex space-between px-2 py-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="form-advanced p-1 d-flex space-between flex-wrap border-top-gray">
-                <div class="card-row p-1 m-1">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex space-between align-center border-top-gray">
+                <div class="d-flex align-center p-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.hp--">-</span>
                     <span>HP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.hp++">+</span>
                 </div>
-                <div class="card-row p-1 m-1">
+                <div class="d-flex align-center p-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.xp--">-</span>
                     <span>XP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.hero.xp++">+</span>
                 </div>
-                <div class="card-row p-1 m-1">
+                <div class="d-flex align-center p-1">
                     <span class="button m-1 p-2 px-3" t-on-click="decreaseGold">-</span>
                     <span>Gold</span>
                     <span class="button m-1 p-2 px-3" t-on-click="increaseGold">+</span>
                 </div>
-            <!-- <div> -->
-                <span>Max card number: <t t-esc="props.hero.maxCard"/></span>
-            <!-- </div> -->
-                <!-- <div class="card-row p-1 d-flex space-between">
-                </div> -->
             </div>
-            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex space-between flex-wrap mt-2">
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex space-between flex-wrap">
                 <div 
                     class="width-100 border-radius-2 height-35 d-flex flex-center align-center" 
                     t-att-class="{'background-darker text-bold': hasStatus('poisoned')}"
@@ -100,6 +95,9 @@ class CharacterCard extends Component {
                 >
                     renforcement
                 </div>
+            </div>
+            <div t-if="state.fullDisplay" t-on-click.stop="" class="p-1 d-flex flex-end">
+                <span>Max card number: <t t-esc="props.hero.maxCard"/></span>
             </div>
         </div>
     `;
@@ -167,7 +165,7 @@ class CharacterCard extends Component {
 class EnemyCard extends Component {
     static template = xml`
         <div class="m-1 border-gray border-radius-4" t-attf-style="background-color:{{props.enemy.boss ? '#f3dcdc' : '#fff0f0'}}" t-on-click="toggleDisplay">
-            <div class="card-row d-flex space-between px-2 py-1">
+            <div class="d-flex space-between px-2 py-1">
                 <span class="text-bold">
                     <span t-if="props.enemy.elite" style="font-variant: smallcaps;">Elite </span>
                     <t t-esc="props.enemy.name"/>
@@ -176,29 +174,29 @@ class EnemyCard extends Component {
                 </span>
 
             </div>
-            <div class="card-row d-flex space-between px-2 py-1">
+            <div class="d-flex space-between px-2 py-1">
                 <span t-att-class="{'text-red': props.enemy.hp lt 1}">HP: <span class="text-bold" t-esc="props.enemy.hp"/> / <span class="text-bold" t-esc="props.enemy.maxHp"/></span>
                 <span>Move: <span class="text-bold" t-esc="props.enemy.move"/></span>
                 <span>Attack: <span class="text-bold" t-esc="props.enemy.attack"/></span>
             </div>
-            <div class="card-row px-2 py-1" t-if="props.enemy.boss">
+            <div class="px-2 py-1" t-if="props.enemy.boss">
                 <span class="text-bold">Special 1</span> <span><t t-esc="props.enemy.special1"/></span>
             </div>
-            <div class="card-row px-2 py-1" t-if="props.enemy.boss">
+            <div class="px-2 py-1" t-if="props.enemy.boss">
                 <span class="text-bold">Special 2</span> <span><t t-esc="props.enemy.special2"/></span>
             </div>
             
-            <div class="card-row d-flex space-between px-2 py-1" t-if="props.enemy.modifiers">
+            <div class="d-flex space-between px-2 py-1" t-if="props.enemy.modifiers">
                 <span>Modificateurs: <t t-esc="props.enemy.modifiers"/></span>
             </div>
-            <div class="card-row d-flex space-between px-2 py-1" t-if="props.enemy.immunities">
+            <div class="d-flex space-between px-2 py-1" t-if="props.enemy.immunities">
                 <span>Immunités: <t t-esc="props.enemy.immunities"/></span>
             </div>
-            <div class="card-row d-flex space-between px-2 py-1" t-if="statuses">
+            <div class="d-flex space-between px-2 py-1" t-if="statuses">
                 <span>Status: <t t-esc="statuses"/> </span>
             </div>
             <div t-if="state.fullDisplay" t-on-click.stop="" class="border-top-gray px-2 py-1 pt-2 d-flex space-between flex-wrap">
-                <div class="card-row p-1 m-1">
+                <div class="p-1 m-1">
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp--">-</span>
                     <span>HP</span>
                     <span class="button m-1 p-2 px-3" t-on-click="()=>props.enemy.hp++">+</span>
@@ -265,7 +263,7 @@ class EnemyCard extends Component {
                     </select>
                     </t>
                 </div>
-                <div class="card-row p-2 m-1">
+                <div class="p-2 m-1">
                     <span class="button p-2" t-on-click="remove">Remove this enemy</span>
                 </div>
             </div>
@@ -628,15 +626,15 @@ class EnemyBuilder extends Component {
 // -----------------------------------------------------------------------------
 class Scenario extends Component {
     static template = xml`
-        <div t-att-class="{card: !(game.enemies.length and game.round)}">
-            <div class="card-row m-2 d-flex space-between align-center">
+        <div t-att-class="{'border-bottom-gray': (!game.enemies.length and !game.heros.length)}">
+            <div class="m-2 d-flex space-between align-center">
                 <span class="text-bold">Round <t t-esc="game.round"/></span>
                 <span class="button p-1" t-att-class="{disabled: !game.heros.length }" t-on-click="incrementRound">
                     <t t-if="game.round">Next round</t>
                     <t t-else="">Start</t>
                 </span>
             </div>
-            <div class="card-row px-1 d-flex space-between" t-if="game.round">
+            <div class="px-1 d-flex space-between" t-if="game.round">
                 <div class="element-card" t-att-class="{'text-bold': game.fire > 1, 'text-gray': !game.fire}" t-on-click="() => this.updateElement('fire')">
                     Feu <t t-if="game.fire" t-esc="game.fire"/>
                 </div>
@@ -647,7 +645,7 @@ class Scenario extends Component {
                     Air <t t-if="game.air" t-esc="game.air"/>
                 </div>
             </div>
-            <div class="card-row p-1 d-flex space-between" t-if="game.round">
+            <div class="p-1 d-flex space-between" t-if="game.round">
                 <div class="element-card" t-att-class="{'text-bold': game.earth > 1, 'text-gray': !game.earth}" t-on-click="() => this.updateElement('earth')">
                     Terre <t t-if="game.earth" t-esc="game.earth"/>
                 </div>
