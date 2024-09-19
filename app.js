@@ -12,6 +12,7 @@
       array[i] = array[j];
       array[j] = temp;
     }
+    return array;
   }
 
   let isSleepPrevented = false;
@@ -28,7 +29,7 @@
     }
   }
 
-  const CARD = "border-gray border-radius-4 m-1";
+  const CARD = "border-gray border-radius-4 mx-1 mt-1 mb-1";
 
   function statusString(statusObj) {
     const keys = [];
@@ -69,7 +70,20 @@
     light = 0;
     darkness = 0;
     monsterActions = {};
+    enemyModifiers = {
+      visible: 0, // number of discarded cards to show
+      deck: shuffleArray(MONSTER_MODIFIERS_DECK.map((c) => c.id)),
+      discardPile: [],
+    };
     battleGoals = {};
+    turnTracker = {};
+    config = {
+      elements: true,
+      tours: true,
+      battleGoals: true,
+      enemyActions: true,
+      attackModifiers: true,
+    };
 
     screens = ["START"];
     states = [null];
@@ -98,15 +112,6 @@
     popScreen() {
       this.screens.pop();
       this.states.pop();
-    }
-
-    areObjectivesAssigned() {
-      for (let hero of this.heroes) {
-        if (!this.battleGoals[hero.id]) {
-          return false;
-        }
-      }
-      return true;
     }
 
     addHero(hero) {
@@ -200,42 +205,42 @@
     static template = xml`
       <t t-set="status" t-value="props.status"/>
       <div 
-        class="border-radius-2 text-center p-1 " 
+        class="border-radius-2 text-smallcaps text-center p-1 " 
         t-att-class="{'bg-darker text-bold': status.poisoned}"
         t-on-click="() => status.poisoned = !status.poisoned"
       >
         poison
       </div>
       <div
-        class="border-radius-2 text-center p-1 "
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.wound}"
         t-on-click="() => status.wound = !status.wound"
       >
         blessure
       </div>
       <div
-        class="border-radius-2 text-center p-1 "
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.confusion}"
         t-on-click="() => status.confusion = !status.confusion"
       >
         confusion
       </div>
       <div
-        class="border-radius-2 text-center p-1 "
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.immobilisation}"
         t-on-click="() => status.immobilisation = !status.immobilisation"
       >
         immobilisation
       </div>
       <div
-        class="border-radius-2 text-center p-1 "
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.stunned}"
         t-on-click="() => status.stunned = !status.stunned"
       >
         étourdissement
       </div>
       <div
-        class="border-radius-2 text-center p-1 "
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.renforced}"
         t-on-click="() => status.renforced = !status.renforced"
       >
@@ -337,6 +342,54 @@
       if (this.game[elem] < 0) {
         this.game[elem] = 2;
       }
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // MARK: Turn Tracker
+  // -----------------------------------------------------------------------------
+  class TurnTracker extends Component {
+    static template = xml`
+      <div class="${CARD} bg-white">
+        <div class="bg-gray p-1">
+          Tours
+        </div>
+        <div class="p-1">
+         dadsf
+        </div>
+      </div>
+  `;
+  }
+
+  // -----------------------------------------------------------------------------
+  // MARK: EnemyAttackModifier
+  // -----------------------------------------------------------------------------
+  class EnemyAttackModifiers extends Component {
+    static template = xml`
+      <div class="${CARD} bg-white">
+        <div class="bg-gray p-1 d-flex space-between">
+          <span>Enemy Attack Modifiers (<t t-esc="mods.deck.length"/> cards)</span>
+          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
+        </div>
+        <div class="d-flex">
+          <div class="d-grid" style="grid-template-columns: 100px 100px;">
+              <div class="button" t-on-click="dealCard">1 Card</div>
+              <div class="button" t-on-click="dealCard">2 Cards</div>
+              <div class="button" t-on-click="addBlessing">+ Curse</div>
+              <div class="button" t-on-click="addCurse">+ Blessing</div>
+          </div>
+          <div>
+            sadf
+          </div>
+        </div>
+      </div>`;
+
+    setup() {
+      this.mods = this.props.game.enemyModifiers;
+    }
+
+    close() {
+      this.props.game.config.attackModifiers = false;
     }
   }
 
@@ -828,14 +881,27 @@
         <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
       </TopMenu>
       <div>
-        <h2 class="p-2">Configuration</h2>
-        <div class="d-flex ">
-            <div class="button p-2 m-1" t-on-click="save">
+        <h2 class="p-2">Features</h2>
+        <t t-set="config" t-value="props.game.config"/>
+        <div class="d-grid align-center" style="grid-template-columns:50px 1fr;">
+          <input type="checkbox" t-model="config.elements" id="track_element"/>
+          <label for="track_element">Element Tracker</label>
+          <input type="checkbox" t-model="config.tours" id="track_tours"/>
+          <label for="track_tours">Tour Tracker</label>
+          <input type="checkbox" t-model="config.battleGoals" id="track_battlegoals"/>
+          <label for="track_battlegoals">Battle Goals</label>
+          <input type="checkbox" t-model="config.attackModifiers" id="enemy_attack_modifiers"/>
+          <label for="enemy_attack_modifiers">Enemy Attack Modifiers</label>
+          <input type="checkbox" t-model="config.enemyActions" id="enemy_actions"/>
+          <label for="enemy_actions">Enemy Actions</label>
+        </div>
+        <hr/>
+        <h2 class="p-2 my-2">Game Data</h2>
+        <div class="d-flex flex-column align-center">
+            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="save">
                 Save to local storage
             </div>
-        </div>
-        <div class="d-flex " >
-            <div class="button p-2 m-1" t-on-click="restore">
+            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="restore">
                 Restore from local storage
             </div>
         </div>
@@ -863,6 +929,37 @@
   }
 
   // -----------------------------------------------------------------------------
+  // MARK: BattleGoalTracker
+  // -----------------------------------------------------------------------------
+
+  class BattleGoalTracker extends Component {
+    static template = xml`
+      <div class="${CARD} bg-white px-2 py-1 text-italic">
+        <div class="d-flex space-between">
+          <span>Select a battle goal for each hero!</span>
+          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
+        </div>
+        <div class="d-flex">
+          <t t-foreach="props.game.heroes" t-as="hero" t-key="hero.id">
+            <t t-if="!props.game.battleGoals[hero.id]">
+              <div class="button" t-on-click="() => this.selectGoal(hero)"><t t-esc="hero.name"/></div>
+            </t>
+          </t>
+        </div>
+      </div>`;
+
+    selectGoal(hero) {
+      // @todo implemenb battle goal selection screen
+      console.log("selecting goal for hero", hero);
+      this.props.game.battleGoals[hero.id] = true;
+    }
+
+    close() {
+      this.props.game.config.battleGoals = false;
+    }
+  }
+
+  // -----------------------------------------------------------------------------
   // MARK: MainScreen
   // -----------------------------------------------------------------------------
   class MainScreen extends Component {
@@ -880,27 +977,23 @@
           <t t-else="">Start Scenario</t>
         </div>
         </ControlPanel>
-      <t t-if="!game.areObjectivesAssigned()">
-        <div class="${CARD} bg-white px-2 py-1 text-italic">
-          <div class="d-flex space-between">
-            <span>Select a battle goal for each hero!</span>
-            <span class="text-bold text-primary" t-on-click="skip">Close</span>
-          </div>
-          <div class="d-flex">
-            <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-              <t t-if="!game.battleGoals[hero.id]">
-                <div class="button" t-on-click="() => this.selectGoal(hero)"><t t-esc="hero.name"/></div>
-              </t>
-            </t>
-          </div>
-        </div>
+      <t t-if="game.round">
+        <ElementTracker t-if="game.config.elements" game="props.game" />
+        <TurnTracker t-if="game.config.tours" game="props.game" />
       </t>
-      <ElementTracker game="props.game" t-if="game.round" />
+      <t t-if="game.config.battleGoals">
+        <BattleGoalTracker game="game"/>
+      </t>
       <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
         <CharacterCard hero="hero"/>
       </t>
-      <t t-if="game.round and game.enemies.length">
-        <EnemyActions game="game"/>
+      <t t-if="game.round">
+        <t t-if="game.config.attackModifiers">
+          <EnemyAttackModifiers game="game"/>
+        </t>
+        <t t-if="game.enemies.length and game.config.enemyActions">
+          <EnemyActions game="game"/>
+        </t>
       </t>
       <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
         <EnemyCard enemy="enemy" game="game"/>
@@ -913,22 +1006,13 @@
       EnemyActions,
       EnemyCard,
       ElementTracker,
+      TurnTracker,
+      BattleGoalTracker,
+      EnemyAttackModifiers,
     };
 
     setup() {
       this.game = this.props.game;
-    }
-
-    skip() {
-      for (let hero of this.props.game.heroes) {
-        this.props.game.battleGoals[hero.id] = true;
-      }
-    }
-
-    selectGoal(hero) {
-      // @todo implemenb battle goal selection screen
-      console.log("selecting goal for hero", hero);
-      this.props.game.battleGoals[hero.id] = true;
     }
 
     goToNextRound() {

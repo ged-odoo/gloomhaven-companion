@@ -4,6 +4,7 @@
 
 input {
   height: 20px;
+  accent-color: var(--primary);
 }
 
 select {
@@ -190,6 +191,14 @@ select {
   margin-top: 8px;
 }
 
+.mb-1 {
+  margin-bottom: 4px;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
 .my-1 {
   margin-top: 4px;
   margin-bottom: 4px;
@@ -296,6 +305,8 @@ select {
 .bg-lightred {
   background-color: #fff0f0;
 }
+
+
 
 /* -------------------------------------------------------------------------- */
 /* border */

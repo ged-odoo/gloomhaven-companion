@@ -13,14 +13,6 @@ const MAX_CARD_MAP = {
   red_guard: 10,
 };
 
-const BATTLE_GOALS = [
-  {
-    id: 1,
-    name: "Premier Sang",
-    description: "Être le premier à tuer un enemy",
-  }
-];
-
 const BOSS_ACTIONS = [
   {
     id: 1,
@@ -66,7 +58,7 @@ const BOSS_ACTIONS = [
   },
   {
     id: 7,
-    name: "Rien de particulier",
+    name: "Rien de Particulier",
     initiative: 36,
     recycled: false,
     effects: ["Déplacement +0", "Attaque +0"],
@@ -114,73 +106,73 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Étreinte putride",
+        name: "Étreinte Putride",
         initiative: 21,
         recycled: false,
         effects: [
           "Déplacement +1",
-          "Confusion, immobilisation (cible un adversaire adjacents)",
-          "consume terre: cible subit aussi 2 dégats",
+          "Confusion, immobilisation (cible un adversaire adjacent)",
+          "[terre]: la cible subit aussi 2 dégats",
         ],
       },
       {
         id: 2,
-        name: "Claque violente",
+        name: "Claque Violente",
         initiative: 32,
         recycled: false,
         effects: [
           "Attaque +2, poussée 1",
-          "Si attaque est effectuée, le cadavre réanimé subit 1 dégat",
+          "Si cette attaque est effectuée, le Cadavre Réanimé subit 1 dégat",
         ],
       },
       {
         id: 3,
-        name: "Assaut précipité",
+        name: "Assaut Précipité",
         initiative: 47,
         recycled: false,
         effects: ["Déplacement +1", "Attaque -1"],
       },
       {
         id: 4,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 68,
         recycled: true,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 5,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 68,
         recycled: true,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 6,
-        name: "Émission de gaz",
+        name: "Émission de Gaz",
         initiative: 71,
         recycled: false,
         effects: [
           "Déplacement +0",
           "Attaque +1",
-          "Empoisonnement (cible tous adversaires adjacents)",
-          "Infuse terre",
+          "Empoisonnement (cible tous les adversaires adjacents)",
+          "Infuse: Terre",
         ],
       },
       {
         id: 7,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 81,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },
       {
         id: 8,
-        name: "Charge téméraire",
+        name: "Charge Téméraire",
         initiative: 91,
         recycled: false,
         effects: [
-          "Déplacement -2",
-          "Si ce déplacement est effectué, cadavre subit 1 dégat",
+          "Déplacement +2",
+          "Si ce déplacement est effectué, le cadavre subit 1 dégat",
         ],
       },
     ],
@@ -224,7 +216,7 @@ const ENEMIES = [
         effects: [
           "Déplacement -1",
           "Attaque +0, cible 2 hex voisins adjacents",
-          "Infuse glace: chaque fois qu'un héro attaque le démon, le héro subit 2 dégats",
+          "[Glace]: chaque fois qu'un personnage attaque le démon, le personnage subit 2 dégats",
         ],
       },
       {
@@ -232,21 +224,17 @@ const ENEMIES = [
         name: "Déflagration de Chaleur",
         initiative: 1,
         recycled: false,
-        effects: [
-          "Déplacement -1",
-          "Attaque -1, portée 3",
-          "Consume feu: blessure",
-        ],
+        effects: ["Déplacement -1", "Attaque -1, portée 3", "[Feu]: blessure"],
       },
       {
         id: 3,
-        name: "Coup sismique",
+        name: "Coup Sismique",
         initiative: 67,
         recycled: false,
         effects: [
           "Déplacement -2",
           "Attaque +1, poussée 2",
-          "Consume terre: cible 2 hex adjacents voisins",
+          "[Terre]: cible 2 hex adjacents voisins",
         ],
       },
       {
@@ -257,7 +245,7 @@ const ENEMIES = [
         effects: [
           "Déplacement +0",
           "Attaque -1, portée 2, cible 3 hex adjacents voisins",
-          "Consume air: bouclier 2",
+          "[Air]: bouclier 2",
         ],
       },
       {
@@ -268,7 +256,7 @@ const ENEMIES = [
         effects: [
           "Déplacement +0",
           "Attaque +0, avantage",
-          "Consume lumière: soin 4 sur lui-même",
+          "[Lumière]: soin 4 sur lui-même",
         ],
       },
       {
@@ -279,7 +267,7 @@ const ENEMIES = [
         effects: [
           "Déplacement -1",
           "Attaque +1",
-          "Consume obscurité: tous les adversaires adjacents à cible subissent 1 dégat",
+          "[Obscurité]: tous les adversaires adjacents à la cible subissent 1 dégat",
         ],
       },
       {
@@ -290,7 +278,7 @@ const ENEMIES = [
         effects: [
           "Déplacement +0",
           "Attaque +0",
-          "Infuse feu, glace, air, terre, lumière, obscurité",
+          "Infuse Feu, Glace, Air, Terre, Lumière, Obscurité",
         ],
       },
       {
@@ -298,7 +286,7 @@ const ENEMIES = [
         name: "Gueule Affamée",
         initiative: 98,
         recycled: true,
-        effects: ["Attaque -1", "Consume n'importe quel élément: désarmement"],
+        effects: ["Attaque -1", "[n'importe quel élément]: désarmement"],
       },
     ],
   },
@@ -335,31 +323,31 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Hors phase",
+        name: "Hors Phase",
         initiative: 5,
         recycled: false,
         effects: ["Bouclier 5", "Soin 1 sur lui même", "Infuse 1 élément"],
       },
       {
         id: 2,
-        name: "Faire pencher la balance",
+        name: "Faire Pencher la Balance",
         initiative: 24,
         recycled: false,
         effects: [
-          "Renforcement, cible tous aliés portée 2 et lui-même",
-          "Confusion, cible tous adversaires à portée 2",
+          "Renforcement, cible tous les alliés à portée 2 et lui-même",
+          "Confusion, cible tous les adversaires à portée 2",
         ],
       },
       {
         id: 3,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 37,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
       },
       {
         id: 4,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 37,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
@@ -378,12 +366,12 @@ const ENEMIES = [
         recycled: true,
         effects: [
           "Déplacement +0",
-          "Attaque -1, portée 2, cible 2, empoisonnement",
+          "Attaque -1, portée 3, cible 2, empoisonnement",
         ],
       },
       {
         id: 7,
-        name: "Sombre charme",
+        name: "Sombre Charme",
         initiative: 42,
         recycled: false,
         effects: [
@@ -393,7 +381,7 @@ const ENEMIES = [
       },
       {
         id: 8,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 76,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1, portée 3"],
@@ -433,31 +421,31 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Hors phase",
+        name: "Hors Phase",
         initiative: 5,
         recycled: false,
         effects: ["Bouclier 5", "Soin 1 sur lui même", "Infuse 1 élément"],
       },
       {
         id: 2,
-        name: "Faire pencher la balance",
+        name: "Faire Pencher la Balance",
         initiative: 24,
         recycled: false,
         effects: [
-          "Renforcement, cible tous aliés portée 2 et lui-même",
-          "Confusion, cible tous adversaires à portée 2",
+          "Renforcement, cible tous les alliés à portée 2 et lui-même",
+          "Confusion, cible tous les adversaires à portée 2",
         ],
       },
       {
         id: 3,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 37,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
       },
       {
         id: 4,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 37,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
@@ -476,12 +464,12 @@ const ENEMIES = [
         recycled: true,
         effects: [
           "Déplacement +0",
-          "Attaque -1, portée 2, cible 2, empoisonnement",
+          "Attaque -1, portée 3, cible 2, empoisonnement",
         ],
       },
       {
         id: 7,
-        name: "Sombre charme",
+        name: "Sombre Charme",
         initiative: 42,
         recycled: false,
         effects: [
@@ -491,7 +479,7 @@ const ENEMIES = [
       },
       {
         id: 8,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 76,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1, portée 3"],
@@ -513,49 +501,49 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Arc court",
+        name: "Arc Court",
         initiative: 29,
         recycled: false,
         effects: ["Déplacement -1", "Attaque -1, portée 3"],
       },
       {
         id: 2,
-        name: "Assaut précipité",
+        name: "Assaut Précipité",
         initiative: 40,
         recycled: false,
         effects: ["Déplacement +1", "Attaque -1"],
       },
       {
         id: 3,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 53,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 4,
-        name: "Flèche rance",
+        name: "Flèche Rance",
         initiative: 53,
         recycled: false,
         effects: ["Déplacement -2", "Attaque +0, portée 3, empoisonnement"],
       },
       {
         id: 5,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 69,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },
       {
         id: 6,
-        name: "Lame délétère",
+        name: "Lame Délétère",
         initiative: 92,
         recycled: true,
         effects: ["Attaque +2, empoisonnement"],
       },
       {
         id: 7,
-        name: "Carreaux rapides",
+        name: "Carreaux Rapides",
         initiative: 78,
         recycled: false,
         effects: ["Attaque -1, portée 4, cible 2"],
@@ -602,45 +590,45 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Saper l'énergie",
+        name: "Saper l'Énergie",
         initiative: 22,
         recycled: true,
         effects: ["Déplacement -1", "Attaque -1, portée 4, confusion"],
       },
       {
         id: 2,
-        name: "Cri retentissant",
+        name: "Cri Retentissant",
         initiative: 33,
         recycled: true,
         effects: [
           "Déplacement +0",
-          "Attaque -1, cible tous adversaires à portée 2",
+          "Attaque -1, cible tous les adversaires à portée 2",
         ],
       },
       {
         id: 3,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 48,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
       },
       {
         id: 4,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 48,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 3"],
       },
       {
         id: 5,
-        name: "Chaine couplée",
+        name: "Chaine Couplée",
         initiative: 61,
         recycled: false,
         effects: ["Attaque +0, portée 3, cible 2"],
       },
       {
         id: 6,
-        name: "Aspirer la chaleur",
+        name: "Aspirer la Chaleur",
         initiative: 75,
         recycled: false,
         effects: [
@@ -652,24 +640,24 @@ const ENEMIES = [
       },
       {
         id: 7,
-        name: "Hurlement de colère",
+        name: "Hurlement de Colère",
         initiative: 55,
         recycled: false,
         effects: [
           "Déplacement +0",
           "Malédiction, cible tous les adversaires à portée 3",
-          "Infuse glace",
+          "Infuse Glace",
         ],
       },
       {
         id: 8,
-        name: "Regard glacial",
+        name: "Regard Glacial",
         initiative: 67,
         recycled: false,
         effects: [
           "Déplacement -1",
           "Attaque +1, portée 3",
-          "Infuse glace: désarmement",
+          "[Glace]: désarmement",
         ],
       },
     ],
@@ -707,72 +695,72 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Progression éprouvante",
+        name: "Progression Éprouvante",
         initiative: 28,
         recycled: false,
         effects: [
           "Déplacement +1",
-          "Attack +1",
+          "Attaque +0",
           "Si la capacité de déplacement a été effectuée, le golem subit 1 dégat",
         ],
       },
       {
         id: 2,
-        name: "Assaut précipité",
+        name: "Assaut Précipité",
         initiative: 51,
         recycled: true,
-        effects: ["Déplacement +1", "Attack -1"],
+        effects: ["Déplacement +1", "Attaque -1"],
       },
       {
         id: 3,
-        name: "Marteler le sol",
+        name: "Marteler le Sol",
         initiative: 83,
         recycled: false,
         effects: [
           "Déplacement +0",
-          "Attack -1 (cible tous les adversaires adjacents",
+          "Attaque -1, cible tous les adversaires adjacents",
         ],
       },
       {
         id: 4,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 90,
         recycled: true,
         effects: ["Déplacement -1", "Attack +1"],
       },
       {
         id: 5,
-        name: "Réaction runique",
+        name: "Réaction Runique",
         initiative: 10,
         recycled: false,
         effects: [
-          "Chaque fois qu'un héro attaque le golem, le héro subit 3 dégats",
+          "Chaque fois qu'un personnage attaque le golem, le personnage subit 3 dégats",
         ],
       },
       {
         id: 6,
-        name: "Attraction runique",
+        name: "Attraction Runique",
         initiative: 28,
         recycled: false,
         effects: [
           "Déplacement +1",
-          "Attaque -2 (portée 3), traction 2, immobilisation",
+          "Attaque -2, portée 3, traction 2, immobilisation",
         ],
       },
       {
         id: 7,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 64,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 8,
-        name: "Lancer sacrificiel",
+        name: "Lancer Sacrificiel",
         initiative: 72,
         recycled: false,
         effects: [
-          "Attaque +1 (portée 3). Si attaque est effectuée, le golem subit 2 dégats",
+          "Attaque +1, portée 3. Si cette attaque est effectuée, le golem subit 2 dégats",
         ],
       },
     ],
@@ -810,12 +798,12 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Bulles explosives",
+        name: "Bulles Explosives",
         initiative: 9,
         recycled: true,
         effects: [
           "Déplacement +1",
-          "Chaque fois qu'un héro attaque la monstruosité, le héro subit 2 dégats",
+          "Chaque fois qu'un personnage attaque la monstruosité, le personnage subit 2 dégats",
         ],
       },
       {
@@ -842,21 +830,21 @@ const ENEMIES = [
       },
       {
         id: 4,
-        name: "Morsure affaiblissante",
+        name: "Morsure Affaiblissante",
         initiative: 34,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, confusion"],
       },
       {
         id: 5,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 39,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 6,
-        name: "Égratignure incertaine",
+        name: "Égratignure Incertaine",
         initiative: 52,
         recycled: true,
         effects: [
@@ -867,19 +855,19 @@ const ENEMIES = [
       },
       {
         id: 7,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 60,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },
       {
         id: 8,
-        name: "Frénésie incertaine",
+        name: "Frénésie Incertaine",
         initiative: 74,
         recycled: false,
         effects: [
           "Déplacement +0",
-          "la monstruosité subit 1 dégat",
+          "la Monstruosité subit 1 dégat",
           "Attaque +1, cible tous les adversaires adjacents",
         ],
       },
@@ -957,7 +945,7 @@ const ENEMIES = [
       },
       {
         id: 5,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 39,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
@@ -975,7 +963,7 @@ const ENEMIES = [
       },
       {
         id: 7,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 60,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
@@ -990,6 +978,52 @@ const ENEMIES = [
           "la monstruosité subit 1 dégat",
           "Attaque +1, cible tous les adversaires adjacents",
         ],
+      },
+    ],
+  },
+  // MARK: base vermling bandit
+  {
+    id: "base_vermling_bandit",
+    name: "Pillard Vermling de Base",
+    normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
+    eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
+    normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
+    eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
+    normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
+    eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
+    normalModifiers: ["", "", "", "", "", "", "", ""],
+    eliteModifiers: ["", "", "", "", "", "", "", ""],
+    actions: [
+      {
+        id: 1,
+        name: "Hurlements",
+        initiative: 85,
+        recycled: true,
+        effects: [
+          "Poussée 1, ciblez tous les adversaires adjacents",
+          "Attaque +1, portée 2",
+        ],
+      },
+      {
+        id: 2,
+        name: "Lancer Précis",
+        initiative: 36,
+        recycled: false,
+        effects: ["Déplacement +0", "Attaque -1, portée 2"],
+      },
+      {
+        id: 3,
+        name: "Double Dagues",
+        initiative: 59,
+        recycled: false,
+        effects: ["Attaque +0, portée 2, cible 2"],
+      },
+      {
+        id: 4,
+        name: "Rien de Particulier",
+        initiative: 50,
+        recycled: false,
+        effects: ["Déplacement +0", "Attaque +0"],
       },
     ],
   },
@@ -1008,41 +1042,41 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Fosse à pointes",
+        name: "Fosse à Pointes",
         initiative: 20,
         recycled: false,
         effects: [
-          "Attaque +0 (portée 4)",
-          "Créez un piège 3 dégats sur l'hexaxone vide adjacent le plus proche d'un adversaire",
+          "Attaque +0, portée 4",
+          "Créez un piège à 3 dégats sur l'hexaxone vide adjacent le plus proche d'un adversaire",
         ],
       },
       {
         id: 2,
-        name: "Panser les blessures",
+        name: "Panser les Blessures",
         initiative: 30,
         recycled: true,
         effects: ["Déplacement +1", "Soin 3 sur lui-même"],
       },
       {
         id: 3,
-        name: "Lancer précis",
+        name: "Lancer Précis",
         initiative: 36,
         recycled: false,
         effects: ["Déplacement +0", "Attaque -1, portée 4"],
       },
       {
         id: 4,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 50,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 5,
-        name: "Doubles dagues",
+        name: "Doubles Dagues",
         initiative: 59,
         recycled: false,
-        effects: ["Attaque +0 (portée 3, cible 2)"],
+        effects: ["Attaque +0, portée 3, cible 2"],
       },
       {
         id: 6,
@@ -1053,14 +1087,14 @@ const ENEMIES = [
       },
       {
         id: 7,
-        name: "Méchant épieu",
+        name: "Méchant Épieu",
         initiative: 77,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +0, portée 3, blessure"],
       },
       {
         id: 8,
-        name: "Hurlements repoussants",
+        name: "Hurlements Repoussants",
         initiative: 85,
         recycled: true,
         effects: [
@@ -1073,7 +1107,7 @@ const ENEMIES = [
   // MARK: black vase
   {
     id: "black_vase",
-    name: "Vase noire",
+    name: "Vase Noire",
     normalHp: [4, 5, 7, 8, 9, 10, 12, 16],
     eliteHp: [8, 9, 11, 11, 13, 15, 16, 18],
     normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
@@ -1103,31 +1137,31 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Assaut précipité",
+        name: "Assaut Précipité",
         initiative: 36,
         recycled: false,
         effects: ["Déplacement +1", "Attaque -1, portée 3"],
       },
       {
         id: 2,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 57,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0, portée 2"],
       },
       {
         id: 3,
-        name: "Explosion toxique",
+        name: "Explosion Toxique",
         initiative: 57,
         recycled: false,
         effects: [
           "Attaque +0, portée 2, cible 2, empoisonnement",
-          "consume terre: +1 cible",
+          "[Terre]: +1 cible",
         ],
       },
       {
         id: 4,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 66,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1, portée 3"],
@@ -1141,7 +1175,7 @@ const ENEMIES = [
           "Déplacement +0",
           "Pillage 1",
           "Soin 2 sur elle-même",
-          "consume obscurité: +1 soin",
+          "[Obscurité]: +1 soin",
         ],
       },
       {
@@ -1150,38 +1184,38 @@ const ENEMIES = [
         initiative: 85,
         recycled: false,
         effects: [
-          "Poussée 1, empoisonnement, cible tous adversaires adjacents",
+          "Poussée 1, empoisonnement, cible tous les adversaires adjacents",
           "Attaque +1, portée 2",
         ],
       },
       {
         id: 7,
-        name: "Noire damnation",
+        name: "Noire Damnation",
         initiative: 85,
         recycled: true,
         effects: [
           "L'adversaire en ligne de vue le plus proche, sans considération de portée, subit 1+NS/2 dégats (arrondis au supérieur)",
           "Soin 1 sur elle-même",
-          "Infuse obscurité",
+          "Infuse Obscurité",
         ],
       },
       {
         id: 8,
-        name: "Damnation infectieuse",
+        name: "Damnation Infectieuse",
         initiative: 85,
         recycled: true,
         effects: [
           "L'adversaire en ligne de vue le plus proche, sans considération de portée, subit 1+NS/2 dégats (arrondis au supérieur)",
           "Soin 1 sur elle-même",
-          "Infuse terre",
+          "Infuse Terre",
         ],
       },
     ],
   },
-  // MARK: giant viper
+  // MARK: base giant viper
   {
-    id: "giant_viper",
-    name: "Vipère géante",
+    id: "base_giant_viper",
+    name: "Vipère Géante de Base",
     normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
     eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
     normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
@@ -1211,7 +1245,75 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Crocs rapides",
+        name: "Constriction",
+        initiative: 58,
+        recycled: false,
+        effects: ["Déplacement -1", "Attaque +1, immobilisation"],
+      },
+      {
+        id: 2,
+        name: "Crocs Rapides",
+        initiative: 33,
+        recycled: false,
+        effects: ["Déplacement +1, saut", "Attaque +0, cible 2"],
+      },
+      {
+        id: 3,
+        name: "À couvert",
+        initiative: 18,
+        recycled: false,
+        effects: [
+          "Déplacement +1, saut",
+          "Attaque -1",
+          "Toutes les attaques ciblant la vipère gagnent désavantage ce round",
+        ],
+      },
+      {
+        id: 4,
+        name: "Frénésie Toxique",
+        initiative: 43,
+        recycled: true,
+        effects: [
+          "Déplacement +1, saut",
+          "Attaque -1, cible tous les adversaires adjacents",
+        ],
+      },
+    ],
+  },
+  // MARK: giant viper
+  {
+    id: "giant_viper",
+    name: "Vipère Géante",
+    normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
+    eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
+    normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
+    eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+    normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
+    eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+    normalModifiers: [
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+    ],
+    eliteModifiers: [
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+      "empoisonnement",
+    ],
+    actions: [
+      {
+        id: 1,
+        name: "Crocs Rapides",
         initiative: 33,
         recycled: false,
         effects: ["Déplacement +1, saut", "Attaque +0, cible 2"],
@@ -1229,19 +1331,19 @@ const ENEMIES = [
       },
       {
         id: 3,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 58,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },
       {
         id: 4,
-        name: "Frénésie toxique",
+        name: "Frénésie Toxique",
         initiative: 43,
         recycled: false,
         effects: [
           "Déplacement +1, saut",
-          "Attaque -1, cible tous adversaires adjacents",
+          "Attaque -1, cible tous les adversaires adjacents",
         ],
       },
       {
@@ -1282,6 +1384,71 @@ const ENEMIES = [
       },
     ],
   },
+  // MARK: base_zealot
+  {
+    id: "base_zealot",
+    name: "Zélote de Base",
+    normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
+    eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
+    normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
+    eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+    normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
+    eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
+    normalModifiers: [
+      "",
+      "",
+      "",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+    ],
+    eliteModifiers: [
+      "",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+      "blessure",
+    ],
+    actions: [
+      {
+        id: 1,
+        name: "Sang Bouillant",
+        initiative: 46,
+        recycled: false,
+        effects: ["Attaque +1, portée 2, confusion"],
+      },
+      {
+        id: 2,
+        name: "Fouet de Damnation",
+        initiative: 19,
+        recycled: false,
+        effects: ["Déplacement +0", "Attaque -1, malédiction"],
+      },
+      {
+        id: 3,
+        name: "Drain de Vie",
+        initiative: 27,
+        recycled: true,
+        effects: [
+          "Soin 1 sur lui-même",
+          "Déplacement +1",
+          "Attaque -1, portée 2",
+        ],
+      },
+      {
+        id: 4,
+        name: "Fléau Infame",
+        initiative: 77,
+        recycled: false,
+        effects: ["Déplacement -1", "Attaque -1, empoisonnement"],
+      },
+    ],
+  },
   // MARK: zealot
   {
     id: "zealot",
@@ -1315,75 +1482,75 @@ const ENEMIES = [
     actions: [
       {
         id: 1,
-        name: "Fouet de damnation",
+        name: "Fouet de Damnation",
         initiative: 19,
         recycled: false,
         effects: [
           "Déplacement +1, saut",
           "Attaque -1, malédiction",
-          "infuse air",
+          "infuse Air",
         ],
       },
       {
         id: 2,
-        name: "Drain de vie",
+        name: "Drain de Vie",
         initiative: 27,
         recycled: true,
         effects: [
           "Déplacement +0",
-          "Attaque -1 (portée 2)",
-          "Soin X sur lui-même (X=montant dégat attaque)",
+          "Attaque -1, portée 2",
+          "Soin X sur lui-même (X=montant dégats attaque)",
           "infuse Obscurité",
         ],
       },
       {
         id: 3,
-        name: "Assaut précipité",
+        name: "Assaut Précipité",
         initiative: 35,
         recycled: false,
         effects: ["Déplacement +1", "Attaque -1"],
       },
       {
         id: 4,
-        name: "Sang bouillant",
+        name: "Sang Bouillant",
         initiative: 46,
         recycled: false,
         effects: [
           "Attaque -1, portée 2, cible 2, confusion",
-          "Consume feu: +2 portée",
+          "[Feu]: +2 portée",
         ],
       },
       {
         id: 5,
-        name: "Rien de particulier",
+        name: "Rien de Particulier",
         initiative: 50,
         recycled: false,
         effects: ["Déplacement +0", "Attaque +0"],
       },
       {
         id: 6,
-        name: "Coup calculé",
+        name: "Coup Calculé",
         initiative: 0,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },
       {
         id: 7,
-        name: "Fléau infame",
+        name: "Fléau Infame",
         initiative: 77,
         recycled: false,
         effects: [
           "Déplacement -1",
           "Attaque -1, empoisonnement (cible 2 hexes adjacents voisins",
-          "Consume air: +1 attaque",
+          "[Air]: +1 attaque",
         ],
       },
       {
         id: 8,
         name: "Flamme impie",
-        initiative: 0,
+        initiative: 82,
         recycled: true,
-        effects: ["Attaque +1, portée 3", "Infuse feu"],
+        effects: ["Attaque +1, portée 3", "Infuse Feu"],
       },
     ],
   },
@@ -1583,3 +1750,301 @@ const ENEMIES_MAP = {};
 for (let enemies of ENEMIES) {
   ENEMIES_MAP[enemies.id] = enemies;
 }
+
+const BATTLE_GOALS = [
+  {
+    id: 1,
+    title: "Maraudeur",
+    description:
+      "Effectuer deux actions présentant l'icone Perdue durant le même round",
+  },
+  {
+    id: 2,
+    title: "Reclus",
+    description: "Ne jamais terminer votre tour adjacent à un de vos alliés",
+  },
+  {
+    id: 3,
+    title: "Vite sur pied",
+    description:
+      "Terminer le scénario avec un nombre de points de vie égal à votre valeur maximale de points de vie",
+  },
+  {
+    id: 4,
+    title: "Feinteur",
+    description:
+      "Éliminer un monstre qui ne vous est pas adjacent alors que vous êtes adjacent à un autre",
+  },
+  {
+    id: 5,
+    title: "Tête brûlée",
+    description:
+      "Effectuer deux actions présentant l'icone Perdue avant votre premier repos",
+  },
+  {
+    id: 6,
+    title: "Insomniaque",
+    description:
+      "Subir des dégâts d'une attaque intervenant le même round où vous prenez un repos long",
+  },
+  {
+    id: 7,
+    title: "Pacifiste",
+    description: "Éliminer au maximum trois monstres",
+  },
+  {
+    id: 8,
+    title: "Acrobate",
+    description: "Perdre une carte pour éviter de subir 5 dégats ou plus",
+  },
+  {
+    id: 9,
+    title: "Abstinent",
+    description: "Ne jamais consommer de potion",
+  },
+  {
+    id: 10,
+    title: "Fin de match",
+    description: "Être le dernier à éliminer un monstre lors de ce scénario",
+  },
+  {
+    id: 11,
+    title: "Conservateur",
+    description: "Ne jamais perdre une carte pour éviter de subir des dégats",
+  },
+  {
+    id: 12,
+    title: "Dur à cuire",
+    description:
+      "Ne jamais laisser votre nombre de points de vie descendre sous la moitié de votre valeur maximale de points de vie (arrondie au supérieur)",
+  },
+  {
+    id: 13,
+    title: "Compétiteur",
+    description: "Ne jamais quitter un hexagone adjacent à un monstre",
+  },
+  {
+    id: 14,
+    title: "Vol à la tire",
+    description:
+      "Ramasser au moins un pion Monnaie en effectuant une action Pillage lorsque vous êtes sur un hexagone adjacents à deux monstres ou plus",
+  },
+  {
+    id: 15,
+    title: "Pelote à épingles",
+    description:
+      "Être la cible d'attaque d'au moins trois monstres durant le même round",
+  },
+  {
+    id: 16,
+    title: "Plébéien",
+    description: "Ne jamais éliminer un monstre d'élite ou un boss",
+  },
+  {
+    id: 17,
+    title: "Égoiste",
+    description: "Amasser plus de pions Monnaie que tout autre aventurier",
+  },
+  {
+    id: 18,
+    title: "Vecteur",
+    description:
+      "Appliquer un état négatif à un monstre alors que vous êtes vous-même sous le coup d'un état négatif",
+  },
+  {
+    id: 19,
+    title: "Gringalet",
+    description: "Finir épuisé avant tout autre aventurier",
+  },
+  {
+    id: 20,
+    title: "Joueur",
+    description: "Éliminer un monstre grâce à une attaque avec désaventage",
+  },
+  {
+    id: 21,
+    title: "Pionnier",
+    description:
+      "Ouvrir une porte et terminer le même tour dans la salle révélée",
+  },
+  {
+    id: 22,
+    title: "Traînard",
+    description: "Ne jamais prendre de repos court",
+  },
+  {
+    id: 23,
+    title: "Assistant",
+    description:
+      "Éliminer un monstre précédemment attaqué par un de vos alliés durant le même round",
+  },
+  {
+    id: 24,
+    title: "Altruiste",
+    description: "Amasser moins de pions monnaie que tout autre aventurier",
+  },
+  {
+    id: 25,
+    title: "Spécialiste",
+    description: "Ne jamais entreprendre d'action par défaut",
+  },
+  {
+    id: 26,
+    title: "Agoraphobe",
+    description: "Terminer tous vos tours adjacent à un mur ou à un obstacle",
+  },
+  {
+    id: 27,
+    title: "Hyperactif",
+    description: "Ne jamais prendre un repos long",
+  },
+  {
+    id: 28,
+    title: "Ombre",
+    description: "Terminer tous vos tours adjacents à un de vos alliés",
+  },
+  {
+    id: 29,
+    title: "Sadique",
+    description: "Éliminer au moins cinq monstres",
+  },
+  {
+    id: 30,
+    title: "Masochiste",
+    description: "Terminer le scénario avec 3 points de vie au maximum",
+  },
+  {
+    id: 31,
+    title: "Premier sang",
+    description: "Être le premier à éliminer un monstre lors de ce scénario",
+  },
+  {
+    id: 32,
+    title: "Coupe-jarret",
+    description:
+      "Éliminer un monstre et piller le pion Monnaie qu'il laisse tomb au cours du même tour",
+  },
+];
+
+const MONSTER_MODIFIERS_DECK = [
+  {
+    id: 1,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 2,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 3,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 4,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 5,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 6,
+    effects: ["+0"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: 7,
+    effects: ["-1"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 8,
+    effects: ["-1"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 9,
+    effects: ["-1"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 10,
+    effects: ["-1"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 11,
+    effects: ["-1"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 12,
+    effects: ["-2"],
+    recycled: false,
+    color: "red",
+  },
+  {
+    id: 13,
+    effects: ["+1"],
+    recycled: false,
+    color: "green",
+  },
+  {
+    id: 14,
+    effects: ["+1"],
+    recycled: false,
+    color: "green",
+  },
+  {
+    id: 15,
+    effects: ["+1"],
+    recycled: false,
+    color: "green",
+  },
+  {
+    id: 16,
+    effects: ["+1"],
+    recycled: false,
+    color: "green",
+  },
+  {
+    id: 17,
+    effects: ["+1"],
+    recycled: false,
+    color: "green",
+  },
+  {
+    id: 18,
+    effects: ["x0"],
+    recycled: true,
+    color: "yellow",
+  },
+  {
+    id: 19,
+    effects: ["x2"],
+    recycled: true,
+    color: "purple",
+  },
+  {
+    id: 20,
+    effects: ["+2"],
+    recycled: false,
+    color: "green",
+  },
+];
