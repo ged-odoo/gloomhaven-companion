@@ -127,7 +127,7 @@
       if (this.round) {
         return true;
       } else {
-        return this.areObjectivesAssigned();
+        return true;
       }
     }
 
@@ -884,7 +884,7 @@
         <div class="${CARD} bg-white px-2 py-1 text-italic">
           <div class="d-flex space-between">
             <span>Select a battle goal for each hero!</span>
-            <span class="text-bold text-primary" t-on-click="skip">Skip</span>
+            <span class="text-bold text-primary" t-on-click="skip">Close</span>
           </div>
           <div class="d-flex">
             <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
