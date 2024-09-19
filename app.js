@@ -53,34 +53,8 @@
   }
 
   // -----------------------------------------------------------------------------
-  // MARK: UI and Game state
+  // MARK: Game state
   // -----------------------------------------------------------------------------
-
-  class UIState {
-    screens = ["START"];
-    states = [null];
-
-    get screen() {
-      return this.screens.at(-1);
-    }
-
-    get state() {
-      return this.states.at(-1);
-    }
-
-    pushScreen(screen, state = null) {
-      if (!(screen in SCREEN_MAP)) {
-        throw new Error("Nope...");
-      }
-      this.screens.push(screen);
-      this.states.push(state);
-    }
-
-    popScreen() {
-      this.screens.pop();
-      this.states.pop();
-    }
-  }
 
   class GameState {
     nextId = 1;
@@ -96,6 +70,35 @@
     darkness = 0;
     monsterActions = {};
     battleGoals = {};
+
+    screens = ["START"];
+    states = [null];
+
+    get screen() {
+      return this.screens.at(-1);
+    }
+
+    get state() {
+      return this.states.at(-1);
+    }
+
+    setScreen(screen) {
+      this.screens = [screen];
+      this.states = [null];
+    }
+
+    pushScreen(screen, state = null) {
+      if (!(screen in SCREEN_MAP)) {
+        throw new Error("Nope...");
+      }
+      this.screens.push(screen);
+      this.states.push(state);
+    }
+
+    popScreen() {
+      this.screens.pop();
+      this.states.pop();
+    }
 
     areObjectivesAssigned() {
       for (let hero of this.heroes) {
@@ -548,7 +551,7 @@
   class CharacterEditor extends Component {
     static template = xml`
       <TopMenu>
-        <span class="p-2" t-on-click="() => props.ui.popScreen()">Back</span>
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
       </TopMenu>
       <h2 class="p-2"><t t-if="activeHero">Edit</t><t t-else="">Create</t> your Hero</h2>
       <div class="d-flex align-center mx-2 my-3">
@@ -596,7 +599,7 @@
     static components = { TopMenu };
 
     setup() {
-      this.activeHero = this.props.ui.state;
+      this.activeHero = this.props.game.state;
       this.state = useState({
         name: this.activeHero ? this.activeHero.name : "",
         class: this.activeHero ? this.activeHero.class : "",
@@ -637,7 +640,7 @@
           },
         });
       }
-      this.props.ui.popScreen();
+      this.props.game.popScreen();
     }
   }
 
@@ -647,7 +650,7 @@
   class AddEnemyScreen extends Component {
     static template = xml`
       <TopMenu>
-        <span class="p-2" t-on-click="() => props.ui.popScreen()">Back</span>
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
       </TopMenu>
       <h2 class="p-2">Add an Enemy</h2>
       <div class="d-flex m-2 align-center">
@@ -763,7 +766,7 @@
         },
       };
       this.props.game.addEnemy(enemyObj);
-      this.props.ui.popScreen();
+      this.props.game.popScreen();
     }
 
     isBoss() {
@@ -783,10 +786,10 @@
       <t t-set="ui" t-value="props.ui"/>
       <TopMenu>
         <span class="mx-2">GloomHaven</span>
-        <div class="m-3 text-bold text-larger" t-on-click="() => ui.pushScreen('CONFIG')">⚙</div>
+        <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
       </TopMenu>
       <ControlPanel>
-        <div class="button ms-1" t-on-click="() => ui.pushScreen('CHAR_EDITOR')">Add Hero</div>
+        <div class="button ms-1" t-on-click="() => game.pushScreen('CHAR_EDITOR')">Add Hero</div>
         <select class="border-none bg-white" t-model.number="game.scenarioLevel">
           <option value="1">Scenario Level 1</option>
           <option value="2">Scenario Level 2</option>
@@ -808,11 +811,11 @@
     static components = { TopMenu, ControlPanel, CharacterSummary };
 
     editChar(hero) {
-      this.props.ui.pushScreen("CHAR_EDITOR", hero);
+      this.props.game.pushScreen("CHAR_EDITOR", hero);
     }
 
     start() {
-      this.props.ui.pushScreen("MAIN");
+      this.props.game.pushScreen("MAIN");
     }
   }
 
@@ -822,14 +825,41 @@
   class ConfigScreen extends Component {
     static template = xml`
       <TopMenu>
-        <span class="p-2" t-on-click="() => props.ui.popScreen()">Back</span>
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
       </TopMenu>
       <div>
         <h2 class="p-2">Configuration</h2>
-        todo
+        <div class="d-flex ">
+            <div class="button p-2 m-1" t-on-click="save">
+                Save to local storage
+            </div>
+        </div>
+        <div class="d-flex " >
+            <div class="button p-2 m-1" t-on-click="restore">
+                Restore from local storage
+            </div>
+        </div>
+
       </div>
     `;
     static components = { TopMenu };
+
+    save() {
+      const state = JSON.stringify(this.props.game);
+      localStorage.setItem("game_state", state);
+      this.props.game.popScreen();
+      alert("Game saved!");
+    }
+
+    restore() {
+      const dataStr = localStorage.getItem("game_state");
+      if (!dataStr) {
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      Object.assign(this.props.game, data);
+      this.props.game.popScreen();
+    }
   }
 
   // -----------------------------------------------------------------------------
@@ -841,10 +871,10 @@
       <t t-set="ui" t-value="props.ui"/>
       <TopMenu>
         <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
-        <div class="m-3 text-bold text-larger" t-on-click="() => ui.pushScreen('CONFIG')">⚙</div>
+        <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
       </TopMenu>
       <ControlPanel>
-        <div class="button ms-1" t-on-click="() => ui.pushScreen('ADD_ENEMY')">Add Enemy</div>
+        <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
         <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
           <t t-if="game.round">Next Round</t>
           <t t-else="">Start Scenario</t>
@@ -918,10 +948,9 @@
   };
 
   class App extends Component {
-    static template = xml`<t t-component="screen" ui="ui" game="game"/>`;
+    static template = xml`<t t-component="screen" game="game"/>`;
 
     setup() {
-      this.ui = useState(new UIState());
       this.game = useState(new GameState());
 
       preventSleep();
@@ -930,7 +959,7 @@
     }
 
     get screen() {
-      return SCREEN_MAP[this.ui.screen];
+      return SCREEN_MAP[this.game.screen];
     }
   }
 
