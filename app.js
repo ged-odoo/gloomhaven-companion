@@ -163,6 +163,41 @@
           this.monsterActions[type].discardPile = [];
         }
       }
+
+      // reset all enemy attack modifiers if necessary
+      const mods = this.enemyModifiers;
+      mods.visible = 0;
+      // remove strings (curses and blessings)
+      mods.discardPile = mods.discardPile.filter((c) => typeof c === "number");
+      const discardedMods = mods.discardPile.map((id) =>
+        MONSTER_MODIFIERS_DECK.find((mod) => mod.id === id),
+      );
+      if (discardedMods.find((mod) => mod.recycled)) {
+        // should shuffle
+        while (mods.discardPile.length) {
+          mods.deck.push(mods.discardPile.pop());
+        }
+        shuffleArray(mods.deck);
+      }
+    }
+
+    addCurse() {
+      const curses = this.enemyModifiers.deck.filter((id) => {
+        return typeof id === "string" && id.startsWith("curse");
+      });
+      if (curses.length < 10) {
+        this.enemyModifiers.deck.push(`curse${-this.nextId++}`);
+        shuffleArray(this.enemyModifiers.deck);
+      }
+    }
+    addBlessing() {
+      const blessings = this.enemyModifiers.deck.filter((id) => {
+        return typeof id === "string" && id.startsWith("blessing");
+      });
+      if (blessings.length < 10) {
+        this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
+        shuffleArray(this.enemyModifiers.deck);
+      }
     }
   }
 
@@ -367,29 +402,96 @@
   class EnemyAttackModifiers extends Component {
     static template = xml`
       <div class="${CARD} bg-white">
-        <div class="bg-gray p-1 d-flex space-between">
+        <div class="bg-gray p-1 d-flex space-between"  t-on-click="toggle">
           <span>Enemy Attack Modifiers (<t t-esc="mods.deck.length"/> cards)</span>
           <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
         </div>
-        <div class="d-flex">
-          <div class="d-grid" style="grid-template-columns: 100px 100px;">
-              <div class="button" t-on-click="dealCard">1 Card</div>
-              <div class="button" t-on-click="dealCard">2 Cards</div>
-              <div class="button" t-on-click="addBlessing">+ Curse</div>
-              <div class="button" t-on-click="addCurse">+ Blessing</div>
+        <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;" t-if="state.open">
+          <div class="d-flex flex-column">
+            <div class="button mb-0" t-on-click="() => this.dealCard(1)">1 Card</div>
+            <div class="button" t-on-click="() => this.dealCard(2)">2 Cards</div>
+          </div>
+          <div class="d-flex py-1 flex-center">
+            <!-- sadf -->
+            <t t-foreach="currentModifiers()" t-as="mod" t-key="mod.id">
+              <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center" t-attf-style="width:35px;position:relative;background-color:{{mod.color || 'white'}};">
+                <t t-if="mod.recycled">
+                  <span class="text-bold" style="position:absolute;bottom:0;right:0">♲</span>
+                </t>
+                <t t-foreach="mod.effects" t-as="effect" t-key="effect_index">
+                  <div class="text-bold text-larger"><t t-esc="effect"/></div>
+                </t>
+              </div>
+            </t>
           </div>
           <div>
-            sadf
+            <div class="button mb-0" t-on-click="addCurse">+ Curse</div>
+            <div class="button" t-on-click="addBlessing">+ Blessing</div>
           </div>
         </div>
       </div>`;
 
     setup() {
       this.mods = this.props.game.enemyModifiers;
+      this.state = useState({
+        open: true,
+      });
+    }
+
+    toggle() {
+      this.state.open = !this.state.open;
     }
 
     close() {
       this.props.game.config.attackModifiers = false;
+    }
+
+    addCurse() {
+      this.props.game.addCurse();
+    }
+    addBlessing() {
+      this.props.game.addBlessing();
+    }
+
+    dealCard(n) {
+      this.mods.visible = n;
+      if (this.mods.deck.length < n) {
+        while (this.mods.discardPile.length) {
+          this.mods.deck.push(this.mods.discardPile.pop());
+        }
+      }
+      shuffleArray(this.mods.deck);
+      for (let i = 0; i < n; i++) {
+        this.mods.discardPile.unshift(this.mods.deck.pop());
+      }
+    }
+
+    currentModifiers() {
+      const n = this.mods.visible;
+      const ids = this.mods.discardPile.slice(0, n);
+      const cards = ids.map((id) => {
+        if (typeof id === "string") {
+          if (id.startsWith("curse")) {
+            return {
+              id,
+              effects: [" Cx0"],
+              recycled: false,
+              color: "#ffffd9",
+            };
+          }
+          if (id.startsWith("blessing")) {
+            return {
+              id,
+              effects: [" Bx2"],
+              recycled: false,
+              color: "#ffc7ff",
+            };
+          }
+        }
+        return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+      });
+      console.log(cards);
+      return cards;
     }
   }
 
