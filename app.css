@@ -163,6 +163,11 @@ select {
   margin-right: 8px;
 }
 
+.mx-3 {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
 .me-1 {
   margin-right: 4px;
 }

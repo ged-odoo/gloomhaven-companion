@@ -1922,7 +1922,7 @@ const BATTLE_GOALS = [
     id: 32,
     title: "Coupe-jarret",
     description:
-      "Éliminer un monstre et piller le pion Monnaie qu'il laisse tomb au cours du même tour",
+      "Éliminer un monstre et piller le pion Monnaie qu'il laisse tomber au cours du même tour",
   },
 ];
 

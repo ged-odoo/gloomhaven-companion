@@ -79,7 +79,7 @@
     turnTracker = {};
     config = {
       elements: true,
-      tours: true,
+      turnTracker: true,
       battleGoals: true,
       enemyActions: true,
       attackModifiers: true,
@@ -386,14 +386,26 @@
   class TurnTracker extends Component {
     static template = xml`
       <div class="${CARD} bg-white">
-        <div class="bg-gray p-1">
-          Tours
+        <div class="bg-gray p-1 d-flex space-between align-center" t-on-click="toggle">
+          <span>Turn Tracker</span>
+          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
         </div>
-        <div class="p-1">
+        <div class="p-1" t-if="state.open">
          dadsf
         </div>
       </div>
-  `;
+    `;
+    setup() {
+      this.state = useState({ open: true });
+    }
+
+    close() {
+      this.props.game.config.turnTracker = false;
+    }
+
+    toggle() {
+      this.state.open = !this.state.open;
+    }
   }
 
   // -----------------------------------------------------------------------------
@@ -776,9 +788,9 @@
         level: this.state.level,
         hp: maxHp,
         maxHp: maxHp,
-        xp: this.state.xp,
+        xp: this.state.xp || 0,
         maxCard: MAX_CARD_MAP[this.state.class],
-        gold: this.state.gold,
+        gold: this.state.gold || 0,
       };
       if (this.activeHero) {
         Object.assign(this.activeHero, hero);
@@ -985,11 +997,11 @@
       <div>
         <h2 class="p-2">Features</h2>
         <t t-set="config" t-value="props.game.config"/>
-        <div class="d-grid align-center" style="grid-template-columns:50px 1fr;">
+        <div class="d-grid align-center" style="grid-template-columns:50px 1fr;row-gap:10px">
           <input type="checkbox" t-model="config.elements" id="track_element"/>
           <label for="track_element">Element Tracker</label>
-          <input type="checkbox" t-model="config.tours" id="track_tours"/>
-          <label for="track_tours">Tour Tracker</label>
+          <input type="checkbox" t-model="config.turnTracker" id="track_turns"/>
+          <label for="track_turns">Turn Tracker</label>
           <input type="checkbox" t-model="config.battleGoals" id="track_battlegoals"/>
           <label for="track_battlegoals">Battle Goals</label>
           <input type="checkbox" t-model="config.attackModifiers" id="enemy_attack_modifiers"/>
@@ -998,7 +1010,7 @@
           <label for="enemy_actions">Enemy Actions</label>
         </div>
         <hr/>
-        <h2 class="p-2 my-2">Game Data</h2>
+        <h2 class="p-2 my-2">Data</h2>
         <div class="d-flex flex-column align-center">
             <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="save">
                 Save to local storage
@@ -1033,29 +1045,89 @@
   // -----------------------------------------------------------------------------
   // MARK: BattleGoalTracker
   // -----------------------------------------------------------------------------
+  class BattleGoal extends Component {
+    static template = xml`
+        <div class="mx-3 my-2 p-1 border-gray border-radius-4" t-on-click="onClick">
+          <div class="text-bold"><t t-esc="goal.title"/></div>
+          <div><t t-esc="goal.description"/></div>
+        </div>`;
+
+    get goal() {
+      const goal = BATTLE_GOALS.find((g) => g.id === this.props.id);
+      return goal;
+    }
+
+    onClick() {
+      if (this.props.onClick) {
+        this.props.onClick();
+      }
+    }
+  }
 
   class BattleGoalTracker extends Component {
     static template = xml`
-      <div class="${CARD} bg-white px-2 py-1 text-italic">
-        <div class="d-flex space-between">
-          <span>Select a battle goal for each hero!</span>
+      <div class="${CARD} bg-white">
+        <div class="d-flex space-between bg-gray p-1 align-center">
+          <t t-set="n" t-value="nbrGoals()"/>
+          <span><t t-esc="nbrGoals()"/> Battle Goals assigned</span>
           <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
         </div>
         <div class="d-flex">
           <t t-foreach="props.game.heroes" t-as="hero" t-key="hero.id">
-            <t t-if="!props.game.battleGoals[hero.id]">
-              <div class="button" t-on-click="() => this.selectGoal(hero)"><t t-esc="hero.name"/></div>
-            </t>
+                <div class="button" t-on-click="() => this.toggleHero(hero)" t-att-class="{'text-bold': state.hero and state.hero.id === hero.id}"><t t-esc="hero.name"/></div>
           </t>
         </div>
+        <div t-if="state.hero">
+              <t t-if="props.game.battleGoals[state.hero.id]">
+                <BattleGoal id="props.game.battleGoals[state.hero.id]"/>
+              </t>
+              <t t-else="">
+                <t t-set="i" t-value="getHeroIndex(state.hero.id)"/>
+                <BattleGoal id="goals[2*i]" onClick="() => this.selectGoal(2*i)"/>
+                <BattleGoal id="goals[2*i+1]" onClick="() => this.selectGoal(2*i+1)"/>
+              </t>
+          <div>
+          </div>
+        </div>
       </div>`;
+    static components = { BattleGoal };
 
-    selectGoal(hero) {
-      // @todo implemenb battle goal selection screen
-      console.log("selecting goal for hero", hero);
-      this.props.game.battleGoals[hero.id] = true;
+    setup() {
+      this.state = useState({
+        hero: false,
+      });
+      this.goals = shuffleArray(BATTLE_GOALS.map((g) => g.id));
     }
 
+    getHeroIndex(heroId) {
+      return this.props.game.heroes.findIndex((h) => h.id === heroId);
+    }
+
+    toggleHero(hero) {
+      if (this.state.hero === hero) {
+        this.state.hero = false;
+      } else {
+        this.state.hero = hero;
+      }
+    }
+
+    selectGoal(goalIndex) {
+      const heroId = this.state.hero.id;
+      this.props.game.battleGoals[heroId] = this.goals[goalIndex];
+      //   // @todo implemenb battle goal selection screen
+      //   console.log("selecting goal for hero", hero);
+      //   this.props.game.battleGoals[hero.id] = true;
+    }
+
+    nbrGoals() {
+      let n = 0;
+      for (let h in this.props.game.battleGoals) {
+        if (this.props.game.battleGoals[h]) {
+          n++;
+        }
+      }
+      return n;
+    }
     close() {
       this.props.game.config.battleGoals = false;
     }
@@ -1081,7 +1153,7 @@
         </ControlPanel>
       <t t-if="game.round">
         <ElementTracker t-if="game.config.elements" game="props.game" />
-        <TurnTracker t-if="game.config.tours" game="props.game" />
+        <TurnTracker t-if="game.config.turnTracker" game="props.game" />
       </t>
       <t t-if="game.config.battleGoals">
         <BattleGoalTracker game="game"/>
