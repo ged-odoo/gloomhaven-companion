@@ -29,7 +29,7 @@
     }
   }
 
-  const CARD = "border-gray border-radius-4 mx-1 mt-1 mb-1";
+  const CARD = "border-gray border-radius-4 m-1";
 
   function statusString(statusObj) {
     const keys = [];
@@ -48,6 +48,7 @@
       immobilisation: "immobilisation",
       stunned: "étourdissement",
       renforced: "renforcement",
+      disarmed: "désarmé",
     };
 
     return keys.map((k) => mapping[k]).join(", ");
@@ -77,6 +78,7 @@
     };
     battleGoals = {};
     turnTracker = {};
+    activeEntity = false;
     config = {
       elements: true,
       turnTracker: true,
@@ -122,6 +124,17 @@
     addEnemy(enemy) {
       enemy.id = this.nextId++;
       this.enemies.push(enemy);
+      this.turnTracker[enemy.type] = false;
+      if (!this.monsterActions[enemy.type]) {
+        const deck = ENEMIES_MAP[enemy.type].actions.map((a) => a.id);
+        shuffleArray(deck);
+        this.monsterActions[enemy.type] = {
+          deck,
+          discardPile: [],
+          active: false,
+          initiative: false,
+        };
+      }
     }
 
     getId() {
@@ -129,14 +142,61 @@
     }
 
     isNextRoundEnabled() {
-      if (this.round) {
+      if (this.round === 0) {
         return true;
+      }
+      if (this.config.turnTracker) {
+        for (let hero of this.heroes) {
+          if (!this.turnTracker[hero.id]) {
+            return false;
+          }
+        }
+        for (let enemy of this.enemies) {
+          if (!this.turnTracker[enemy.type]) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    startTurn(entity) {
+      const prevEntity = this.activeEntity;
+      if (prevEntity) {
+        this.endTurn(prevEntity);
+      }
+      this.activeEntity = entity;
+      this.turnTracker[entity] = true;
+    }
+
+    endTurn(entity) {
+      if (typeof entity === "number") {
+        // its a hero!
+        const hero = this.heroes.find((hero) => hero.id === entity);
+        this.clearStatus(hero.status);
       } else {
-        return true;
+        // its a monster!
+        for (let enemy of this.enemies) {
+          if (enemy.type === entity && !enemy.hasTurnEnded) {
+            this.clearStatus(enemy.status);
+          }
+          enemy.hasTurnEnded = true;
+        }
       }
     }
 
+    clearStatus(status) {
+      status.confusion = Math.max(0, status.confusion - 1);
+      status.immobilisation = Math.max(0, status.immobilisation - 1);
+      status.stunned = Math.max(0, status.stunned - 1);
+      status.disarmed = Math.max(0, status.disarmed - 1);
+      status.renforced = Math.max(0, status.renforced - 1);
+    }
+
     incrementRound() {
+      if (this.activeEntity) {
+        this.endTurn(this.activeEntity);
+      }
       this.round++;
       for (let elem of ["fire", "ice", "air", "earth", "light", "darkness"]) {
         if (this[elem] > 0) {
@@ -146,6 +206,7 @@
       // reset all monster actions
       for (let type in this.monsterActions) {
         this.monsterActions[type].active = false;
+        this.monsterActions[type].initiative = false;
         let shouldShuffle = false;
         for (let actionId of this.monsterActions[type].discardPile) {
           const action = ENEMIES_MAP[type].actions.find(
@@ -179,6 +240,14 @@
         }
         shuffleArray(mods.deck);
       }
+
+      // reset turntracker to false
+      this.turnTracker = {};
+      this.activeEntity = false;
+
+      for (let enemy of this.enemies) {
+        enemy.hasTurnEnded = false;
+      }
     }
 
     addCurse() {
@@ -198,32 +267,6 @@
         this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
         shuffleArray(this.enemyModifiers.deck);
       }
-    }
-  }
-
-  // -----------------------------------------------------------------------------
-  // MARK: CharacterSummary
-  // -----------------------------------------------------------------------------
-  class CharacterSummary extends Component {
-    static template = xml`
-      <div class="${CARD} bg-lightgreen" t-on-click="onClick">
-        <div class="d-flex space-between px-2 py-1">
-          <span class="text-bold"><t t-esc="props.hero.name"/></span>
-          <span class=""><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
-        </div>
-        <div class="d-flex space-between px-2 py-1">
-          <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <span class="text-bold" t-esc="props.hero.hp"/> / <span class="text-bold" t-esc="props.hero.maxHp"/></span>
-          <span>XP: <span class="text-bold" t-esc="props.hero.xp"/></span>
-          <span>Gold: <span class="text-bold" t-esc="props.hero.gold"/></span>
-        </div>
-      </div>`;
-
-    get heroClass() {
-      return CLASS_NAME[this.props.hero.class];
-    }
-
-    onClick() {
-      this.props.onClick?.();
     }
   }
 
@@ -256,31 +299,46 @@
       <div
         class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.confusion}"
-        t-on-click="() => status.confusion = !status.confusion"
+        t-on-click="() => this.toggleStatus('confusion')"
       >
         confusion
       </div>
       <div
         class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.immobilisation}"
-        t-on-click="() => status.immobilisation = !status.immobilisation"
+        t-on-click="() => this.toggleStatus('immobilisation')"
       >
         immobilisation
       </div>
       <div
         class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.stunned}"
-        t-on-click="() => status.stunned = !status.stunned"
+        t-on-click="() => this.toggleStatus('stunned')"
       >
         étourdissement
       </div>
       <div
         class="border-radius-2 text-smallcaps text-center p-1 "
+        t-att-class="{'bg-darker text-bold': status.disarmed}"
+        t-on-click="() => this.toggleStatus('disarmed')"
+      >
+        désarmement
+      </div>
+      <div
+        class="border-radius-2 text-smallcaps text-center p-1 "
         t-att-class="{'bg-darker text-bold': status.renforced}"
-        t-on-click="() => status.renforced = !status.renforced"
+        t-on-click="() => this.toggleStatus('renforced')"
       >
         renforcement
       </div>`;
+
+    toggleStatus(effect) {
+      if (this.props.status[effect]) {
+        this.props.status[effect] = 0;
+      } else {
+        this.props.status[effect] = this.props.isActive ? 2 : 1;
+      }
+    }
   }
 
   // -----------------------------------------------------------------------------
@@ -305,18 +363,9 @@
           <Counter dec="() => props.hero.hp--" inc="() => props.hero.hp++">HP</Counter>
           <Counter dec="() => props.hero.xp--" inc="() => props.hero.xp++">XP</Counter>
           <Counter dec="() => props.hero.gold--" inc="() => props.hero.gold++">Gold</Counter>
-          <StatusEditor status="props.hero.status" />
+          <StatusEditor status="props.hero.status" isActive="props.hero.id === props.game.activeEntity" />
         </div>
-
-      </div>
-        <!-- <div class="d-flex space-between px-2 py-1">
-          <span>XP: <span class="text-bold" t-esc="props.hero.xp"/></span>
-          <span>Gold: <span class="text-bold" t-esc="props.hero.gold"/></span>
-        </div>
-        <div class="d-flex space-between px-2 py-1" t-if="statuses">
-          <span>Status: <t t-esc="statuses"/> </span>
-        </div> -->
-      `;
+      </div>`;
     static components = { Counter, StatusEditor };
 
     setup() {
@@ -388,23 +437,62 @@
       <div class="${CARD} bg-white">
         <div class="bg-gray p-1 d-flex space-between align-center" t-on-click="toggle">
           <span>Turn Tracker</span>
-          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
         </div>
         <div class="p-1" t-if="state.open">
-         dadsf
+          <div t-if="game.round === 1">Select each hero/monster when its turn starts</div>
+          <div class="d-flex align-center flex-wrap">
+            <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
+              <t t-if="game.turnTracker[hero.id]">
+                <div class="button disabled" t-att-class="{'text-bold': game.activeEntity===hero.id}"><t t-esc="hero.name"/></div>
+              </t>
+              <div t-else="" class="button" t-on-click="() => this.startTurn(hero.id)">
+                <t t-esc="hero.name"/>
+              </div>
+            </t>
+            <t t-foreach="enemies()" t-as="type" t-key="type">
+              <t t-set="initiative" t-value="enemyInitiative(type)"/>
+              <t t-if="game.turnTracker[type]">
+                <div class="button disabled"  t-att-class="{'text-bold': game.activeEntity===type}">
+                  <t t-if="initiative">[<t t-esc="initiative"/>] </t>
+                  <t t-esc="enemyName(type)"/>
+                </div>
+              </t>
+              <div t-else="" class="button" t-on-click="() => this.startTurn(type)">
+                <t t-if="initiative">[<t t-esc="initiative"/>] </t>
+                <t t-esc="enemyName(type)"/>
+              </div>
+            </t>
+          </div>
         </div>
       </div>
     `;
     setup() {
       this.state = useState({ open: true });
-    }
-
-    close() {
-      this.props.game.config.turnTracker = false;
+      this.game = this.props.game;
     }
 
     toggle() {
       this.state.open = !this.state.open;
+    }
+
+    startTurn(entity) {
+      this.game.startTurn(entity);
+    }
+
+    enemyInitiative(type) {
+      return this.game.monsterActions[type].initiative;
+    }
+
+    enemyName(type) {
+      return ENEMIES_MAP[type].name;
+    }
+
+    enemies() {
+      const types = new Set();
+      for (let enemy of this.game.enemies) {
+        types.add(enemy.type);
+      }
+      return [...types];
     }
   }
 
@@ -416,7 +504,6 @@
       <div class="${CARD} bg-white">
         <div class="bg-gray p-1 d-flex space-between"  t-on-click="toggle">
           <span>Enemy Attack Modifiers (<t t-esc="mods.deck.length"/> cards)</span>
-          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
         </div>
         <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;" t-if="state.open">
           <div class="d-flex flex-column">
@@ -452,10 +539,6 @@
 
     toggle() {
       this.state.open = !this.state.open;
-    }
-
-    close() {
-      this.props.game.config.attackModifiers = false;
     }
 
     addCurse() {
@@ -547,7 +630,7 @@
         </t>
         <div t-if="state.isOpen" t-on-click.stop="" class="p-1  border-top-gray">
           <div class="d-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-            <StatusEditor status="props.enemy.status" />
+            <StatusEditor status="props.enemy.status"  isActive="props.enemy.type === props.game.activeEntity"  />
           </div>
           <div class="d-flex space-between align-center">
             <Counter dec="() => props.enemy.hp--" inc="() => props.enemy.hp++">HP</Counter>
@@ -644,18 +727,8 @@
 
     get enemyTypes() {
       const types = new Set();
-      const monsterActions = this.props.game.monsterActions;
       for (let enemy of this.props.game.enemies) {
         types.add(enemy.type);
-        if (!(enemy.type in monsterActions)) {
-          const deck = ENEMIES_MAP[enemy.type].actions.map((a) => a.id);
-          shuffleArray(deck);
-          monsterActions[enemy.type] = {
-            deck,
-            discardPile: [],
-            active: false,
-          };
-        }
       }
       return [...types];
     }
@@ -678,6 +751,8 @@
       const action = monsterAction.deck.pop();
       monsterAction.discardPile.unshift(action);
       monsterAction.active = true;
+      const actionObj = this.activeAction(type);
+      monsterAction.initiative = actionObj.initiative;
     }
 
     activeAction(type) {
@@ -689,6 +764,90 @@
       const action = ENEMIES_MAP[type].actions.find((a) => a.id === activeId);
       console.log(action);
       return action;
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // MARK: BattleGoalTracker
+  // -----------------------------------------------------------------------------
+  class BattleGoal extends Component {
+    static template = xml`
+        <div class="mx-3 my-2 p-1 border-gray border-radius-4" t-on-click="onClick">
+          <div class="text-bold"><t t-esc="goal.title"/></div>
+          <div><t t-esc="goal.description"/></div>
+        </div>`;
+
+    get goal() {
+      const goal = BATTLE_GOALS.find((g) => g.id === this.props.id);
+      return goal;
+    }
+
+    onClick() {
+      if (this.props.onClick) {
+        this.props.onClick();
+      }
+    }
+  }
+
+  class BattleGoalTracker extends Component {
+    static template = xml`
+      <div class="${CARD} bg-white">
+        <div class="d-flex space-between bg-gray p-1 align-center">
+          <span>Battle Goals</span>
+          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
+        </div>
+        <div class="d-flex">
+          <t t-foreach="props.game.heroes" t-as="hero" t-key="hero.id">
+                <div class="button" t-on-click="() => this.toggleHero(hero)" t-att-class="{'text-bold': state.hero and state.hero.id === hero.id}">
+                  <t t-esc="hero.name"/>
+                  <t t-if="props.game.battleGoals[hero.id]"><span class="ms-1">✓</span></t>
+                </div>
+          </t>
+        </div>
+        <div t-if="state.hero">
+              <t t-if="props.game.battleGoals[state.hero.id]">
+                <BattleGoal id="props.game.battleGoals[state.hero.id]"/>
+              </t>
+              <t t-else="">
+                <t t-set="i" t-value="getHeroIndex(state.hero.id)"/>
+                <BattleGoal id="goals[2*i]" onClick="() => this.selectGoal(2*i)"/>
+                <BattleGoal id="goals[2*i+1]" onClick="() => this.selectGoal(2*i+1)"/>
+              </t>
+          <div>
+          </div>
+        </div>
+      </div>`;
+    static components = { BattleGoal };
+
+    setup() {
+      this.state = useState({
+        hero: false,
+      });
+      this.goals = shuffleArray(BATTLE_GOALS.map((g) => g.id));
+    }
+
+    getHeroIndex(heroId) {
+      return this.props.game.heroes.findIndex((h) => h.id === heroId);
+    }
+
+    toggleHero(hero) {
+      if (this.state.hero === hero) {
+        this.state.hero = false;
+      } else {
+        this.state.hero = hero;
+      }
+    }
+
+    selectGoal(goalIndex) {
+      const heroId = this.state.hero.id;
+      this.props.game.battleGoals[heroId] = this.goals[goalIndex];
+      //   // @todo implemenb battle goal selection screen
+      //   console.log("selecting goal for hero", hero);
+      //   this.props.game.battleGoals[hero.id] = true;
+    }
+
+    close() {
+      this.props.game.config.battleGoals = false;
     }
   }
 
@@ -803,6 +962,7 @@
             confusion: false,
             immobilisation: false,
             stunned: false,
+            disarmed: false,
             renforced: false,
           },
         });
@@ -923,12 +1083,14 @@
         immunities,
         special1,
         special2,
+        hasTurnEnded: false,
         status: {
           poisoned: false,
           wound: false,
           confusion: false,
           immobilisation: false,
           stunned: false,
+          disarmed: false,
           renforced: false,
         },
       };
@@ -966,22 +1128,30 @@
           <option value="6">Scenario Level 6</option>
           <option value="7">Scenario Level 7</option>
         </select>
-        <div class="me-2 button me-2" t-att-class="{disabled: !game.heroes.length }" t-on-click="start">Start Game</div>
+        <div class="me-2 button me-2" t-att-class="{disabled: !canStartGame() }" t-on-click="start">Start Game</div>
       </ControlPanel>
-      <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-        <CharacterSummary hero="hero" onClick="() => this.editChar(hero)"/>
+      <t t-if="game.heroes.length">
+        <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
+          <CharacterCard hero="hero"/>
+        </t>
       </t>
-      <div t-if="!game.heroes.length" class="text-gray text-smaller" style="padding:24px;">
+      <div t-else="" class="text-gray" style="padding:24px;">
         Prepare your team of heroes, then start a game!
       </div>
     `;
-    static components = { TopMenu, ControlPanel, CharacterSummary };
+    static components = {
+      TopMenu,
+      ControlPanel,
+      CharacterCard,
+      BattleGoalTracker,
+    };
 
-    editChar(hero) {
-      this.props.game.pushScreen("CHAR_EDITOR", hero);
+    canStartGame() {
+      return this.props.game.heroes.length;
     }
 
     start() {
+      this.props.game.round = 1;
       this.props.game.pushScreen("MAIN");
     }
   }
@@ -995,6 +1165,19 @@
         <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
       </TopMenu>
       <div>
+        <h2 class="p-2">Settings</h2>
+        <div class="mx-2">
+          Scenario
+          <select class="bg-white" t-model.number="props.game.scenarioLevel">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+            <option value="6">Level 6</option>
+            <option value="7">Level 7</option>
+          </select>
+        </div>
         <h2 class="p-2">Features</h2>
         <t t-set="config" t-value="props.game.config"/>
         <div class="d-grid align-center" style="grid-template-columns:50px 1fr;row-gap:10px">
@@ -1043,97 +1226,6 @@
   }
 
   // -----------------------------------------------------------------------------
-  // MARK: BattleGoalTracker
-  // -----------------------------------------------------------------------------
-  class BattleGoal extends Component {
-    static template = xml`
-        <div class="mx-3 my-2 p-1 border-gray border-radius-4" t-on-click="onClick">
-          <div class="text-bold"><t t-esc="goal.title"/></div>
-          <div><t t-esc="goal.description"/></div>
-        </div>`;
-
-    get goal() {
-      const goal = BATTLE_GOALS.find((g) => g.id === this.props.id);
-      return goal;
-    }
-
-    onClick() {
-      if (this.props.onClick) {
-        this.props.onClick();
-      }
-    }
-  }
-
-  class BattleGoalTracker extends Component {
-    static template = xml`
-      <div class="${CARD} bg-white">
-        <div class="d-flex space-between bg-gray p-1 align-center">
-          <t t-set="n" t-value="nbrGoals()"/>
-          <span><t t-esc="nbrGoals()"/> Battle Goals assigned</span>
-          <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
-        </div>
-        <div class="d-flex">
-          <t t-foreach="props.game.heroes" t-as="hero" t-key="hero.id">
-                <div class="button" t-on-click="() => this.toggleHero(hero)" t-att-class="{'text-bold': state.hero and state.hero.id === hero.id}"><t t-esc="hero.name"/></div>
-          </t>
-        </div>
-        <div t-if="state.hero">
-              <t t-if="props.game.battleGoals[state.hero.id]">
-                <BattleGoal id="props.game.battleGoals[state.hero.id]"/>
-              </t>
-              <t t-else="">
-                <t t-set="i" t-value="getHeroIndex(state.hero.id)"/>
-                <BattleGoal id="goals[2*i]" onClick="() => this.selectGoal(2*i)"/>
-                <BattleGoal id="goals[2*i+1]" onClick="() => this.selectGoal(2*i+1)"/>
-              </t>
-          <div>
-          </div>
-        </div>
-      </div>`;
-    static components = { BattleGoal };
-
-    setup() {
-      this.state = useState({
-        hero: false,
-      });
-      this.goals = shuffleArray(BATTLE_GOALS.map((g) => g.id));
-    }
-
-    getHeroIndex(heroId) {
-      return this.props.game.heroes.findIndex((h) => h.id === heroId);
-    }
-
-    toggleHero(hero) {
-      if (this.state.hero === hero) {
-        this.state.hero = false;
-      } else {
-        this.state.hero = hero;
-      }
-    }
-
-    selectGoal(goalIndex) {
-      const heroId = this.state.hero.id;
-      this.props.game.battleGoals[heroId] = this.goals[goalIndex];
-      //   // @todo implemenb battle goal selection screen
-      //   console.log("selecting goal for hero", hero);
-      //   this.props.game.battleGoals[hero.id] = true;
-    }
-
-    nbrGoals() {
-      let n = 0;
-      for (let h in this.props.game.battleGoals) {
-        if (this.props.game.battleGoals[h]) {
-          n++;
-        }
-      }
-      return n;
-    }
-    close() {
-      this.props.game.config.battleGoals = false;
-    }
-  }
-
-  // -----------------------------------------------------------------------------
   // MARK: MainScreen
   // -----------------------------------------------------------------------------
   class MainScreen extends Component {
@@ -1150,24 +1242,20 @@
           <t t-if="game.round">Next Round</t>
           <t t-else="">Start Scenario</t>
         </div>
-        </ControlPanel>
-      <t t-if="game.round">
-        <ElementTracker t-if="game.config.elements" game="props.game" />
-        <TurnTracker t-if="game.config.turnTracker" game="props.game" />
-      </t>
+      </ControlPanel>
       <t t-if="game.config.battleGoals">
         <BattleGoalTracker game="game"/>
       </t>
+      <ElementTracker t-if="game.config.elements" game="props.game" />
+      <TurnTracker t-if="game.config.turnTracker" game="props.game" />
       <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-        <CharacterCard hero="hero"/>
+        <CharacterCard hero="hero" game="game"/>
       </t>
-      <t t-if="game.round">
-        <t t-if="game.config.attackModifiers">
-          <EnemyAttackModifiers game="game"/>
-        </t>
-        <t t-if="game.enemies.length and game.config.enemyActions">
-          <EnemyActions game="game"/>
-        </t>
+      <t t-if="game.config.attackModifiers">
+        <EnemyAttackModifiers game="game"/>
+      </t>
+      <t t-if="game.enemies.length and game.config.enemyActions">
+        <EnemyActions game="game"/>
       </t>
       <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
         <EnemyCard enemy="enemy" game="game"/>
