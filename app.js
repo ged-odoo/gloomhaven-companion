@@ -1244,8 +1244,11 @@
       <t t-if="game.config.battleGoals">
         <BattleGoalTracker game="game"/>
       </t>
-      <ElementTracker t-if="game.config.elements" game="props.game" />
       <TurnTracker t-if="game.config.turnTracker" game="props.game" />
+      <t t-if="game.enemies.length and game.config.enemyActions">
+        <EnemyActions game="game"/>
+      </t>
+      <ElementTracker t-if="game.config.elements" game="props.game" />
       <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
         <CharacterCard hero="hero" game="game"/>
       </t>
@@ -1254,9 +1257,6 @@
       </t>
       <t t-if="game.config.attackModifiers and game.enemies.length">
         <EnemyAttackModifiers game="game"/>
-      </t>
-      <t t-if="game.enemies.length and game.config.enemyActions">
-        <EnemyActions game="game"/>
       </t>
     `;
     static components = {
