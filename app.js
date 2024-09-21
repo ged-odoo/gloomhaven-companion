@@ -841,9 +841,7 @@
     selectGoal(goalIndex) {
       const heroId = this.state.hero.id;
       this.props.game.battleGoals[heroId] = this.goals[goalIndex];
-      //   // @todo implemenb battle goal selection screen
-      //   console.log("selecting goal for hero", hero);
-      //   this.props.game.battleGoals[hero.id] = true;
+      this.state.hero = false;
     }
 
     close() {
@@ -1132,7 +1130,7 @@
       </ControlPanel>
       <t t-if="game.heroes.length">
         <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-          <CharacterCard hero="hero"/>
+          <CharacterCard hero="hero" game="game"/>
         </t>
       </t>
       <div t-else="" class="text-gray" style="padding:24px;">
@@ -1251,14 +1249,14 @@
       <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
         <CharacterCard hero="hero" game="game"/>
       </t>
-      <t t-if="game.config.attackModifiers">
+      <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
+        <EnemyCard enemy="enemy" game="game"/>
+      </t>
+      <t t-if="game.config.attackModifiers and game.enemies.length">
         <EnemyAttackModifiers game="game"/>
       </t>
       <t t-if="game.enemies.length and game.config.enemyActions">
         <EnemyActions game="game"/>
-      </t>
-      <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
-        <EnemyCard enemy="enemy" game="game"/>
       </t>
     `;
     static components = {
