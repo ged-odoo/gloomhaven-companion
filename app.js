@@ -436,7 +436,8 @@
     static template = xml`
       <div class="${CARD} bg-white">
         <div class="bg-gray p-1 d-flex space-between align-center" t-on-click="toggle">
-          <span>Turn Tracker</span>
+          <span t-if="game.activeEntity">Current turn: <t t-esc="activeEntityName()"/></span>
+          <span t-else="">Turn Tracker</span>
         </div>
         <div class="p-1" t-if="state.open">
           <div t-if="game.round === 1">Select each hero/monster when its turn starts</div>
@@ -487,6 +488,17 @@
       return ENEMIES_MAP[type].name;
     }
 
+    activeEntityName() {
+      const entity = this.game.activeEntity;
+      if (typeof entity === "number") {
+        // hero
+        const hero = this.game.heroes.find((hero) => hero.id === entity);
+        return hero.name;
+      } else {
+        // enemy
+        return ENEMIES_MAP[entity].name;
+      }
+    }
     enemies() {
       const types = new Set();
       for (let enemy of this.game.enemies) {
