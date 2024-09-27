@@ -1,14 +1,14 @@
-const CLASS_NAME = {
+export const CLASS_NAME = {
   void_warden: "Gardienne du Néant",
   red_guard: "Garde Rouge",
 };
 
-const MAX_HP_MAP = {
+export const MAX_HP_MAP = {
   void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
   red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
 };
 
-const MAX_CARD_MAP = {
+export const MAX_CARD_MAP = {
   void_warden: 11,
   red_guard: 10,
 };
@@ -72,7 +72,7 @@ const BOSS_ACTIONS = [
   },
 ];
 
-const ENEMIES = [
+export const ENEMIES = [
   // MARK: reanimated corpse
   {
     id: "reanimated_corpse",
@@ -1746,12 +1746,12 @@ const ENEMIES = [
   },
 ];
 
-const ENEMIES_MAP = {};
+export const ENEMIES_MAP = {};
 for (let enemies of ENEMIES) {
   ENEMIES_MAP[enemies.id] = enemies;
 }
 
-const BATTLE_GOALS = [
+export const BATTLE_GOALS = [
   {
     id: 1,
     title: "Maraudeur",
@@ -1926,7 +1926,7 @@ const BATTLE_GOALS = [
   },
 ];
 
-const MONSTER_MODIFIERS_DECK = [
+export const MONSTER_MODIFIERS_DECK = [
   {
     id: 1,
     effects: ["+0"],

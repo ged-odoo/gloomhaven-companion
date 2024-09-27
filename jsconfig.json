@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "target": "ES2022",
+      "lib": ["ES2022", "DOM"],  // Include DOM if you're using browser-based JS
+      "checkJs": true,           // Enables error checking in JavaScript files
+    //   "noImplicitAny": true,     // Disallows usage of variables with implicit "any" type
+    //   "strict": true ,
+      "module": "Node16",
+      "moduleResolution": "Node16"
+    },
+    "exclude": ["node_modules"]
+  }

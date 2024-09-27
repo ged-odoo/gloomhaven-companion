@@ -1,0 +1,19 @@
+{
+  "name": "ghc",
+  "version": "1.0.0",
+  "description": "A companion app to play gloomhaven",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/app.js src/app.css --bundle --sourcemap --outdir=dist ",
+    "dev": "esbuild src/app.js src/app.css --bundle --sourcemap --outdir=dist --watch",
+    "prettier": "prettier src/ -w"
+  },
+  "author": "Géry Debongnie",
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  },
+  "dependencies": {
+    "@odoo/owl": "^2.3.0"
+  }
+}
