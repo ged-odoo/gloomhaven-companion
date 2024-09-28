@@ -42,6 +42,12 @@ select {
 .align-center {
   align-items: center;
 }
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.h-100 {
+  height: 100%;
+}
 .d-grid {
   display: grid;
 }

@@ -7166,48 +7166,54 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
   __info__.hash = "0cde4b8";
   __info__.url = "https://github.com/odoo/owl";
 
-  // src/shared/top_menu.js
-  var TopMenu = class extends Component {
+  // src/shared/layout.js
+  var Layout = class extends Component {
     static template = xml`
-        <div class="bg-primary text-white d-flex align-center space-between" style="height:45px;">
-          <t t-slot="default"/>
-        </div>`;
+    <div class="h-100 d-flex flex-column">
+      <div class="bg-primary text-white d-flex align-center space-between" style="height:45px;">
+        <t t-slot="navbar"/>
+      </div>
+      <div class="overflow-y-auto">
+        <t t-slot="default"/>
+      </div>
+    </div>`;
   };
 
   // src/screens/add_enemy_screen.js
   var AddEnemyScreen = class extends Component {
     static template = xml`
-        <TopMenu>
-          <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-        </TopMenu>
-        <h2 class="p-2">Add an Enemy</h2>
+    <Layout>
+      <t t-set="navbar">
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
+      </t>
+      <h2 class="p-2">Add an Enemy</h2>
+      <div class="d-flex m-2 align-center">
+        <div class="width-50px text-right">Type </div>
+        <select class=" mx-2 flex-grow" t-model="state.type">
+          <option value="">Select a type</option>
+          <t t-foreach="enemies" t-as="enemy" t-key="enemy.id">
+            <option t-att-value="enemy.id"><t t-esc="enemy.name"/><t t-if="enemy.boss"> (BOSS)</t></option>
+          </t>
+        </select>
+      </div>
+      <div class="" t-if="!isBoss()">
         <div class="d-flex m-2 align-center">
-          <div class="width-50px text-right">Type </div>
-          <select class=" mx-2 flex-grow" t-model="state.type">
-            <option value="">Select a type</option>
-            <t t-foreach="enemies" t-as="enemy" t-key="enemy.id">
-              <option t-att-value="enemy.id"><t t-esc="enemy.name"/><t t-if="enemy.boss"> (BOSS)</t></option>
-            </t>
-          </select>
+          <div class="width-50px text-right">Id </div>
+          <input class="mx-2 width-50px" type="number" t-model.number="state.nbr"/>
         </div>
-        <div class="" t-if="!isBoss()">
-          <div class="d-flex m-2 align-center">
-            <div class="width-50px text-right">Id </div>
-            <input class="mx-2 width-50px" type="number" t-model.number="state.nbr"/>
-          </div>
-          <div class="d-flex m-2 align-center" >
-            <div class="width-50px text-right">Elite </div>
-            <div class="width-50px"><input type="checkbox" t-model="state.elite"/>
-            </div>
+        <div class="d-flex m-2 align-center" >
+          <div class="width-50px text-right">Elite </div>
+          <div class="width-50px"><input type="checkbox" t-model="state.elite"/>
           </div>
         </div>
-        <div class="d-flex flex-end">
-          <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: !state.type}">
-            Add Enemy
-          </div>
+      </div>
+      <div class="d-flex flex-end">
+        <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: !state.type}">
+          Add Enemy
         </div>
-      `;
-    static components = { TopMenu };
+      </div>
+    </Layout>`;
+    static components = { Layout };
     setup() {
       this.state = useState({
         type: "",
@@ -7294,53 +7300,54 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
   // src/screens/character_editor_screen.js
   var CharacterEditor = class extends Component {
     static template = xml`
-        <TopMenu>
-          <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-        </TopMenu>
-        <h2 class="p-2"><t t-if="activeHero">Edit</t><t t-else="">Create</t> your Hero</h2>
-        <div class="d-flex align-center mx-2 my-3">
-          <div class="width-50px text-right">Name </div>
-          <input class="mx-2 flex-grow" t-model="state.name" placeholder="Character name"/>
-        </div>
-        <div class="d-flex align-center mx-2 my-3">
-          <div class="width-50px text-right">Class </div>
-          <select class="mx-2 flex-grow" t-model="state.class">
-            <option value="">Select a class</option>
-            <option value="void_warden">Gardienne du Néant</option>
-            <option value="red_guard">Garde Rouge</option>
+    <Layout>
+      <t t-set-slot="navbar">
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
+      </t>
+      <h2 class="p-2"><t t-if="activeHero">Edit</t><t t-else="">Create</t> your Hero</h2>
+      <div class="d-flex align-center mx-2 my-3">
+        <div class="width-50px text-right">Name </div>
+        <input class="mx-2 flex-grow" t-model="state.name" placeholder="Character name"/>
+      </div>
+      <div class="d-flex align-center mx-2 my-3">
+        <div class="width-50px text-right">Class </div>
+        <select class="mx-2 flex-grow" t-model="state.class">
+          <option value="">Select a class</option>
+          <option value="void_warden">Gardienne du Néant</option>
+          <option value="red_guard">Garde Rouge</option>
+        </select>
+      </div>
+      <div class="d-flex mx-2 my-3 space-between">
+        <div class="d-flex align-center">
+          <div class="width-50px text-right">Level </div>
+          <select class="mx-2" t-model.number="state.level">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
           </select>
         </div>
-        <div class="d-flex mx-2 my-3 space-between">
-          <div class="d-flex align-center">
-            <div class="width-50px text-right">Level </div>
-            <select class="mx-2" t-model.number="state.level">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-            </select>
-          </div>
-          <div class="d-flex align-center">
-            <div class="width-50px text-right">XP </div>
-            <input class="mx-2 width-50px" type="number" t-model.number="state.xp"/>
-          </div>
-          <div class="d-flex align-center">
-            <div class="width-50px text-right">Gold </div>
-            <input  class="mx-2 width-50px" type="number" t-model.number="state.gold"/>
-          </div>
+        <div class="d-flex align-center">
+          <div class="width-50px text-right">XP </div>
+          <input class="mx-2 width-50px" type="number" t-model.number="state.xp"/>
         </div>
-        <div class="d-flex flex-end p-2">
-          <div class="button p-2 m-2" t-on-click="create" t-att-class="{disabled: isDisabled}">
-            <t t-if="activeHero">Update</t><t t-else="">Add</t> Hero
-          </div>
+        <div class="d-flex align-center">
+          <div class="width-50px text-right">Gold </div>
+          <input  class="mx-2 width-50px" type="number" t-model.number="state.gold"/>
         </div>
-      `;
-    static components = { TopMenu };
+      </div>
+      <div class="d-flex flex-end p-2">
+        <div class="button p-2 m-2" t-on-click="create" t-att-class="{disabled: isDisabled}">
+          <t t-if="activeHero">Update</t><t t-else="">Add</t> Hero
+        </div>
+      </div>
+    </Layout>`;
+    static components = { Layout };
     setup() {
       this.activeHero = this.props.game.state;
       this.state = useState({
@@ -7389,51 +7396,52 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
   // src/screens/config_screen.js
   var ConfigScreen = class extends Component {
     static template = xml`
-        <TopMenu>
-          <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-        </TopMenu>
-        <div>
-          <h2 class="p-2">Settings</h2>
-          <div class="mx-2">
-            Scenario
-            <select class="bg-white" t-model.number="props.game.scenarioLevel">
-              <option value="1">Level 1</option>
-              <option value="2">Level 2</option>
-              <option value="3">Level 3</option>
-              <option value="4">Level 4</option>
-              <option value="5">Level 5</option>
-              <option value="6">Level 6</option>
-              <option value="7">Level 7</option>
-            </select>
-          </div>
-          <h2 class="p-2">Features</h2>
-          <t t-set="config" t-value="props.game.config"/>
-          <div class="d-grid align-center" style="grid-template-columns:50px 1fr;row-gap:10px">
-            <input type="checkbox" t-model="config.elements" id="track_element"/>
-            <label for="track_element">Element Tracker</label>
-            <input type="checkbox" t-model="config.turnTracker" id="track_turns"/>
-            <label for="track_turns">Turn Tracker</label>
-            <input type="checkbox" t-model="config.battleGoals" id="track_battlegoals"/>
-            <label for="track_battlegoals">Battle Goals</label>
-            <input type="checkbox" t-model="config.attackModifiers" id="enemy_attack_modifiers"/>
-            <label for="enemy_attack_modifiers">Enemy Attack Modifiers</label>
-            <input type="checkbox" t-model="config.enemyActions" id="enemy_actions"/>
-            <label for="enemy_actions">Enemy Actions</label>
-          </div>
-          <hr/>
-          <h2 class="p-2 my-2">Data</h2>
-          <div class="d-flex flex-column align-center">
-              <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="save">
-                  Save to local storage
-              </div>
-              <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="restore">
-                  Restore from local storage
-              </div>
-          </div>
-  
+    <Layout>
+      <t t-set-slot="navbar">
+        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
+      </t>
+      <div>
+        <h2 class="p-2">Settings</h2>
+        <div class="mx-2">
+          Scenario
+          <select class="bg-white" t-model.number="props.game.scenarioLevel">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+            <option value="6">Level 6</option>
+            <option value="7">Level 7</option>
+          </select>
         </div>
-      `;
-    static components = { TopMenu };
+        <h2 class="p-2">Features</h2>
+        <t t-set="config" t-value="props.game.config"/>
+        <div class="d-grid align-center" style="grid-template-columns:50px 1fr;row-gap:10px">
+          <input type="checkbox" t-model="config.elements" id="track_element"/>
+          <label for="track_element">Element Tracker</label>
+          <input type="checkbox" t-model="config.turnTracker" id="track_turns"/>
+          <label for="track_turns">Turn Tracker</label>
+          <input type="checkbox" t-model="config.battleGoals" id="track_battlegoals"/>
+          <label for="track_battlegoals">Battle Goals</label>
+          <input type="checkbox" t-model="config.attackModifiers" id="enemy_attack_modifiers"/>
+          <label for="enemy_attack_modifiers">Enemy Attack Modifiers</label>
+          <input type="checkbox" t-model="config.enemyActions" id="enemy_actions"/>
+          <label for="enemy_actions">Enemy Actions</label>
+        </div>
+        <hr/>
+        <h2 class="p-2 my-2">Data</h2>
+        <div class="d-flex flex-column align-center">
+            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="save">
+                Save to local storage
+            </div>
+            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="restore">
+                Restore from local storage
+            </div>
+        </div>
+
+      </div>
+    </Layout>`;
+    static components = { Layout };
     save() {
       const state = JSON.stringify(this.props.game);
       localStorage.setItem("game_state", state);
@@ -8016,39 +8024,40 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
   };
   var MainScreen = class extends Component {
     static template = xml`
-        <t t-set="game" t-value="props.game"/>
-        <t t-set="ui" t-value="props.ui"/>
-        <TopMenu>
-          <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
-          <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
-        </TopMenu>
-        <ControlPanel>
-          <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
-          <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
-            <t t-if="game.round">Next Round</t>
-            <t t-else="">Start Scenario</t>
-          </div>
-        </ControlPanel>
-        <t t-if="game.config.battleGoals">
-          <BattleGoalTracker game="game"/>
-        </t>
-        <TurnTracker t-if="game.config.turnTracker" game="props.game" />
-        <t t-if="game.enemies.length and game.config.enemyActions">
-          <EnemyActions game="game"/>
-        </t>
-        <ElementTracker t-if="game.config.elements" game="props.game" />
-        <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-          <CharacterCard hero="hero" game="game"/>
-        </t>
-        <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
-          <EnemyCard enemy="enemy" game="game"/>
-        </t>
-        <t t-if="game.config.attackModifiers and game.enemies.length">
-          <EnemyAttackModifiers game="game"/>
-        </t>
-      `;
+    <t t-set="game" t-value="props.game"/>
+    <t t-set="ui" t-value="props.ui"/>
+    <Layout>
+      <t t-set-slot="navbar">
+        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
+        <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
+      </t>
+      <ControlPanel>
+        <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
+        <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
+          <t t-if="game.round">Next Round</t>
+          <t t-else="">Start Scenario</t>
+        </div>
+      </ControlPanel>
+      <t t-if="game.config.battleGoals">
+        <BattleGoalTracker game="game"/>
+      </t>
+      <TurnTracker t-if="game.config.turnTracker" game="props.game" />
+      <t t-if="game.enemies.length and game.config.enemyActions">
+        <EnemyActions game="game"/>
+      </t>
+      <ElementTracker t-if="game.config.elements" game="props.game" />
+      <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
+        <CharacterCard hero="hero" game="game"/>
+      </t>
+      <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
+        <EnemyCard enemy="enemy" game="game"/>
+      </t>
+      <t t-if="game.config.attackModifiers and game.enemies.length">
+        <EnemyAttackModifiers game="game"/>
+      </t>
+    </Layout>`;
     static components = {
-      TopMenu,
+      Layout,
       ControlPanel,
       CharacterCard,
       EnemyActions,
@@ -8071,34 +8080,36 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     static template = xml`
         <t t-set="game" t-value="props.game"/>
         <t t-set="ui" t-value="props.ui"/>
-        <TopMenu>
-          <span class="mx-2">GloomHaven</span>
-          <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
-        </TopMenu>
-        <ControlPanel>
-          <div class="button ms-1" t-on-click="() => game.pushScreen('CHAR_EDITOR')">Add Hero</div>
-          <select class="border-none bg-white" t-model.number="game.scenarioLevel">
-            <option value="1">Scenario Level 1</option>
-            <option value="2">Scenario Level 2</option>
-            <option value="3">Scenario Level 3</option>
-            <option value="4">Scenario Level 4</option>
-            <option value="5">Scenario Level 5</option>
-            <option value="6">Scenario Level 6</option>
-            <option value="7">Scenario Level 7</option>
-          </select>
-          <div class="me-2 button me-2" t-att-class="{disabled: !canStartGame() }" t-on-click="start">Start Game</div>
-        </ControlPanel>
-        <t t-if="game.heroes.length">
-          <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-            <CharacterCard hero="hero" game="game"/>
+        <Layout>
+          <t t-set-slot="navbar">
+            <span class="mx-2">GloomHaven</span>
+            <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
           </t>
-        </t>
-        <div t-else="" class="text-gray" style="padding:24px;">
-          Prepare your team of heroes, then start a game!
-        </div>
+          <ControlPanel>
+            <div class="button ms-1" t-on-click="() => game.pushScreen('CHAR_EDITOR')">Add Hero</div>
+            <select class="border-none bg-white" t-model.number="game.scenarioLevel">
+              <option value="1">Scenario Level 1</option>
+              <option value="2">Scenario Level 2</option>
+              <option value="3">Scenario Level 3</option>
+              <option value="4">Scenario Level 4</option>
+              <option value="5">Scenario Level 5</option>
+              <option value="6">Scenario Level 6</option>
+              <option value="7">Scenario Level 7</option>
+            </select>
+            <div class="me-2 button me-2" t-att-class="{disabled: !canStartGame() }" t-on-click="start">Start Game</div>
+          </ControlPanel>
+          <t t-if="game.heroes.length">
+            <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
+              <CharacterCard hero="hero" game="game"/>
+            </t>
+          </t>
+          <div t-else="" class="text-gray" style="padding:24px;">
+            Prepare your team of heroes, then start a game!
+          </div>
+        </Layout>
       `;
     static components = {
-      TopMenu,
+      Layout,
       ControlPanel,
       CharacterCard
     };

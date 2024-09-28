@@ -1,5 +1,4 @@
 import { Component, useState, xml } from "@odoo/owl";
-import { TopMenu } from "../shared/top_menu";
 import { ControlPanel } from "../shared/control_panel";
 import { CharacterCard } from "../shared/character_card";
 import { CARD } from "../shared/style";
@@ -7,6 +6,7 @@ import { BATTLE_GOALS, ENEMIES_MAP, MONSTER_MODIFIERS_DECK } from "../data";
 import { shuffleArray } from "../utils";
 import { StatusEditor, statusString } from "../shared/status_editor";
 import { Counter } from "../shared/counter";
+import { Layout } from "../shared/layout";
 
 // -----------------------------------------------------------------------------
 // MARK: EnemyAttackModifier
@@ -478,39 +478,40 @@ class EnemyActions extends Component {
 
 export class MainScreen extends Component {
   static template = xml`
-        <t t-set="game" t-value="props.game"/>
-        <t t-set="ui" t-value="props.ui"/>
-        <TopMenu>
-          <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
-          <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
-        </TopMenu>
-        <ControlPanel>
-          <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
-          <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
-            <t t-if="game.round">Next Round</t>
-            <t t-else="">Start Scenario</t>
-          </div>
-        </ControlPanel>
-        <t t-if="game.config.battleGoals">
-          <BattleGoalTracker game="game"/>
-        </t>
-        <TurnTracker t-if="game.config.turnTracker" game="props.game" />
-        <t t-if="game.enemies.length and game.config.enemyActions">
-          <EnemyActions game="game"/>
-        </t>
-        <ElementTracker t-if="game.config.elements" game="props.game" />
-        <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-          <CharacterCard hero="hero" game="game"/>
-        </t>
-        <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
-          <EnemyCard enemy="enemy" game="game"/>
-        </t>
-        <t t-if="game.config.attackModifiers and game.enemies.length">
-          <EnemyAttackModifiers game="game"/>
-        </t>
-      `;
+    <t t-set="game" t-value="props.game"/>
+    <t t-set="ui" t-value="props.ui"/>
+    <Layout>
+      <t t-set-slot="navbar">
+        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
+        <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
+      </t>
+      <ControlPanel>
+        <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
+        <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
+          <t t-if="game.round">Next Round</t>
+          <t t-else="">Start Scenario</t>
+        </div>
+      </ControlPanel>
+      <t t-if="game.config.battleGoals">
+        <BattleGoalTracker game="game"/>
+      </t>
+      <TurnTracker t-if="game.config.turnTracker" game="props.game" />
+      <t t-if="game.enemies.length and game.config.enemyActions">
+        <EnemyActions game="game"/>
+      </t>
+      <ElementTracker t-if="game.config.elements" game="props.game" />
+      <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
+        <CharacterCard hero="hero" game="game"/>
+      </t>
+      <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
+        <EnemyCard enemy="enemy" game="game"/>
+      </t>
+      <t t-if="game.config.attackModifiers and game.enemies.length">
+        <EnemyAttackModifiers game="game"/>
+      </t>
+    </Layout>`;
   static components = {
-    TopMenu,
+    Layout,
     ControlPanel,
     CharacterCard,
     EnemyActions,
