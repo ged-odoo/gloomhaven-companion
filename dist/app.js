@@ -7948,7 +7948,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     remove() {
       if (confirm("Are you sure that you want to remove this enemy?")) {
         const index = this.props.game.enemies.findIndex(
-          (e) => e._id === this.props.enemy._id
+          (e) => e.id === this.props.enemy.id
         );
         if (index >= 0) {
           this.props.game.enemies.splice(index, 1);
