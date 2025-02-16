@@ -2267,6 +2267,7 @@
       for (let enemy of this.enemies) {
         enemy.hasTurnEnded = false;
       }
+      this.save();
     }
     addCurse() {
       const curses = this.enemyModifiers.deck.filter((id) => {
@@ -8118,7 +8119,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
           </t>
           <div t-else="" class="text-gray" style="padding:24px;">
             Prepare your team of heroes, then start a game!
-            <t t-if="canRestore()">(or <span t-on-click="restore">restore from local storage</span>)</t>
+            <t t-if="canRestore()">(or <a href="" t-on-click.prevent="restore">restore from local storage</a>)</t>
           </div>
         </Layout>
       `;

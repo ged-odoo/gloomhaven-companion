@@ -276,6 +276,7 @@ export class GameState {
     for (let enemy of this.enemies) {
       enemy.hasTurnEnded = false;
     }
+    this.save();
   }
 
   addCurse() {
