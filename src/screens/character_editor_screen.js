@@ -19,6 +19,8 @@ export class CharacterEditor extends Component {
           <option value="">Select a class</option>
           <option value="void_warden">Gardienne du Néant</option>
           <option value="red_guard">Garde Rouge</option>
+          <option value="axe_thrower">Lanceur de Haches</option>
+          <option value="artificer">Artificier</option>
         </select>
       </div>
       <div class="d-flex mx-2 my-3 space-between">
