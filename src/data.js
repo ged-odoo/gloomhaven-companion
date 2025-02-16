@@ -1,16 +1,22 @@
 export const CLASS_NAME = {
   void_warden: "Gardienne du Néant",
   red_guard: "Garde Rouge",
+  axe_thrower: "Lanceur de Haches",
+  artificer: "Artificier",
 };
 
 export const MAX_HP_MAP = {
   void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
   red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
+  axe_thrower: [8, 9, 11, 12, 14, 15, 17, 18, 20],
+  artificer: [8, 9, 11, 12, 14, 15, 17, 18, 20],
 };
 
 export const MAX_CARD_MAP = {
   void_warden: 11,
   red_guard: 10,
+  artificer: 9,
+  axe_thrower: 10,
 };
 
 const BOSS_ACTIONS = [
@@ -1530,7 +1536,7 @@ export const ENEMIES = [
       {
         id: 6,
         name: "Coup Calculé",
-        initiative: 0,
+        initiative: 65,
         recycled: false,
         effects: ["Déplacement -1", "Attaque +1"],
       },

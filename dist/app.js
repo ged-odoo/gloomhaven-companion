@@ -2,15 +2,21 @@
   // src/data.js
   var CLASS_NAME = {
     void_warden: "Gardienne du N\xE9ant",
-    red_guard: "Garde Rouge"
+    red_guard: "Garde Rouge",
+    axe_thrower: "Lanceur de Haches",
+    artificer: "Artificier"
   };
   var MAX_HP_MAP = {
     void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
-    red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26]
+    red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
+    axe_thrower: [8, 9, 11, 12, 14, 15, 17, 18, 20],
+    artificer: [8, 9, 11, 12, 14, 15, 17, 18, 20]
   };
   var MAX_CARD_MAP = {
     void_warden: 11,
-    red_guard: 10
+    red_guard: 10,
+    artificer: 9,
+    axe_thrower: 10
   };
   var BOSS_ACTIONS = [
     {
@@ -1528,7 +1534,7 @@
         {
           id: 6,
           name: "Coup Calcul\xE9",
-          initiative: 0,
+          initiative: 65,
           recycled: false,
           effects: ["D\xE9placement -1", "Attaque +1"]
         },
@@ -2056,6 +2062,18 @@
     };
     screens = ["START"];
     states = [null];
+    save() {
+      const state = JSON.stringify(this);
+      localStorage.setItem("game_state", state);
+    }
+    restore() {
+      const dataStr = localStorage.getItem("game_state");
+      if (!dataStr) {
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      Object.assign(this, data);
+    }
     get screen() {
       return this.screens.at(-1);
     }
@@ -2078,14 +2096,76 @@
       hero.id = this.nextId++;
       this.heroes.push(hero);
     }
-    addEnemy(enemy) {
-      enemy.id = this.nextId++;
-      this.enemies.push(enemy);
-      this.turnTracker[enemy.type] = false;
-      if (!this.monsterActions[enemy.type]) {
-        const deck = ENEMIES_MAP[enemy.type].actions.map((a) => a.id);
+    addEnemy(type, nbr, elite) {
+      const enemy = ENEMIES_MAP[type];
+      const level = this.scenarioLevel;
+      const A = this.heroes.length;
+      let maxHp;
+      if (enemy.boss) {
+        maxHp = enemy.hp[level](A);
+      } else {
+        const hpArray = elite ? enemy.eliteHp : enemy.normalHp;
+        maxHp = hpArray[level];
+      }
+      let move;
+      if (enemy.boss) {
+        move = enemy.move[level];
+      } else {
+        const moveArray = elite ? enemy.eliteMove : enemy.normalMove;
+        move = moveArray[level];
+      }
+      let attack;
+      if (enemy.boss) {
+        attack = enemy.attack[level](A);
+      } else {
+        const attackArray = elite ? enemy.eliteAttack : enemy.normalAttack;
+        attack = attackArray[level];
+      }
+      let modifiers = "";
+      if (!enemy.boss) {
+        const modifiersArray = elite ? enemy.eliteModifiers : enemy.normalModifiers;
+        modifiers = modifiersArray[level];
+      }
+      let immunities = "";
+      let special1 = "";
+      let special2 = "";
+      if (enemy.boss) {
+        immunities = enemy.immunities.join(", ");
+        special1 = enemy.special1[level](A);
+        special2 = enemy.special2[level](A);
+      }
+      const enemyObj = {
+        id: this.getId(),
+        type,
+        name: enemy.name,
+        nbr,
+        elite,
+        boss: !!enemy.boss,
+        hp: maxHp,
+        maxHp,
+        move,
+        attack,
+        modifiers,
+        immunities,
+        special1,
+        special2,
+        hasTurnEnded: false,
+        status: {
+          poisoned: false,
+          wound: false,
+          confusion: false,
+          immobilisation: false,
+          stunned: false,
+          disarmed: false,
+          renforced: false
+        }
+      };
+      this.enemies.push(enemyObj);
+      this.turnTracker[enemyObj.type] = false;
+      if (!this.monsterActions[enemyObj.type]) {
+        const deck = ENEMIES_MAP[enemyObj.type].actions.map((a) => a.id);
         shuffleArray(deck);
-        this.monsterActions[enemy.type] = {
+        this.monsterActions[enemyObj.type] = {
           deck,
           discardPile: [],
           active: false,
@@ -7223,70 +7303,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this.enemies = ENEMIES;
     }
     create() {
-      const enemy = ENEMIES_MAP[this.state.type];
-      const level = this.props.game.scenarioLevel;
-      const A = this.props.game.heroes.length;
-      let maxHp;
-      if (enemy.boss) {
-        maxHp = enemy.hp[level](A);
-      } else {
-        const hpArray = this.state.elite ? enemy.eliteHp : enemy.normalHp;
-        maxHp = hpArray[level];
-      }
-      let move;
-      if (enemy.boss) {
-        move = enemy.move[level];
-      } else {
-        const moveArray = this.state.elite ? enemy.eliteMove : enemy.normalMove;
-        move = moveArray[level];
-      }
-      let attack;
-      if (enemy.boss) {
-        attack = enemy.attack[level](A);
-      } else {
-        const attackArray = this.state.elite ? enemy.eliteAttack : enemy.normalAttack;
-        attack = attackArray[level];
-      }
-      let modifiers = "";
-      if (!enemy.boss) {
-        const modifiersArray = this.state.elite ? enemy.eliteModifiers : enemy.normalModifiers;
-        modifiers = modifiersArray[level];
-      }
-      let immunities = "";
-      let special1 = "";
-      let special2 = "";
-      if (enemy.boss) {
-        immunities = enemy.immunities.join(", ");
-        special1 = enemy.special1[level](A);
-        special2 = enemy.special2[level](A);
-      }
-      const enemyObj = {
-        id: this.props.game.getId(),
-        type: this.state.type,
-        name: enemy.name,
-        nbr: this.state.nbr,
-        elite: this.state.elite,
-        boss: !!enemy.boss,
-        hp: maxHp,
-        maxHp,
-        move,
-        attack,
-        modifiers,
-        immunities,
-        special1,
-        special2,
-        hasTurnEnded: false,
-        status: {
-          poisoned: false,
-          wound: false,
-          confusion: false,
-          immobilisation: false,
-          stunned: false,
-          disarmed: false,
-          renforced: false
-        }
-      };
-      this.props.game.addEnemy(enemyObj);
+      this.props.game.addEnemy(this.state.type, this.state.nbr, this.state.elite);
       this.props.game.popScreen();
     }
     isBoss() {
@@ -7443,18 +7460,12 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     </Layout>`;
     static components = { Layout };
     save() {
-      const state = JSON.stringify(this.props.game);
-      localStorage.setItem("game_state", state);
+      this.props.game.save();
       this.props.game.popScreen();
       alert("Game saved!");
     }
     restore() {
-      const dataStr = localStorage.getItem("game_state");
-      if (!dataStr) {
-        return;
-      }
-      const data = JSON.parse(dataStr);
-      Object.assign(this.props.game, data);
+      this.props.game.restore();
       this.props.game.popScreen();
     }
   };
@@ -8105,6 +8116,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
           </t>
           <div t-else="" class="text-gray" style="padding:24px;">
             Prepare your team of heroes, then start a game!
+            <t t-if="canRestore()">(or <span t-on-click="restore">restore from local storage</span>)</t>
           </div>
         </Layout>
       `;
@@ -8115,6 +8127,13 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     };
     canStartGame() {
       return this.props.game.heroes.length;
+    }
+    canRestore() {
+      const value = localStorage.getItem("game_state");
+      return !!value;
+    }
+    restore() {
+      this.props.game.restore();
     }
     start() {
       this.props.game.round = 1;

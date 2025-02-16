@@ -37,6 +37,20 @@ export class GameState {
   screens = ["START"];
   states = [null];
 
+  save() {
+    const state = JSON.stringify(this);
+    localStorage.setItem("game_state", state);
+  }
+
+  restore() {
+    const dataStr = localStorage.getItem("game_state");
+    if (!dataStr) {
+      return;
+    }
+    const data = JSON.parse(dataStr);
+    Object.assign(this, data);
+  }
+
   get screen() {
     return this.screens.at(-1);
   }
@@ -65,14 +79,86 @@ export class GameState {
     this.heroes.push(hero);
   }
 
-  addEnemy(enemy) {
-    enemy.id = this.nextId++;
-    this.enemies.push(enemy);
-    this.turnTracker[enemy.type] = false;
-    if (!this.monsterActions[enemy.type]) {
-      const deck = ENEMIES_MAP[enemy.type].actions.map((a) => a.id);
+  addEnemy(type, nbr, elite) {
+    const enemy = ENEMIES_MAP[type];
+    const level = this.scenarioLevel;
+    const A = this.heroes.length;
+    // hp computation
+    let maxHp;
+    if (enemy.boss) {
+      maxHp = enemy.hp[level](A);
+    } else {
+      const hpArray = elite ? enemy.eliteHp : enemy.normalHp;
+      maxHp = hpArray[level];
+    }
+    // move computation
+    let move;
+    if (enemy.boss) {
+      move = enemy.move[level];
+    } else {
+      const moveArray = elite ? enemy.eliteMove : enemy.normalMove;
+      move = moveArray[level];
+    }
+    // attack computation
+    let attack;
+    if (enemy.boss) {
+      attack = enemy.attack[level](A);
+    } else {
+      const attackArray = elite
+        ? enemy.eliteAttack
+        : enemy.normalAttack;
+      attack = attackArray[level];
+    }
+    // modifiers computation
+    let modifiers = "";
+    if (!enemy.boss) {
+      const modifiersArray = elite
+        ? enemy.eliteModifiers
+        : enemy.normalModifiers;
+      modifiers = modifiersArray[level];
+    }
+    // boss specific values
+    let immunities = "";
+    let special1 = "";
+    let special2 = "";
+    if (enemy.boss) {
+      immunities = enemy.immunities.join(", ");
+      special1 = enemy.special1[level](A);
+      special2 = enemy.special2[level](A);
+    }
+    const enemyObj = {
+      id: this.getId(),
+      type: type,
+      name: enemy.name,
+      nbr: nbr,
+      elite: elite,
+      boss: !!enemy.boss,
+      hp: maxHp,
+      maxHp,
+      move,
+      attack,
+      modifiers,
+      immunities,
+      special1,
+      special2,
+      hasTurnEnded: false,
+      status: {
+        poisoned: false,
+        wound: false,
+        confusion: false,
+        immobilisation: false,
+        stunned: false,
+        disarmed: false,
+        renforced: false,
+      },
+    };
+
+    this.enemies.push(enemyObj);
+    this.turnTracker[enemyObj.type] = false;
+    if (!this.monsterActions[enemyObj.type]) {
+      const deck = ENEMIES_MAP[enemyObj.type].actions.map((a) => a.id);
       shuffleArray(deck);
-      this.monsterActions[enemy.type] = {
+      this.monsterActions[enemyObj.type] = {
         deck,
         discardPile: [],
         active: false,

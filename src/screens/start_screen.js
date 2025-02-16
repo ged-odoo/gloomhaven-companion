@@ -32,6 +32,7 @@ export class StartScreen extends Component {
           </t>
           <div t-else="" class="text-gray" style="padding:24px;">
             Prepare your team of heroes, then start a game!
+            <t t-if="canRestore()">(or <span t-on-click="restore">restore from local storage</span>)</t>
           </div>
         </Layout>
       `;
@@ -43,6 +44,14 @@ export class StartScreen extends Component {
 
   canStartGame() {
     return this.props.game.heroes.length;
+  }
+
+  canRestore() {
+    const value = localStorage.getItem('game_state');
+    return !!value;
+  }
+  restore() {
+    this.props.game.restore();
   }
 
   start() {

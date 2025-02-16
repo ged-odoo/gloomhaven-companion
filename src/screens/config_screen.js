@@ -51,19 +51,13 @@ export class ConfigScreen extends Component {
   static components = { Layout };
 
   save() {
-    const state = JSON.stringify(this.props.game);
-    localStorage.setItem("game_state", state);
+    this.props.game.save();
     this.props.game.popScreen();
     alert("Game saved!");
   }
 
   restore() {
-    const dataStr = localStorage.getItem("game_state");
-    if (!dataStr) {
-      return;
-    }
-    const data = JSON.parse(dataStr);
-    Object.assign(this.props.game, data);
+    this.props.game.restore();
     this.props.game.popScreen();
   }
 }
