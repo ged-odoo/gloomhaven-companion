@@ -71,6 +71,7 @@ class EnemyAttackModifiers extends Component {
     for (let i = 0; i < n; i++) {
       this.mods.discardPile.unshift(this.mods.deck.pop());
     }
+    this.props.game.isDirty = true;
   }
 
   currentModifiers() {
@@ -97,7 +98,6 @@ class EnemyAttackModifiers extends Component {
       }
       return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
     });
-    console.log(cards);
     return cards;
   }
 }
@@ -178,6 +178,7 @@ class BattleGoalTracker extends Component {
     const heroId = this.state.hero.id;
     this.props.game.battleGoals[heroId] = this.goals[goalIndex];
     this.state.hero = false;
+    this.props.game.isDirty = true;
   }
 
   close() {
@@ -300,6 +301,7 @@ class ElementTracker extends Component {
     if (this.game[elem] < 0) {
       this.game[elem] = 2;
     }
+    this.game.isDirty = true;
   }
 }
 
@@ -402,6 +404,7 @@ class EnemyCard extends Component {
         this.props.game.enemies.splice(index, 1);
       }
     }
+    this.isDirty = true;
   }
 }
 
@@ -462,6 +465,7 @@ class EnemyActions extends Component {
     monsterAction.active = true;
     const actionObj = this.activeAction(type);
     monsterAction.initiative = actionObj.initiative;
+    this.props.game.isDirty = true;
   }
 
   activeAction(type) {
@@ -482,7 +486,7 @@ export class MainScreen extends Component {
     <t t-set="ui" t-value="props.ui"/>
     <Layout>
       <t t-set-slot="navbar">
-        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
+        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/> <t t-if="game.isDirty">(*)</t></t></span>
         <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
       </t>
       <ControlPanel>

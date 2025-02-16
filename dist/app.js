@@ -2060,11 +2060,13 @@
       enemyActions: true,
       attackModifiers: true
     };
+    isDirty = false;
     screens = ["START"];
     states = [null];
     save() {
       const state = JSON.stringify(this);
       localStorage.setItem("game_state", state);
+      this.isDirty = false;
     }
     restore() {
       const dataStr = localStorage.getItem("game_state");
@@ -2073,6 +2075,7 @@
       }
       const data = JSON.parse(dataStr);
       Object.assign(this, data);
+      this.isDirty = false;
     }
     get screen() {
       return this.screens.at(-1);
@@ -2095,6 +2098,7 @@
     addHero(hero) {
       hero.id = this.nextId++;
       this.heroes.push(hero);
+      this.isDirty = true;
     }
     addEnemy(type, nbr, elite) {
       const enemy = ENEMIES_MAP[type];
@@ -2172,6 +2176,7 @@
           initiative: false
         };
       }
+      this.isDirty = true;
     }
     getId() {
       return this.nextId++;
@@ -2201,6 +2206,7 @@
       }
       this.activeEntity = entity;
       this.turnTracker[entity] = true;
+      this.isDirty = true;
     }
     endTurn(entity) {
       if (typeof entity === "number") {
@@ -2214,6 +2220,7 @@
           enemy.hasTurnEnded = true;
         }
       }
+      this.isDirty = true;
     }
     clearStatus(status) {
       status.confusion = Math.max(0, status.confusion - 1);
@@ -2221,6 +2228,7 @@
       status.stunned = Math.max(0, status.stunned - 1);
       status.disarmed = Math.max(0, status.disarmed - 1);
       status.renforced = Math.max(0, status.renforced - 1);
+      this.isDirty = true;
     }
     incrementRound() {
       if (this.activeEntity) {
@@ -2277,6 +2285,7 @@
         this.enemyModifiers.deck.push(`curse${-this.nextId++}`);
         shuffleArray(this.enemyModifiers.deck);
       }
+      this.isDirty = true;
     }
     addBlessing() {
       const blessings = this.enemyModifiers.deck.filter((id) => {
@@ -2286,6 +2295,7 @@
         this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
         shuffleArray(this.enemyModifiers.deck);
       }
+      this.isDirty = true;
     }
   };
 
@@ -7677,6 +7687,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       for (let i = 0; i < n; i++) {
         this.mods.discardPile.unshift(this.mods.deck.pop());
       }
+      this.props.game.isDirty = true;
     }
     currentModifiers() {
       const n = this.mods.visible;
@@ -7702,7 +7713,6 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         }
         return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
       });
-      console.log(cards);
       return cards;
     }
   };
@@ -7771,6 +7781,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       const heroId = this.state.hero.id;
       this.props.game.battleGoals[heroId] = this.goals[goalIndex];
       this.state.hero = false;
+      this.props.game.isDirty = true;
     }
     close() {
       this.props.game.config.battleGoals = false;
@@ -7875,6 +7886,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       if (this.game[elem] < 0) {
         this.game[elem] = 2;
       }
+      this.game.isDirty = true;
     }
   };
   var EnemyCard = class extends Component {
@@ -7968,6 +7980,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
           this.props.game.enemies.splice(index, 1);
         }
       }
+      this.isDirty = true;
     }
   };
   var EnemyActions = class extends Component {
@@ -8024,6 +8037,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       monsterAction.active = true;
       const actionObj = this.activeAction(type);
       monsterAction.initiative = actionObj.initiative;
+      this.props.game.isDirty = true;
     }
     activeAction(type) {
       const actions = this.enemyActions(type);
@@ -8042,7 +8056,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     <t t-set="ui" t-value="props.ui"/>
     <Layout>
       <t t-set-slot="navbar">
-        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/></t></span>
+        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/> <t t-if="game.isDirty">(*)</t></t></span>
         <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
       </t>
       <ControlPanel>

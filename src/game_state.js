@@ -34,12 +34,15 @@ export class GameState {
     attackModifiers: true,
   };
 
+  isDirty = false;
+
   screens = ["START"];
   states = [null];
 
   save() {
     const state = JSON.stringify(this);
     localStorage.setItem("game_state", state);
+    this.isDirty = false;
   }
 
   restore() {
@@ -49,6 +52,7 @@ export class GameState {
     }
     const data = JSON.parse(dataStr);
     Object.assign(this, data);
+    this.isDirty = false;
   }
 
   get screen() {
@@ -77,6 +81,7 @@ export class GameState {
   addHero(hero) {
     hero.id = this.nextId++;
     this.heroes.push(hero);
+    this.isDirty = true;
   }
 
   addEnemy(type, nbr, elite) {
@@ -165,6 +170,7 @@ export class GameState {
         initiative: false,
       };
     }
+    this.isDirty = true;
   }
 
   getId() {
@@ -197,6 +203,7 @@ export class GameState {
     }
     this.activeEntity = entity;
     this.turnTracker[entity] = true;
+    this.isDirty = true;
   }
 
   endTurn(entity) {
@@ -213,6 +220,7 @@ export class GameState {
         enemy.hasTurnEnded = true;
       }
     }
+    this.isDirty = true;
   }
 
   clearStatus(status) {
@@ -221,6 +229,7 @@ export class GameState {
     status.stunned = Math.max(0, status.stunned - 1);
     status.disarmed = Math.max(0, status.disarmed - 1);
     status.renforced = Math.max(0, status.renforced - 1);
+    this.isDirty = true;
   }
 
   incrementRound() {
@@ -287,6 +296,7 @@ export class GameState {
       this.enemyModifiers.deck.push(`curse${-this.nextId++}`);
       shuffleArray(this.enemyModifiers.deck);
     }
+    this.isDirty = true;
   }
   addBlessing() {
     const blessings = this.enemyModifiers.deck.filter((id) => {
@@ -296,5 +306,6 @@ export class GameState {
       this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
       shuffleArray(this.enemyModifiers.deck);
     }
+    this.isDirty = true;
   }
 }
