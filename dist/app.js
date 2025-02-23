@@ -1,2304 +1,4 @@
 (() => {
-  // src/data.js
-  var CLASS_NAME = {
-    void_warden: "Gardienne du N\xE9ant",
-    red_guard: "Garde Rouge",
-    axe_thrower: "Lanceur de Haches",
-    artificer: "Artificier"
-  };
-  var MAX_HP_MAP = {
-    void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
-    red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
-    axe_thrower: [8, 9, 11, 12, 14, 15, 17, 18, 20],
-    artificer: [8, 9, 11, 12, 14, 15, 17, 18, 20]
-  };
-  var MAX_CARD_MAP = {
-    void_warden: 11,
-    red_guard: 10,
-    artificer: 9,
-    axe_thrower: 10
-  };
-  var BOSS_ACTIONS = [
-    {
-      id: 1,
-      name: "Puissance Acc\xE9l\xE9r\xE9e",
-      initiative: 11,
-      recycled: false,
-      effects: ["Sp\xE9cial 2"]
-    },
-    {
-      id: 2,
-      name: "Puissance Acc\xE9l\xE9r\xE9e",
-      initiative: 14,
-      recycled: false,
-      effects: ["Sp\xE9cial 2"]
-    },
-    {
-      id: 3,
-      name: "Puissance Acc\xE9l\xE9r\xE9e",
-      initiative: 17,
-      recycled: true,
-      effects: ["Sp\xE9cial 2"]
-    },
-    {
-      id: 4,
-      name: "Force Durable",
-      initiative: 85,
-      recycled: true,
-      effects: ["Sp\xE9cial 1"]
-    },
-    {
-      id: 5,
-      name: "Force Durable",
-      initiative: 79,
-      recycled: false,
-      effects: ["Sp\xE9cial 1"]
-    },
-    {
-      id: 6,
-      name: "Force Durable",
-      initiative: 73,
-      recycled: false,
-      effects: ["Sp\xE9cial 1"]
-    },
-    {
-      id: 7,
-      name: "Rien de Particulier",
-      initiative: 36,
-      recycled: false,
-      effects: ["D\xE9placement +0", "Attaque +0"]
-    },
-    {
-      id: 8,
-      name: "Projectiles Jumeaux",
-      initiative: 54,
-      recycled: false,
-      effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3, cible 2"]
-    }
-  ];
-  var ENEMIES = [
-    // MARK: reanimated corpse
-    {
-      id: "reanimated_corpse",
-      name: "Cadavre R\xE9anim\xE9",
-      normalHp: [5, 7, 9, 10, 11, 13, 14, 16],
-      eliteHp: [10, 11, 14, 14, 16, 18, 23, 29],
-      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-      eliteMove: [1, 1, 1, 2, 2, 2, 2, 2],
-      normalAttack: [3, 3, 3, 4, 4, 4, 4, 5],
-      eliteAttack: [3, 4, 4, 5, 5, 6, 6, 6],
-      normalModifiers: [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      eliteModifiers: [
-        "",
-        "",
-        "",
-        "",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "Empoisonnement"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "\xC9treinte Putride",
-          initiative: 21,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Confusion, immobilisation (cible un adversaire adjacent)",
-            "[terre]: la cible subit aussi 2 d\xE9gats"
-          ]
-        },
-        {
-          id: 2,
-          name: "Claque Violente",
-          initiative: 32,
-          recycled: false,
-          effects: [
-            "Attaque +2, pouss\xE9e 1",
-            "Si cette attaque est effectu\xE9e, le Cadavre R\xE9anim\xE9 subit 1 d\xE9gat"
-          ]
-        },
-        {
-          id: 3,
-          name: "Assaut Pr\xE9cipit\xE9",
-          initiative: 47,
-          recycled: false,
-          effects: ["D\xE9placement +1", "Attaque -1"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 68,
-          recycled: true,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 5,
-          name: "Rien de Particulier",
-          initiative: 68,
-          recycled: true,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 6,
-          name: "\xC9mission de Gaz",
-          initiative: 71,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +1",
-            "Empoisonnement (cible tous les adversaires adjacents)",
-            "Infuse: Terre"
-          ]
-        },
-        {
-          id: 7,
-          name: "Coup Calcul\xE9",
-          initiative: 81,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 8,
-          name: "Charge T\xE9m\xE9raire",
-          initiative: 91,
-          recycled: false,
-          effects: [
-            "D\xE9placement +2",
-            "Si ce d\xE9placement est effectu\xE9, le cadavre subit 1 d\xE9gat"
-          ]
-        }
-      ]
-    },
-    // MARK: chaos demon
-    {
-      id: "chaos_demon",
-      name: "D\xE9mon du Chaos",
-      normalHp: [7, 8, 11, 12, 15, 16, 20, 22],
-      eliteHp: [10, 12, 14, 18, 21, 26, 30, 35],
-      normalMove: [3, 3, 3, 3, 4, 4, 4, 4],
-      eliteMove: [4, 4, 4, 5, 5, 5, 5, 5],
-      normalAttack: [2, 3, 3, 4, 4, 5, 5, 6],
-      eliteAttack: [3, 4, 5, 5, 6, 6, 7, 8],
-      normalModifiers: [
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion"
-      ],
-      eliteModifiers: [
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Souffle Glacial",
-          initiative: 13,
-          recycled: false,
-          effects: [
-            "D\xE9placement -1",
-            "Attaque +0, cible 2 hex voisins adjacents",
-            "[Glace]: chaque fois qu'un personnage attaque le d\xE9mon, le personnage subit 2 d\xE9gats"
-          ]
-        },
-        {
-          id: 2,
-          name: "D\xE9flagration de Chaleur",
-          initiative: 1,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3", "[Feu]: blessure"]
-        },
-        {
-          id: 3,
-          name: "Coup Sismique",
-          initiative: 67,
-          recycled: false,
-          effects: [
-            "D\xE9placement -2",
-            "Attaque +1, pouss\xE9e 2",
-            "[Terre]: cible 2 hex adjacents voisins"
-          ]
-        },
-        {
-          id: 4,
-          name: "Tourbillon",
-          initiative: 20,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 2, cible 3 hex adjacents voisins",
-            "[Air]: bouclier 2"
-          ]
-        },
-        {
-          id: 5,
-          name: "Griffes Soudaines",
-          initiative: 41,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +0, avantage",
-            "[Lumi\xE8re]: soin 4 sur lui-m\xEAme"
-          ]
-        },
-        {
-          id: 6,
-          name: "Vrilles Noires",
-          initiative: 52,
-          recycled: false,
-          effects: [
-            "D\xE9placement -1",
-            "Attaque +1",
-            "[Obscurit\xE9]: tous les adversaires adjacents \xE0 la cible subissent 1 d\xE9gat"
-          ]
-        },
-        {
-          id: 7,
-          name: "Explosion de Mana",
-          initiative: 76,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +0",
-            "Infuse Feu, Glace, Air, Terre, Lumi\xE8re, Obscurit\xE9"
-          ]
-        },
-        {
-          id: 8,
-          name: "Gueule Affam\xE9e",
-          initiative: 98,
-          recycled: true,
-          effects: ["Attaque -1", "[n'importe quel \xE9l\xE9ment]: d\xE9sarmement"]
-        }
-      ]
-    },
-    // MARK: blood demon
-    {
-      id: "blood_demon",
-      name: "Diablotin de Sang",
-      normalHp: [3, 4, 5, 5, 7, 8, 9, 12],
-      eliteHp: [4, 6, 7, 10, 11, 13, 17, 21],
-      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
-      eliteAttack: [2, 2, 2, 2, 3, 3, 4, 4],
-      normalModifiers: [
-        "",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion"
-      ],
-      eliteModifiers: [
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion",
-        "confusion"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Hors Phase",
-          initiative: 5,
-          recycled: false,
-          effects: ["Bouclier 5", "Soin 1 sur lui m\xEAme", "Infuse 1 \xE9l\xE9ment"]
-        },
-        {
-          id: 2,
-          name: "Faire Pencher la Balance",
-          initiative: 24,
-          recycled: false,
-          effects: [
-            "Renforcement, cible tous les alli\xE9s \xE0 port\xE9e 2 et lui-m\xEAme",
-            "Confusion, cible tous les adversaires \xE0 port\xE9e 2"
-          ]
-        },
-        {
-          id: 3,
-          name: "Rien de Particulier",
-          initiative: 37,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 37,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 5,
-          name: "R\xE9cup\xE9ration",
-          initiative: 42,
-          recycled: true,
-          effects: ["D\xE9placement +1", "Soin 2, port\xE9e 3"]
-        },
-        {
-          id: 6,
-          name: "Estropier",
-          initiative: 42,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 3, cible 2, empoisonnement"
-          ]
-        },
-        {
-          id: 7,
-          name: "Sombre Charme",
-          initiative: 42,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 3, cible 2, mal\xE9diction"
-          ]
-        },
-        {
-          id: 8,
-          name: "Coup Calcul\xE9",
-          initiative: 76,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
-        }
-      ]
-    },
-    // MARK: black imp
-    {
-      id: "black_imp",
-      name: "Diablotin Noir",
-      normalHp: [3, 4, 5, 5, 7, 9, 10, 13],
-      eliteHp: [4, 6, 8, 8, 11, 14, 15, 19],
-      normalMove: [1, 1, 1, 1, 1, 1, 1, 1],
-      eliteMove: [1, 1, 1, 1, 1, 1, 1, 1],
-      normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
-      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-      normalModifiers: [
-        "",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      eliteModifiers: [
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement, attaquants gagnent d\xE9savantage",
-        "empoisonnement, attaquants gagnent d\xE9savantage",
-        "empoisonnement, attaquants gagnent d\xE9savantage",
-        "empoisonnement, attaquants gagnent d\xE9savantage",
-        "empoisonnement, attaquants gagnent d\xE9savantage"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Hors Phase",
-          initiative: 5,
-          recycled: false,
-          effects: ["Bouclier 5", "Soin 1 sur lui m\xEAme", "Infuse 1 \xE9l\xE9ment"]
-        },
-        {
-          id: 2,
-          name: "Faire Pencher la Balance",
-          initiative: 24,
-          recycled: false,
-          effects: [
-            "Renforcement, cible tous les alli\xE9s \xE0 port\xE9e 2 et lui-m\xEAme",
-            "Confusion, cible tous les adversaires \xE0 port\xE9e 2"
-          ]
-        },
-        {
-          id: 3,
-          name: "Rien de Particulier",
-          initiative: 37,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 37,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 5,
-          name: "R\xE9cup\xE9ration",
-          initiative: 42,
-          recycled: true,
-          effects: ["D\xE9placement +1", "Soin 2, port\xE9e 3"]
-        },
-        {
-          id: 6,
-          name: "Estropier",
-          initiative: 42,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 3, cible 2, empoisonnement"
-          ]
-        },
-        {
-          id: 7,
-          name: "Sombre Charme",
-          initiative: 42,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 3, cible 2, mal\xE9diction"
-          ]
-        },
-        {
-          id: 8,
-          name: "Coup Calcul\xE9",
-          initiative: 76,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
-        }
-      ]
-    },
-    // MARK: vermling scout
-    {
-      id: "vermling_scout",
-      name: "\xC9claireur Vermling",
-      normalHp: [2, 3, 3, 5, 6, 8, 10, 13],
-      eliteHp: [4, 5, 5, 7, 8, 11, 13, 17],
-      normalMove: [3, 3, 3, 3, 3, 3, 4, 4],
-      eliteMove: [3, 3, 4, 4, 4, 4, 5, 5],
-      normalAttack: [1, 1, 2, 2, 3, 3, 3, 3],
-      eliteAttack: [2, 2, 3, 3, 4, 4, 4, 4],
-      normalModifiers: ["", "", "", "", "", "", "", ""],
-      eliteModifiers: ["", "", "", "", "", "", "", ""],
-      actions: [
-        {
-          id: 1,
-          name: "Arc Court",
-          initiative: 29,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3"]
-        },
-        {
-          id: 2,
-          name: "Assaut Pr\xE9cipit\xE9",
-          initiative: 40,
-          recycled: false,
-          effects: ["D\xE9placement +1", "Attaque -1"]
-        },
-        {
-          id: 3,
-          name: "Rien de Particulier",
-          initiative: 53,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 4,
-          name: "Fl\xE8che Rance",
-          initiative: 53,
-          recycled: false,
-          effects: ["D\xE9placement -2", "Attaque +0, port\xE9e 3, empoisonnement"]
-        },
-        {
-          id: 5,
-          name: "Coup Calcul\xE9",
-          initiative: 69,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 6,
-          name: "Lame D\xE9l\xE9t\xE8re",
-          initiative: 92,
-          recycled: true,
-          effects: ["Attaque +2, empoisonnement"]
-        },
-        {
-          id: 7,
-          name: "Carreaux Rapides",
-          initiative: 78,
-          recycled: false,
-          effects: ["Attaque -1, port\xE9e 4, cible 2"]
-        },
-        {
-          id: 8,
-          name: "Avidit\xE9",
-          initiative: 40,
-          recycled: true,
-          effects: ["D\xE9placement +1, saut", "Pillage 1"]
-        }
-      ]
-    },
-    // MARK: reanimated spirit
-    {
-      id: "reanimated_spirit",
-      name: "Esprit R\xE9anim\xE9",
-      normalHp: [3, 4, 5, 6, 6, 8, 9, 12],
-      eliteHp: [5, 5, 7, 8, 8, 11, 13, 17],
-      normalMove: [2, 2, 3, 3, 3, 3, 3, 3],
-      eliteMove: [3, 3, 4, 4, 4, 4, 4, 4],
-      normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-      eliteAttack: [3, 3, 3, 4, 4, 4, 5, 5],
-      normalModifiers: [
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 2"
-      ],
-      eliteModifiers: [
-        "Bouclier 1",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 3",
-        "Bouclier 3",
-        "Bouclier 3",
-        "Bouclier 3"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Saper l'\xC9nergie",
-          initiative: 22,
-          recycled: true,
-          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 4, confusion"]
-        },
-        {
-          id: 2,
-          name: "Cri Retentissant",
-          initiative: 33,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, cible tous les adversaires \xE0 port\xE9e 2"
-          ]
-        },
-        {
-          id: 3,
-          name: "Rien de Particulier",
-          initiative: 48,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 48,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
-        },
-        {
-          id: 5,
-          name: "Chaine Coupl\xE9e",
-          initiative: 61,
-          recycled: false,
-          effects: ["Attaque +0, port\xE9e 3, cible 2"]
-        },
-        {
-          id: 6,
-          name: "Aspirer la Chaleur",
-          initiative: 75,
-          recycled: false,
-          effects: [
-            "D\xE9placement -1",
-            "Attaque +1, port\xE9e 3",
-            "Soin 1 sur lui-m\xEAme",
-            "Infuse Glace"
-          ]
-        },
-        {
-          id: 7,
-          name: "Hurlement de Col\xE8re",
-          initiative: 55,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Mal\xE9diction, cible tous les adversaires \xE0 port\xE9e 3",
-            "Infuse Glace"
-          ]
-        },
-        {
-          id: 8,
-          name: "Regard Glacial",
-          initiative: 67,
-          recycled: false,
-          effects: [
-            "D\xE9placement -1",
-            "Attaque +1, port\xE9e 3",
-            "[Glace]: d\xE9sarmement"
-          ]
-        }
-      ]
-    },
-    // MARK: stone golem
-    {
-      id: "stone_golem",
-      name: "Golem de Pierre",
-      normalHp: [10, 10, 11, 11, 12, 13, 16, 16],
-      eliteHp: [10, 11, 13, 14, 16, 18, 20, 21],
-      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-      eliteMove: [2, 2, 2, 2, 2, 3, 3, 3],
-      normalAttack: [3, 3, 4, 4, 4, 5, 5, 5],
-      eliteAttack: [4, 4, 5, 5, 6, 6, 7, 7],
-      normalModifiers: [
-        "",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 3"
-      ],
-      eliteModifiers: [
-        "Bouclier 1",
-        "Bouclier 2",
-        "Bouclier 2",
-        "Bouclier 3",
-        "Bouclier 3",
-        "Bouclier 3",
-        "Bouclier 3",
-        "Bouclier 4"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Progression \xC9prouvante",
-          initiative: 28,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque +0",
-            "Si la capacit\xE9 de d\xE9placement a \xE9t\xE9 effectu\xE9e, le golem subit 1 d\xE9gat"
-          ]
-        },
-        {
-          id: 2,
-          name: "Assaut Pr\xE9cipit\xE9",
-          initiative: 51,
-          recycled: true,
-          effects: ["D\xE9placement +1", "Attaque -1"]
-        },
-        {
-          id: 3,
-          name: "Marteler le Sol",
-          initiative: 83,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, cible tous les adversaires adjacents"
-          ]
-        },
-        {
-          id: 4,
-          name: "Coup Calcul\xE9",
-          initiative: 90,
-          recycled: true,
-          effects: ["D\xE9placement -1", "Attack +1"]
-        },
-        {
-          id: 5,
-          name: "R\xE9action Runique",
-          initiative: 10,
-          recycled: false,
-          effects: [
-            "Chaque fois qu'un personnage attaque le golem, le personnage subit 3 d\xE9gats"
-          ]
-        },
-        {
-          id: 6,
-          name: "Attraction Runique",
-          initiative: 28,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque -2, port\xE9e 3, traction 2, immobilisation"
-          ]
-        },
-        {
-          id: 7,
-          name: "Rien de Particulier",
-          initiative: 64,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 8,
-          name: "Lancer Sacrificiel",
-          initiative: 72,
-          recycled: false,
-          effects: [
-            "Attaque +1, port\xE9e 3. Si cette attaque est effectu\xE9e, le golem subit 2 d\xE9gats"
-          ]
-        }
-      ]
-    },
-    // MARK: monstruosité de sang
-    {
-      id: "blood_monster",
-      name: "Monstruosit\xE9 de Sang",
-      normalHp: [7, 9, 10, 12, 12, 13, 17, 20],
-      eliteHp: [12, 12, 15, 18, 18, 20, 23, 23],
-      normalMove: [2, 2, 2, 3, 3, 3, 3, 3],
-      eliteMove: [2, 2, 2, 3, 3, 3, 3, 3],
-      normalAttack: [2, 2, 3, 3, 3, 4, 4, 5],
-      eliteAttack: [3, 3, 4, 4, 4, 5, 6, 6],
-      normalModifiers: [
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 1"
-      ],
-      eliteModifiers: [
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 1",
-        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 2",
-        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 2",
-        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 2",
-        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 3"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Bulles Explosives",
-          initiative: 9,
-          recycled: true,
-          effects: [
-            "D\xE9placement +1",
-            "Chaque fois qu'un personnage attaque la monstruosit\xE9, le personnage subit 2 d\xE9gats"
-          ]
-        },
-        {
-          id: 2,
-          name: "Nu\xE9e",
-          initiative: 21,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque -1",
-            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
-          ]
-        },
-        {
-          id: 3,
-          name: "Nu\xE9e",
-          initiative: 21,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque -1",
-            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
-          ]
-        },
-        {
-          id: 4,
-          name: "Morsure Affaiblissante",
-          initiative: 34,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, confusion"]
-        },
-        {
-          id: 5,
-          name: "Rien de Particulier",
-          initiative: 39,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 6,
-          name: "\xC9gratignure Incertaine",
-          initiative: 52,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +1",
-            "Si l'attaque est effectu\xE9e, la monstruosit\xE9 subit 1 d\xE9gat"
-          ]
-        },
-        {
-          id: 7,
-          name: "Coup Calcul\xE9",
-          initiative: 60,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 8,
-          name: "Fr\xE9n\xE9sie Incertaine",
-          initiative: 74,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "la Monstruosit\xE9 subit 1 d\xE9gat",
-            "Attaque +1, cible tous les adversaires adjacents"
-          ]
-        }
-      ]
-    },
-    // MARK: monstruosité ratine
-    {
-      id: "rat_monster",
-      name: "Monstruosit\xE9 ratine",
-      normalHp: [4, 4, 5, 6, 8, 10, 12, 12],
-      eliteHp: [6, 7, 8, 10, 12, 13, 14, 16],
-      normalMove: [1, 1, 2, 2, 2, 3, 3, 3],
-      eliteMove: [1, 1, 1, 2, 2, 2, 3, 3],
-      normalAttack: [1, 2, 2, 3, 3, 3, 3, 4],
-      eliteAttack: [2, 2, 3, 3, 3, 4, 4, 5],
-      normalModifiers: [
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats"
-      ],
-      eliteModifiers: [
-        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
-        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, avantage"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Bulles explosives",
-          initiative: 9,
-          recycled: true,
-          effects: [
-            "D\xE9placement +1",
-            "Chaque fois qu'un h\xE9ro attaque la monstruosit\xE9, le h\xE9ro subit 2 d\xE9gats"
-          ]
-        },
-        {
-          id: 2,
-          name: "Nu\xE9e",
-          initiative: 21,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque -1",
-            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
-          ]
-        },
-        {
-          id: 3,
-          name: "Nu\xE9e",
-          initiative: 21,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1",
-            "Attaque -1",
-            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
-          ]
-        },
-        {
-          id: 4,
-          name: "Morsure affaiblissante",
-          initiative: 34,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, confusion"]
-        },
-        {
-          id: 5,
-          name: "Rien de Particulier",
-          initiative: 39,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 6,
-          name: "\xC9gratignure incertaine",
-          initiative: 52,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +1",
-            "Si l'attaque est effectu\xE9e, la monstruosit\xE9 subit 1 d\xE9gat"
-          ]
-        },
-        {
-          id: 7,
-          name: "Coup Calcul\xE9",
-          initiative: 60,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 8,
-          name: "Fr\xE9n\xE9sie incertaine",
-          initiative: 74,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "la monstruosit\xE9 subit 1 d\xE9gat",
-            "Attaque +1, cible tous les adversaires adjacents"
-          ]
-        }
-      ]
-    },
-    // MARK: base vermling bandit
-    {
-      id: "base_vermling_bandit",
-      name: "Pillard Vermling de Base",
-      normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
-      eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
-      normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
-      eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
-      normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
-      eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
-      normalModifiers: ["", "", "", "", "", "", "", ""],
-      eliteModifiers: ["", "", "", "", "", "", "", ""],
-      actions: [
-        {
-          id: 1,
-          name: "Hurlements",
-          initiative: 85,
-          recycled: true,
-          effects: [
-            "Pouss\xE9e 1, ciblez tous les adversaires adjacents",
-            "Attaque +1, port\xE9e 2"
-          ]
-        },
-        {
-          id: 2,
-          name: "Lancer Pr\xE9cis",
-          initiative: 36,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque -1, port\xE9e 2"]
-        },
-        {
-          id: 3,
-          name: "Double Dagues",
-          initiative: 59,
-          recycled: false,
-          effects: ["Attaque +0, port\xE9e 2, cible 2"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 50,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        }
-      ]
-    },
-    // MARK: vermling bandit
-    {
-      id: "vermling_bandit",
-      name: "Pillard Vermling",
-      normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
-      eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
-      normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
-      eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
-      normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
-      eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
-      normalModifiers: ["", "", "", "", "", "", "", ""],
-      eliteModifiers: ["", "", "", "", "", "", "", ""],
-      actions: [
-        {
-          id: 1,
-          name: "Fosse \xE0 Pointes",
-          initiative: 20,
-          recycled: false,
-          effects: [
-            "Attaque +0, port\xE9e 4",
-            "Cr\xE9ez un pi\xE8ge \xE0 3 d\xE9gats sur l'hexaxone vide adjacent le plus proche d'un adversaire"
-          ]
-        },
-        {
-          id: 2,
-          name: "Panser les Blessures",
-          initiative: 30,
-          recycled: true,
-          effects: ["D\xE9placement +1", "Soin 3 sur lui-m\xEAme"]
-        },
-        {
-          id: 3,
-          name: "Lancer Pr\xE9cis",
-          initiative: 36,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque -1, port\xE9e 4"]
-        },
-        {
-          id: 4,
-          name: "Rien de Particulier",
-          initiative: 50,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 5,
-          name: "Doubles Dagues",
-          initiative: 59,
-          recycled: false,
-          effects: ["Attaque +0, port\xE9e 3, cible 2"]
-        },
-        {
-          id: 6,
-          name: "Parade",
-          initiative: 70,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque -1, d\xE9sarmement"]
-        },
-        {
-          id: 7,
-          name: "M\xE9chant \xC9pieu",
-          initiative: 77,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +0, port\xE9e 3, blessure"]
-        },
-        {
-          id: 8,
-          name: "Hurlements Repoussants",
-          initiative: 85,
-          recycled: true,
-          effects: [
-            "Pouss\xE9e 1, ciblez tous les adversaires adjacents",
-            "Attaque +1, port\xE9e 2"
-          ]
-        }
-      ]
-    },
-    // MARK: black vase
-    {
-      id: "black_vase",
-      name: "Vase Noire",
-      normalHp: [4, 5, 7, 8, 9, 10, 12, 16],
-      eliteHp: [8, 9, 11, 11, 13, 15, 16, 18],
-      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
-      eliteMove: [1, 1, 1, 2, 2, 3, 3, 3],
-      normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-      eliteAttack: [2, 2, 3, 3, 4, 4, 4, 5],
-      normalModifiers: [
-        "",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1, empoisonnement",
-        "Bouclier 1, empoisonnement"
-      ],
-      eliteModifiers: [
-        "",
-        "Bouclier 1",
-        "Bouclier 1",
-        "Bouclier 1, empoisonnement",
-        "Bouclier 1, empoisonnement",
-        "Bouclier 1, empoisonnement",
-        "Bouclier 2, empoisonnement",
-        "Bouclier 2, empoisonnement"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Assaut Pr\xE9cipit\xE9",
-          initiative: 36,
-          recycled: false,
-          effects: ["D\xE9placement +1", "Attaque -1, port\xE9e 3"]
-        },
-        {
-          id: 2,
-          name: "Rien de Particulier",
-          initiative: 57,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 2"]
-        },
-        {
-          id: 3,
-          name: "Explosion Toxique",
-          initiative: 57,
-          recycled: false,
-          effects: [
-            "Attaque +0, port\xE9e 2, cible 2, empoisonnement",
-            "[Terre]: +1 cible"
-          ]
-        },
-        {
-          id: 4,
-          name: "Coup Calcul\xE9",
-          initiative: 66,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
-        },
-        {
-          id: 5,
-          name: "Repas",
-          initiative: 66,
-          recycled: false,
-          effects: [
-            "D\xE9placement +0",
-            "Pillage 1",
-            "Soin 2 sur elle-m\xEAme",
-            "[Obscurit\xE9]: +1 soin"
-          ]
-        },
-        {
-          id: 6,
-          name: "Sceau Plasmique",
-          initiative: 85,
-          recycled: false,
-          effects: [
-            "Pouss\xE9e 1, empoisonnement, cible tous les adversaires adjacents",
-            "Attaque +1, port\xE9e 2"
-          ]
-        },
-        {
-          id: 7,
-          name: "Noire Damnation",
-          initiative: 85,
-          recycled: true,
-          effects: [
-            "L'adversaire en ligne de vue le plus proche, sans consid\xE9ration de port\xE9e, subit 1+NS/2 d\xE9gats (arrondis au sup\xE9rieur)",
-            "Soin 1 sur elle-m\xEAme",
-            "Infuse Obscurit\xE9"
-          ]
-        },
-        {
-          id: 8,
-          name: "Damnation Infectieuse",
-          initiative: 85,
-          recycled: true,
-          effects: [
-            "L'adversaire en ligne de vue le plus proche, sans consid\xE9ration de port\xE9e, subit 1+NS/2 d\xE9gats (arrondis au sup\xE9rieur)",
-            "Soin 1 sur elle-m\xEAme",
-            "Infuse Terre"
-          ]
-        }
-      ]
-    },
-    // MARK: base giant viper
-    {
-      id: "base_giant_viper",
-      name: "Vip\xE8re G\xE9ante de Base",
-      normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
-      eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
-      normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
-      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
-      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-      normalModifiers: [
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      eliteModifiers: [
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Constriction",
-          initiative: 58,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1, immobilisation"]
-        },
-        {
-          id: 2,
-          name: "Crocs Rapides",
-          initiative: 33,
-          recycled: false,
-          effects: ["D\xE9placement +1, saut", "Attaque +0, cible 2"]
-        },
-        {
-          id: 3,
-          name: "\xC0 couvert",
-          initiative: 18,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1, saut",
-            "Attaque -1",
-            "Toutes les attaques ciblant la vip\xE8re gagnent d\xE9savantage ce round"
-          ]
-        },
-        {
-          id: 4,
-          name: "Fr\xE9n\xE9sie Toxique",
-          initiative: 43,
-          recycled: true,
-          effects: [
-            "D\xE9placement +1, saut",
-            "Attaque -1, cible tous les adversaires adjacents"
-          ]
-        }
-      ]
-    },
-    // MARK: giant viper
-    {
-      id: "giant_viper",
-      name: "Vip\xE8re G\xE9ante",
-      normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
-      eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
-      normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
-      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
-      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
-      normalModifiers: [
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      eliteModifiers: [
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement",
-        "empoisonnement"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Crocs Rapides",
-          initiative: 33,
-          recycled: false,
-          effects: ["D\xE9placement +1, saut", "Attaque +0, cible 2"]
-        },
-        {
-          id: 2,
-          name: "\xC0 couvert",
-          initiative: 18,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1, saut",
-            "Attaque -1",
-            "Toutes les attaques ciblant la vip\xE8re gagnent d\xE9savantage ce round"
-          ]
-        },
-        {
-          id: 3,
-          name: "Coup Calcul\xE9",
-          initiative: 58,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 4,
-          name: "Fr\xE9n\xE9sie Toxique",
-          initiative: 43,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1, saut",
-            "Attaque -1, cible tous les adversaires adjacents"
-          ]
-        },
-        {
-          id: 5,
-          name: "Cerner",
-          initiative: 32,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +0",
-            "Ajoute +2 attaque si la cible est adjacente \xE0 un alli\xE9 de la vip\xE8re"
-          ]
-        },
-        {
-          id: 6,
-          name: "Cerner",
-          initiative: 32,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque +0",
-            "Ajoute +2 attaque si la cible est adjacente \xE0 un alli\xE9 de la vip\xE8re"
-          ]
-        },
-        {
-          id: 7,
-          name: "Coup D\xE9fensif",
-          initiative: 11,
-          recycled: false,
-          effects: ["Bouclier 1", "Attaque +0"]
-        },
-        {
-          id: 8,
-          name: "Constriction",
-          initiative: 23,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque -1, immobilisation", "Attaque -1"]
-        }
-      ]
-    },
-    // MARK: base_zealot
-    {
-      id: "base_zealot",
-      name: "Z\xE9lote de Base",
-      normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
-      eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
-      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
-      eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
-      normalModifiers: [
-        "",
-        "",
-        "",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure"
-      ],
-      eliteModifiers: [
-        "",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Sang Bouillant",
-          initiative: 46,
-          recycled: false,
-          effects: ["Attaque +1, port\xE9e 2, confusion"]
-        },
-        {
-          id: 2,
-          name: "Fouet de Damnation",
-          initiative: 19,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque -1, mal\xE9diction"]
-        },
-        {
-          id: 3,
-          name: "Drain de Vie",
-          initiative: 27,
-          recycled: true,
-          effects: [
-            "Soin 1 sur lui-m\xEAme",
-            "D\xE9placement +1",
-            "Attaque -1, port\xE9e 2"
-          ]
-        },
-        {
-          id: 4,
-          name: "Fl\xE9au Infame",
-          initiative: 77,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque -1, empoisonnement"]
-        }
-      ]
-    },
-    // MARK: zealot
-    {
-      id: "zealot",
-      name: "Z\xE9lote",
-      normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
-      eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
-      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
-      normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
-      eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
-      normalModifiers: [
-        "",
-        "",
-        "",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure"
-      ],
-      eliteModifiers: [
-        "",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure",
-        "blessure"
-      ],
-      actions: [
-        {
-          id: 1,
-          name: "Fouet de Damnation",
-          initiative: 19,
-          recycled: false,
-          effects: [
-            "D\xE9placement +1, saut",
-            "Attaque -1, mal\xE9diction",
-            "infuse Air"
-          ]
-        },
-        {
-          id: 2,
-          name: "Drain de Vie",
-          initiative: 27,
-          recycled: true,
-          effects: [
-            "D\xE9placement +0",
-            "Attaque -1, port\xE9e 2",
-            "Soin X sur lui-m\xEAme (X=montant d\xE9gats attaque)",
-            "infuse Obscurit\xE9"
-          ]
-        },
-        {
-          id: 3,
-          name: "Assaut Pr\xE9cipit\xE9",
-          initiative: 35,
-          recycled: false,
-          effects: ["D\xE9placement +1", "Attaque -1"]
-        },
-        {
-          id: 4,
-          name: "Sang Bouillant",
-          initiative: 46,
-          recycled: false,
-          effects: [
-            "Attaque -1, port\xE9e 2, cible 2, confusion",
-            "[Feu]: +2 port\xE9e"
-          ]
-        },
-        {
-          id: 5,
-          name: "Rien de Particulier",
-          initiative: 50,
-          recycled: false,
-          effects: ["D\xE9placement +0", "Attaque +0"]
-        },
-        {
-          id: 6,
-          name: "Coup Calcul\xE9",
-          initiative: 65,
-          recycled: false,
-          effects: ["D\xE9placement -1", "Attaque +1"]
-        },
-        {
-          id: 7,
-          name: "Fl\xE9au Infame",
-          initiative: 77,
-          recycled: false,
-          effects: [
-            "D\xE9placement -1",
-            "Attaque -1, empoisonnement (cible 2 hexes adjacents voisins",
-            "[Air]: +1 attaque"
-          ]
-        },
-        {
-          id: 8,
-          name: "Flamme impie",
-          initiative: 82,
-          recycled: true,
-          effects: ["Attaque +1, port\xE9e 3", "Infuse Feu"]
-        }
-      ]
-    },
-    // MARK: horreur de sang
-    {
-      id: "blood_horror",
-      name: "Horreur de sang",
-      boss: true,
-      hp: [
-        (a) => 7 * a,
-        (a) => 10 * a,
-        (a) => 12 * a,
-        (a) => 15 * a,
-        (a) => 17 * a,
-        (a) => 20 * a,
-        (a) => 23 * a,
-        (a) => 28 * a
-      ],
-      move: [3, 3, 4, 4, 5, 5, 5, 5],
-      attack: [
-        (a) => a - 1,
-        (a) => a,
-        (a) => a,
-        (a) => a + 1,
-        (a) => a + 1,
-        (a) => a + 2,
-        (a) => a + 3,
-        (a) => a + 4
-      ],
-      immunities: [
-        "immobilisation",
-        "d\xE9sarmement",
-        "confusion",
-        "\xE9tourdissement"
-      ],
-      special1: [
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
-        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`
-      ],
-      special2: [
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
-        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`
-      ],
-      actions: BOSS_ACTIONS
-    },
-    // MARK: primat de l'ordre
-    {
-      id: "primat_de_ordre",
-      name: "Primat de l'Ordre",
-      boss: true,
-      hp: [
-        (a) => 10 * a,
-        (a) => 14 * a,
-        (a) => 17 * a,
-        (a) => 20 * a,
-        (a) => 24 * a,
-        (a) => 28 * a,
-        (a) => 32 * a,
-        (a) => 36 * a
-      ],
-      move: [2, 2, 2, 2, 3, 3, 3, 3],
-      attack: [
-        () => 3,
-        () => 4,
-        () => 4,
-        () => 5,
-        () => 5,
-        () => 6,
-        () => 7,
-        () => 8
-      ],
-      immunities: [
-        "immobilisation",
-        "d\xE9sarmement",
-        "confusion",
-        "\xE9tourdissement",
-        "mal\xE9diction"
-      ],
-      special1: [
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
-        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`
-      ],
-      special2: [
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
-        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`
-      ],
-      actions: BOSS_ACTIONS
-    },
-    // MARK: tumeur de sang
-    {
-      id: "tumeur_de_sang",
-      name: "Tumeur de Sang",
-      boss: true,
-      hp: [
-        (a) => 7 * a,
-        (a) => 10 * a,
-        (a) => 12 * a,
-        (a) => 15 * a,
-        (a) => 17 * a,
-        (a) => 20 * a,
-        (a) => 23 * a,
-        (a) => 28 * a
-      ],
-      move: [0, 0, 0, 0, 0, 0, 0, 0],
-      attack: [
-        (a) => a - 1,
-        (a) => a,
-        (a) => a,
-        (a) => a + 1,
-        (a) => a + 1,
-        (a) => a + 2,
-        (a) => a + 2,
-        (a) => a + 3
-      ],
-      immunities: ["d\xE9sarmement", "confusion", "\xE9tourdissement"],
-      special1: [
-        (a) => `Soin ${a} sur elle-m\xEAme`,
-        (a) => `Soin ${a} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 1} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 1} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 2} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 2} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 3} sur elle-m\xEAme`,
-        (a) => `Soin ${a + 3} sur elle-m\xEAme`
-      ],
-      special2: [
-        () => `Soin 2 sur tous les alli\xE9s`,
-        () => `Soin 2 sur tous les alli\xE9s`,
-        () => `Soin 3 sur tous les alli\xE9s`,
-        () => `Soin 3 sur tous les alli\xE9s`,
-        () => `Soin 4 sur tous les alli\xE9s`,
-        () => `Soin 4 sur tous les alli\xE9s`,
-        () => `Soin 5 sur tous les alli\xE9s`,
-        () => `Soin 5 sur tous les alli\xE9s`
-      ],
-      actions: BOSS_ACTIONS
-    }
-  ];
-  var ENEMIES_MAP = {};
-  for (let enemies of ENEMIES) {
-    ENEMIES_MAP[enemies.id] = enemies;
-  }
-  var BATTLE_GOALS = [
-    {
-      id: 1,
-      title: "Maraudeur",
-      description: "Effectuer deux actions pr\xE9sentant l'icone Perdue durant le m\xEAme round"
-    },
-    {
-      id: 2,
-      title: "Reclus",
-      description: "Ne jamais terminer votre tour adjacent \xE0 un de vos alli\xE9s"
-    },
-    {
-      id: 3,
-      title: "Vite sur pied",
-      description: "Terminer le sc\xE9nario avec un nombre de points de vie \xE9gal \xE0 votre valeur maximale de points de vie"
-    },
-    {
-      id: 4,
-      title: "Feinteur",
-      description: "\xC9liminer un monstre qui ne vous est pas adjacent alors que vous \xEAtes adjacent \xE0 un autre"
-    },
-    {
-      id: 5,
-      title: "T\xEAte br\xFBl\xE9e",
-      description: "Effectuer deux actions pr\xE9sentant l'icone Perdue avant votre premier repos"
-    },
-    {
-      id: 6,
-      title: "Insomniaque",
-      description: "Subir des d\xE9g\xE2ts d'une attaque intervenant le m\xEAme round o\xF9 vous prenez un repos long"
-    },
-    {
-      id: 7,
-      title: "Pacifiste",
-      description: "\xC9liminer au maximum trois monstres"
-    },
-    {
-      id: 8,
-      title: "Acrobate",
-      description: "Perdre une carte pour \xE9viter de subir 5 d\xE9gats ou plus"
-    },
-    {
-      id: 9,
-      title: "Abstinent",
-      description: "Ne jamais consommer de potion"
-    },
-    {
-      id: 10,
-      title: "Fin de match",
-      description: "\xCAtre le dernier \xE0 \xE9liminer un monstre lors de ce sc\xE9nario"
-    },
-    {
-      id: 11,
-      title: "Conservateur",
-      description: "Ne jamais perdre une carte pour \xE9viter de subir des d\xE9gats"
-    },
-    {
-      id: 12,
-      title: "Dur \xE0 cuire",
-      description: "Ne jamais laisser votre nombre de points de vie descendre sous la moiti\xE9 de votre valeur maximale de points de vie (arrondie au sup\xE9rieur)"
-    },
-    {
-      id: 13,
-      title: "Comp\xE9titeur",
-      description: "Ne jamais quitter un hexagone adjacent \xE0 un monstre"
-    },
-    {
-      id: 14,
-      title: "Vol \xE0 la tire",
-      description: "Ramasser au moins un pion Monnaie en effectuant une action Pillage lorsque vous \xEAtes sur un hexagone adjacents \xE0 deux monstres ou plus"
-    },
-    {
-      id: 15,
-      title: "Pelote \xE0 \xE9pingles",
-      description: "\xCAtre la cible d'attaque d'au moins trois monstres durant le m\xEAme round"
-    },
-    {
-      id: 16,
-      title: "Pl\xE9b\xE9ien",
-      description: "Ne jamais \xE9liminer un monstre d'\xE9lite ou un boss"
-    },
-    {
-      id: 17,
-      title: "\xC9goiste",
-      description: "Amasser plus de pions Monnaie que tout autre aventurier"
-    },
-    {
-      id: 18,
-      title: "Vecteur",
-      description: "Appliquer un \xE9tat n\xE9gatif \xE0 un monstre alors que vous \xEAtes vous-m\xEAme sous le coup d'un \xE9tat n\xE9gatif"
-    },
-    {
-      id: 19,
-      title: "Gringalet",
-      description: "Finir \xE9puis\xE9 avant tout autre aventurier"
-    },
-    {
-      id: 20,
-      title: "Joueur",
-      description: "\xC9liminer un monstre gr\xE2ce \xE0 une attaque avec d\xE9saventage"
-    },
-    {
-      id: 21,
-      title: "Pionnier",
-      description: "Ouvrir une porte et terminer le m\xEAme tour dans la salle r\xE9v\xE9l\xE9e"
-    },
-    {
-      id: 22,
-      title: "Tra\xEEnard",
-      description: "Ne jamais prendre de repos court"
-    },
-    {
-      id: 23,
-      title: "Assistant",
-      description: "\xC9liminer un monstre pr\xE9c\xE9demment attaqu\xE9 par un de vos alli\xE9s durant le m\xEAme round"
-    },
-    {
-      id: 24,
-      title: "Altruiste",
-      description: "Amasser moins de pions monnaie que tout autre aventurier"
-    },
-    {
-      id: 25,
-      title: "Sp\xE9cialiste",
-      description: "Ne jamais entreprendre d'action par d\xE9faut"
-    },
-    {
-      id: 26,
-      title: "Agoraphobe",
-      description: "Terminer tous vos tours adjacent \xE0 un mur ou \xE0 un obstacle"
-    },
-    {
-      id: 27,
-      title: "Hyperactif",
-      description: "Ne jamais prendre un repos long"
-    },
-    {
-      id: 28,
-      title: "Ombre",
-      description: "Terminer tous vos tours adjacents \xE0 un de vos alli\xE9s"
-    },
-    {
-      id: 29,
-      title: "Sadique",
-      description: "\xC9liminer au moins cinq monstres"
-    },
-    {
-      id: 30,
-      title: "Masochiste",
-      description: "Terminer le sc\xE9nario avec 3 points de vie au maximum"
-    },
-    {
-      id: 31,
-      title: "Premier sang",
-      description: "\xCAtre le premier \xE0 \xE9liminer un monstre lors de ce sc\xE9nario"
-    },
-    {
-      id: 32,
-      title: "Coupe-jarret",
-      description: "\xC9liminer un monstre et piller le pion Monnaie qu'il laisse tomber au cours du m\xEAme tour"
-    }
-  ];
-  var MONSTER_MODIFIERS_DECK = [
-    {
-      id: 1,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 2,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 3,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 4,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 5,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 6,
-      effects: ["+0"],
-      recycled: false,
-      color: false
-    },
-    {
-      id: 7,
-      effects: ["-1"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 8,
-      effects: ["-1"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 9,
-      effects: ["-1"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 10,
-      effects: ["-1"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 11,
-      effects: ["-1"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 12,
-      effects: ["-2"],
-      recycled: false,
-      color: "#fff0f0"
-    },
-    {
-      id: 13,
-      effects: ["+1"],
-      recycled: false,
-      color: "#ebfceb"
-    },
-    {
-      id: 14,
-      effects: ["+1"],
-      recycled: false,
-      color: "#ebfceb"
-    },
-    {
-      id: 15,
-      effects: ["+1"],
-      recycled: false,
-      color: "#ebfceb"
-    },
-    {
-      id: 16,
-      effects: ["+1"],
-      recycled: false,
-      color: "#ebfceb"
-    },
-    {
-      id: 17,
-      effects: ["+1"],
-      recycled: false,
-      color: "#ebfceb"
-    },
-    {
-      id: 18,
-      effects: ["x0"],
-      recycled: true,
-      color: "#ffffd9"
-    },
-    {
-      id: 19,
-      effects: ["x2"],
-      recycled: true,
-      color: "#ffc7ff"
-    },
-    {
-      id: 20,
-      effects: ["+2"],
-      recycled: false,
-      color: "#ebfceb"
-    }
-  ];
-
-  // src/utils.js
-  function shuffleArray(array) {
-    for (var i = array.length - 1; i >= 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
-  }
-  var isSleepPrevented = false;
-  function preventSleep() {
-    if ("wakeLock" in navigator && !isSleepPrevented) {
-      isSleepPrevented = true;
-      document.addEventListener(
-        "click",
-        () => {
-          navigator.wakeLock.request("screen");
-        },
-        { once: true }
-      );
-    }
-  }
-
-  // src/game_state.js
-  var GameState = class {
-    nextId = 1;
-    heroes = [];
-    enemies = [];
-    scenarioLevel = 1;
-    round = 0;
-    fire = 0;
-    ice = 0;
-    air = 0;
-    earth = 0;
-    light = 0;
-    darkness = 0;
-    monsterActions = {};
-    enemyModifiers = {
-      visible: 0,
-      // number of discarded cards to show
-      deck: shuffleArray(MONSTER_MODIFIERS_DECK.map((c) => c.id)),
-      discardPile: []
-    };
-    battleGoals = {};
-    turnTracker = {};
-    activeEntity = false;
-    config = {
-      elements: true,
-      turnTracker: true,
-      battleGoals: true,
-      enemyActions: true,
-      attackModifiers: true
-    };
-    isDirty = false;
-    screens = ["START"];
-    states = [null];
-    save() {
-      const state = JSON.stringify(this);
-      localStorage.setItem("game_state", state);
-      this.isDirty = false;
-    }
-    restore() {
-      const dataStr = localStorage.getItem("game_state");
-      if (!dataStr) {
-        return;
-      }
-      const data = JSON.parse(dataStr);
-      Object.assign(this, data);
-      this.isDirty = false;
-    }
-    get screen() {
-      return this.screens.at(-1);
-    }
-    get state() {
-      return this.states.at(-1);
-    }
-    setScreen(screen) {
-      this.screens = [screen];
-      this.states = [null];
-    }
-    pushScreen(screen, state = null) {
-      this.screens.push(screen);
-      this.states.push(state);
-    }
-    popScreen() {
-      this.screens.pop();
-      this.states.pop();
-    }
-    addHero(hero) {
-      hero.id = this.nextId++;
-      this.heroes.push(hero);
-      this.isDirty = true;
-    }
-    addEnemy(type, nbr, elite) {
-      const enemy = ENEMIES_MAP[type];
-      const level = this.scenarioLevel;
-      const A = this.heroes.length;
-      let maxHp;
-      if (enemy.boss) {
-        maxHp = enemy.hp[level](A);
-      } else {
-        const hpArray = elite ? enemy.eliteHp : enemy.normalHp;
-        maxHp = hpArray[level];
-      }
-      let move;
-      if (enemy.boss) {
-        move = enemy.move[level];
-      } else {
-        const moveArray = elite ? enemy.eliteMove : enemy.normalMove;
-        move = moveArray[level];
-      }
-      let attack;
-      if (enemy.boss) {
-        attack = enemy.attack[level](A);
-      } else {
-        const attackArray = elite ? enemy.eliteAttack : enemy.normalAttack;
-        attack = attackArray[level];
-      }
-      let modifiers = "";
-      if (!enemy.boss) {
-        const modifiersArray = elite ? enemy.eliteModifiers : enemy.normalModifiers;
-        modifiers = modifiersArray[level];
-      }
-      let immunities = "";
-      let special1 = "";
-      let special2 = "";
-      if (enemy.boss) {
-        immunities = enemy.immunities.join(", ");
-        special1 = enemy.special1[level](A);
-        special2 = enemy.special2[level](A);
-      }
-      const enemyObj = {
-        id: this.getId(),
-        type,
-        name: enemy.name,
-        nbr,
-        elite,
-        boss: !!enemy.boss,
-        hp: maxHp,
-        maxHp,
-        move,
-        attack,
-        modifiers,
-        immunities,
-        special1,
-        special2,
-        hasTurnEnded: false,
-        status: {
-          poisoned: false,
-          wound: false,
-          confusion: false,
-          immobilisation: false,
-          stunned: false,
-          disarmed: false,
-          renforced: false
-        }
-      };
-      this.enemies.push(enemyObj);
-      this.turnTracker[enemyObj.type] = false;
-      if (!this.monsterActions[enemyObj.type]) {
-        const deck = ENEMIES_MAP[enemyObj.type].actions.map((a) => a.id);
-        shuffleArray(deck);
-        this.monsterActions[enemyObj.type] = {
-          deck,
-          discardPile: [],
-          active: false,
-          initiative: false
-        };
-      }
-      this.isDirty = true;
-    }
-    getId() {
-      return this.nextId++;
-    }
-    isNextRoundEnabled() {
-      if (this.round === 0) {
-        return true;
-      }
-      if (this.config.turnTracker) {
-        for (let hero of this.heroes) {
-          if (!this.turnTracker[hero.id]) {
-            return false;
-          }
-        }
-        for (let enemy of this.enemies) {
-          if (!this.turnTracker[enemy.type]) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-    startTurn(entity) {
-      const prevEntity = this.activeEntity;
-      if (prevEntity) {
-        this.endTurn(prevEntity);
-      }
-      this.activeEntity = entity;
-      this.turnTracker[entity] = true;
-      this.isDirty = true;
-    }
-    endTurn(entity) {
-      if (typeof entity === "number") {
-        const hero = this.heroes.find((hero2) => hero2.id === entity);
-        this.clearStatus(hero.status);
-      } else {
-        for (let enemy of this.enemies) {
-          if (enemy.type === entity && !enemy.hasTurnEnded) {
-            this.clearStatus(enemy.status);
-          }
-          enemy.hasTurnEnded = true;
-        }
-      }
-      this.isDirty = true;
-    }
-    clearStatus(status) {
-      status.confusion = Math.max(0, status.confusion - 1);
-      status.immobilisation = Math.max(0, status.immobilisation - 1);
-      status.stunned = Math.max(0, status.stunned - 1);
-      status.disarmed = Math.max(0, status.disarmed - 1);
-      status.renforced = Math.max(0, status.renforced - 1);
-      this.isDirty = true;
-    }
-    incrementRound() {
-      if (this.activeEntity) {
-        this.endTurn(this.activeEntity);
-      }
-      this.round++;
-      for (let elem of ["fire", "ice", "air", "earth", "light", "darkness"]) {
-        if (this[elem] > 0) {
-          this[elem]--;
-        }
-      }
-      for (let type in this.monsterActions) {
-        this.monsterActions[type].active = false;
-        this.monsterActions[type].initiative = false;
-        let shouldShuffle = false;
-        for (let actionId of this.monsterActions[type].discardPile) {
-          const action = ENEMIES_MAP[type].actions.find((a) => a.id === actionId);
-          if (action.recycled) {
-            shouldShuffle = true;
-            break;
-          }
-        }
-        if (shouldShuffle) {
-          const deck = ENEMIES_MAP[type].actions.map((a) => a.id);
-          shuffleArray(deck);
-          this.monsterActions[type].deck = deck;
-          this.monsterActions[type].discardPile = [];
-        }
-      }
-      const mods = this.enemyModifiers;
-      mods.visible = 0;
-      mods.discardPile = mods.discardPile.filter((c) => typeof c === "number");
-      const discardedMods = mods.discardPile.map(
-        (id) => MONSTER_MODIFIERS_DECK.find((mod) => mod.id === id)
-      );
-      if (discardedMods.find((mod) => mod.recycled)) {
-        while (mods.discardPile.length) {
-          mods.deck.push(mods.discardPile.pop());
-        }
-        shuffleArray(mods.deck);
-      }
-      this.turnTracker = {};
-      this.activeEntity = false;
-      for (let enemy of this.enemies) {
-        enemy.hasTurnEnded = false;
-      }
-      this.save();
-    }
-    addCurse() {
-      const curses = this.enemyModifiers.deck.filter((id) => {
-        return typeof id === "string" && id.startsWith("curse");
-      });
-      if (curses.length < 10) {
-        this.enemyModifiers.deck.push(`curse${-this.nextId++}`);
-        shuffleArray(this.enemyModifiers.deck);
-      }
-      this.isDirty = true;
-    }
-    addBlessing() {
-      const blessings = this.enemyModifiers.deck.filter((id) => {
-        return typeof id === "string" && id.startsWith("blessing");
-      });
-      if (blessings.length < 10) {
-        this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
-        shuffleArray(this.enemyModifiers.deck);
-      }
-      this.isDirty = true;
-    }
-  };
-
   // node_modules/@odoo/owl/dist/owl.es.js
   function filterOutModifiersFromData(dataList) {
     dataList = dataList.slice();
@@ -3371,7 +1071,7 @@
       let endIdx2 = ch2.length - 1;
       let endVn1 = ch1[endIdx1];
       let endVn2 = ch2[endIdx2];
-      let mapping = void 0;
+      let mapping2 = void 0;
       while (startIdx1 <= endIdx1 && startIdx2 <= endIdx2) {
         if (startVn1 === null) {
           startVn1 = ch1[++startIdx1];
@@ -3417,8 +1117,8 @@
           startVn2 = ch2[++startIdx2];
           continue;
         }
-        mapping = mapping || createMapping(ch1, startIdx1, endIdx1);
-        let idxInOld = mapping[startKey2];
+        mapping2 = mapping2 || createMapping(ch1, startIdx1, endIdx1);
+        let idxInOld = mapping2[startKey2];
         if (idxInOld === void 0) {
           cMount.call(startVn2, parent, cFirstNode.call(startVn1) || null);
         } else {
@@ -3488,11 +1188,11 @@
     return new VList(children);
   }
   function createMapping(ch1, startIdx1, endIdx2) {
-    let mapping = {};
+    let mapping2 = {};
     for (let i = startIdx1; i <= endIdx2; i++) {
-      mapping[ch1[i].key] = i;
+      mapping2[ch1[i].key] = i;
     }
-    return mapping;
+    return mapping2;
   }
   var nodeProto = Node.prototype;
   var nodeInsertBefore = nodeProto.insertBefore;
@@ -5533,15 +3233,15 @@ ${code}`;
         return compileExpr(expr);
       }
       const tokens = compileExprToArray(expr);
-      const mapping = /* @__PURE__ */ new Map();
+      const mapping2 = /* @__PURE__ */ new Map();
       return tokens.map((tok) => {
         if (tok.varName && !tok.isLocal) {
-          if (!mapping.has(tok.varName)) {
+          if (!mapping2.has(tok.varName)) {
             const varId = generateId("v");
-            mapping.set(tok.varName, varId);
+            mapping2.set(tok.varName, varId);
             this.define(varId, tok.value);
           }
-          tok.value = mapping.get(tok.varName);
+          tok.value = mapping2.get(tok.varName);
         }
         return tok.value;
       }).join("");
@@ -7240,6 +4940,23 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     }
     return stopped;
   };
+  function useEnv() {
+    return getCurrent().component.env;
+  }
+  function extendEnv(currentEnv, extension) {
+    const env = Object.create(currentEnv);
+    const descrs = Object.getOwnPropertyDescriptors(extension);
+    return Object.freeze(Object.defineProperties(env, descrs));
+  }
+  function useSubEnv(envExtension) {
+    const node = getCurrent();
+    node.component.env = extendEnv(node.component.env, envExtension);
+    useChildSubEnv(envExtension);
+  }
+  function useChildSubEnv(envExtension) {
+    const node = getCurrent();
+    node.childEnv = extendEnv(node.childEnv, envExtension);
+  }
   config.shouldNormalizeDom = false;
   config.mainEventHandler = mainEventHandler;
   var __info__ = {
@@ -7257,444 +4974,3333 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
   __info__.hash = "0cde4b8";
   __info__.url = "https://github.com/odoo/owl";
 
-  // src/shared/layout.js
-  var Layout = class extends Component {
-    static template = xml`
-    <div class="h-100 d-flex flex-column">
-      <div class="bg-primary text-white d-flex align-center space-between" style="height:45px;">
-        <t t-slot="navbar"/>
-      </div>
-      <div class="overflow-y-auto">
-        <t t-slot="default"/>
-      </div>
-    </div>`;
-  };
-
-  // src/screens/add_enemy_screen.js
-  var AddEnemyScreen = class extends Component {
-    static template = xml`
-    <Layout>
-      <t t-set="navbar">
-        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-      </t>
-      <h2 class="p-2">Add an Enemy</h2>
-      <div class="d-flex m-2 align-center">
-        <div class="width-50px text-right">Type </div>
-        <select class=" mx-2 flex-grow" t-model="state.type">
-          <option value="">Select a type</option>
-          <t t-foreach="enemies" t-as="enemy" t-key="enemy.id">
-            <option t-att-value="enemy.id"><t t-esc="enemy.name"/><t t-if="enemy.boss"> (BOSS)</t></option>
-          </t>
-        </select>
-      </div>
-      <div class="" t-if="!isBoss()">
-        <div class="d-flex m-2 align-center">
-          <div class="width-50px text-right">Id </div>
-          <input class="mx-2 width-50px" type="number" t-model.number="state.nbr"/>
-        </div>
-        <div class="d-flex m-2 align-center" >
-          <div class="width-50px text-right">Elite </div>
-          <div class="width-50px"><input type="checkbox" t-model="state.elite"/>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex flex-end">
-        <div class="button p-2 m-1" t-on-click="create" t-att-class="{disabled: !state.type}">
-          Add Enemy
-        </div>
-      </div>
-    </Layout>`;
-    static components = { Layout };
-    setup() {
-      this.state = useState({
-        type: "",
-        nbr: 0,
-        elite: false
-      });
-      this.enemies = ENEMIES;
-    }
-    create() {
-      this.props.game.addEnemy(this.state.type, this.state.nbr, this.state.elite);
-      this.props.game.popScreen();
-    }
-    isBoss() {
-      if (!this.state.type) {
-        return false;
-      }
-      return !!ENEMIES_MAP[this.state.type].boss;
-    }
-  };
-
-  // src/screens/character_editor_screen.js
-  var CharacterEditor = class extends Component {
-    static template = xml`
-    <Layout>
-      <t t-set-slot="navbar">
-        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-      </t>
-      <h2 class="p-2"><t t-if="activeHero">Edit</t><t t-else="">Create</t> your Hero</h2>
-      <div class="d-flex align-center mx-2 my-3">
-        <div class="width-50px text-right">Name </div>
-        <input class="mx-2 flex-grow" t-model="state.name" placeholder="Character name"/>
-      </div>
-      <div class="d-flex align-center mx-2 my-3">
-        <div class="width-50px text-right">Class </div>
-        <select class="mx-2 flex-grow" t-model="state.class">
-          <option value="">Select a class</option>
-          <option value="void_warden">Gardienne du Néant</option>
-          <option value="red_guard">Garde Rouge</option>
-          <option value="axe_thrower">Lanceur de Haches</option>
-          <option value="artificer">Artificier</option>
-        </select>
-      </div>
-      <div class="d-flex mx-2 my-3 space-between">
-        <div class="d-flex align-center">
-          <div class="width-50px text-right">Level </div>
-          <select class="mx-2" t-model.number="state.level">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
-        </div>
-        <div class="d-flex align-center">
-          <div class="width-50px text-right">XP </div>
-          <input class="mx-2 width-50px" type="number" t-model.number="state.xp"/>
-        </div>
-        <div class="d-flex align-center">
-          <div class="width-50px text-right">Gold </div>
-          <input  class="mx-2 width-50px" type="number" t-model.number="state.gold"/>
-        </div>
-      </div>
-      <div class="d-flex flex-end p-2">
-        <div class="button p-2 m-2" t-on-click="create" t-att-class="{disabled: isDisabled}">
-          <t t-if="activeHero">Update</t><t t-else="">Add</t> Hero
-        </div>
-      </div>
-    </Layout>`;
-    static components = { Layout };
-    setup() {
-      this.activeHero = this.props.game.state;
-      this.state = useState({
-        name: this.activeHero ? this.activeHero.name : "",
-        class: this.activeHero ? this.activeHero.class : "",
-        level: this.activeHero ? this.activeHero.level : 1,
-        gold: this.activeHero ? this.activeHero.gold : 0,
-        xp: this.activeHero ? this.activeHero.xp : 0
-      });
-    }
-    get isDisabled() {
-      return !(this.state.name && this.state.class);
-    }
-    create() {
-      const maxHp = MAX_HP_MAP[this.state.class][this.state.level - 1];
-      const hero = {
-        name: this.state.name,
-        class: this.state.class,
-        level: this.state.level,
-        hp: maxHp,
-        maxHp,
-        xp: this.state.xp || 0,
-        maxCard: MAX_CARD_MAP[this.state.class],
-        gold: this.state.gold || 0
-      };
-      if (this.activeHero) {
-        Object.assign(this.activeHero, hero);
-      } else {
-        this.props.game.addHero({
-          ...hero,
-          status: {
-            poisoned: false,
-            wound: false,
-            confusion: false,
-            immobilisation: false,
-            stunned: false,
-            disarmed: false,
-            renforced: false
-          }
-        });
-      }
-      this.props.game.popScreen();
-    }
-  };
-
-  // src/screens/config_screen.js
-  var ConfigScreen = class extends Component {
-    static template = xml`
-    <Layout>
-      <t t-set-slot="navbar">
-        <span class="p-2" t-on-click="() => props.game.popScreen()">Back</span>
-      </t>
-      <div>
-        <h2 class="p-2">Settings</h2>
-        <div class="mx-2">
-          Scenario
-          <select class="bg-white" t-model.number="props.game.scenarioLevel">
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
-            <option value="4">Level 4</option>
-            <option value="5">Level 5</option>
-            <option value="6">Level 6</option>
-            <option value="7">Level 7</option>
-          </select>
-        </div>
-        <h2 class="p-2">Features</h2>
-        <t t-set="config" t-value="props.game.config"/>
-        <div class="d-grid align-center" style="grid-template-columns:50px 1fr;row-gap:10px">
-          <input type="checkbox" t-model="config.elements" id="track_element"/>
-          <label for="track_element">Element Tracker</label>
-          <input type="checkbox" t-model="config.turnTracker" id="track_turns"/>
-          <label for="track_turns">Turn Tracker</label>
-          <input type="checkbox" t-model="config.battleGoals" id="track_battlegoals"/>
-          <label for="track_battlegoals">Battle Goals</label>
-          <input type="checkbox" t-model="config.attackModifiers" id="enemy_attack_modifiers"/>
-          <label for="enemy_attack_modifiers">Enemy Attack Modifiers</label>
-          <input type="checkbox" t-model="config.enemyActions" id="enemy_actions"/>
-          <label for="enemy_actions">Enemy Actions</label>
-        </div>
-        <hr/>
-        <h2 class="p-2 my-2">Data</h2>
-        <div class="d-flex flex-column align-center">
-            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="save">
-                Save to local storage
-            </div>
-            <div class="button p-2 mx-3 my-1 text-center" style="width:200px;" t-on-click="restore">
-                Restore from local storage
-            </div>
-        </div>
-
-      </div>
-    </Layout>`;
-    static components = { Layout };
-    save() {
-      this.props.game.save();
-      this.props.game.popScreen();
-      alert("Game saved!");
-    }
-    restore() {
-      this.props.game.restore();
-      this.props.game.popScreen();
-    }
-  };
-
-  // src/shared/control_panel.js
-  var ControlPanel = class extends Component {
-    static template = xml`
-        <div class="bg-white d-flex align-center border-bottom-gray space-between" style="height:50px;">
-          <t t-slot="default"/>
-        </div>`;
-  };
-
-  // src/shared/status_editor.js
-  function statusString(statusObj) {
-    const keys = [];
-    for (let k in statusObj) {
-      if (statusObj[k]) {
-        keys.push(k);
-      }
-    }
-    if (!keys.length) {
-      return "";
-    }
-    const mapping = {
-      poisoned: "poison",
-      wound: "blessure",
-      confusion: "confusion",
-      immobilisation: "immobilisation",
-      stunned: "\xE9tourdissement",
-      renforced: "renforcement",
-      disarmed: "d\xE9sarm\xE9"
-    };
-    return keys.map((k) => mapping[k]).join(", ");
+  // src/utils.js
+  function generateId2() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
   }
-  var StatusEditor = class extends Component {
-    static template = xml`
-        <t t-set="status" t-value="props.status"/>
-        <div 
-          class="border-radius-2 text-smallcaps text-center p-1 " 
-          t-att-class="{'bg-darker text-bold': status.poisoned}"
-          t-on-click="() => status.poisoned = !status.poisoned"
-        >
-          poison
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.wound}"
-          t-on-click="() => status.wound = !status.wound"
-        >
-          blessure
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.confusion}"
-          t-on-click="() => this.toggleStatus('confusion')"
-        >
-          confusion
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.immobilisation}"
-          t-on-click="() => this.toggleStatus('immobilisation')"
-        >
-          immobilisation
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.stunned}"
-          t-on-click="() => this.toggleStatus('stunned')"
-        >
-          étourdissement
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.disarmed}"
-          t-on-click="() => this.toggleStatus('disarmed')"
-        >
-          désarmement
-        </div>
-        <div
-          class="border-radius-2 text-smallcaps text-center p-1 "
-          t-att-class="{'bg-darker text-bold': status.renforced}"
-          t-on-click="() => this.toggleStatus('renforced')"
-        >
-          renforcement
-        </div>`;
-    toggleStatus(effect) {
-      if (this.props.status[effect]) {
-        this.props.status[effect] = 0;
-      } else {
-        this.props.status[effect] = this.props.isActive ? 2 : 1;
-      }
+  function shuffle(array) {
+    for (var i = array.length - 1; i >= 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
     }
-  };
+    return array;
+  }
+  var isSleepPrevented = false;
+  function preventSleep() {
+    if ("wakeLock" in navigator && !isSleepPrevented) {
+      isSleepPrevented = true;
+      document.addEventListener(
+        "click",
+        () => {
+          navigator.wakeLock.request("screen");
+        },
+        { once: true }
+      );
+    }
+  }
+  function today() {
+    const d = /* @__PURE__ */ new Date();
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  }
 
-  // src/shared/counter.js
-  var Counter = class extends Component {
-    static template = xml`
-        <div class="d-flex align-center p-1">
-          <span class="button m-1 py-2 px-3" t-on-click="props.dec">-</span>
-          <t t-slot="default"/>
-          <span class="button m-1 py-2 px-3" t-on-click="props.inc">+</span>
-        </div>`;
-  };
-
-  // src/shared/style.js
-  var CARD = "border-gray border-radius-4 m-1";
-
-  // src/shared/character_card.js
-  var CharacterCard = class extends Component {
-    static template = xml`
-        <div class="${CARD} bg-lightgreen" t-on-click="toggle">
-        <div class="d-flex space-between px-2 py-1">
-            <span class="text-bold"><t t-esc="props.hero.name"/></span>
-            <span class=""><t t-esc="heroClass"/> (level <t t-esc="props.hero.level"/>)</span>
-          </div>
-          <div class="d-flex space-between px-2 py-1">
-            <span t-att-class="{'text-red': props.hero.hp lt 1}">HP: <span class="text-bold" t-esc="props.hero.hp"/> / <span class="text-bold" t-esc="props.hero.maxHp"/></span>
-            <span>XP: <span class="text-bold" t-esc="props.hero.xp"/></span>
-            <span>Gold: <span class="text-bold" t-esc="props.hero.gold"/></span>
-          </div>
-          <div class="d-flex space-between px-2 py-1" t-if="statuses">
-            <span>Status: <span class="text-bold" t-esc="statuses"/> </span>
-          </div>
-          <div t-if="state.isOpen" t-on-click.stop="" class="p-1  border-top-gray d-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-            <Counter dec="() => props.hero.hp--" inc="() => props.hero.hp++">HP</Counter>
-            <Counter dec="() => props.hero.xp--" inc="() => props.hero.xp++">XP</Counter>
-            <Counter dec="() => props.hero.gold--" inc="() => props.hero.gold++">Gold</Counter>
-            <StatusEditor status="props.hero.status" isActive="props.hero.id === props.game.activeEntity" />
-          </div>
-        </div>`;
-    static components = { Counter, StatusEditor };
-    setup() {
-      this.state = useState({
-        isOpen: false
-      });
+  // src/base_model.js
+  function getDefaultValue(field) {
+    if ("default" in field) {
+      const def = field.default;
+      return typeof def === "function" ? def() : def;
     }
-    get heroClass() {
-      return CLASS_NAME[this.props.hero.class];
-    }
-    toggle() {
-      this.state.isOpen = !this.state.isOpen;
-    }
-    get statuses() {
-      if (this.props.hero.hp <= 0) {
+    switch (field.type) {
+      case "number":
+        return 0;
+      case "char":
         return "";
-      }
-      return statusString(this.props.hero.status);
+      case "one2many":
+        return [];
+      case "select":
+      case "many2one":
+      case "any":
+        return null;
+      case "boolean":
+        return false;
+      case "instance":
+        return new field.cls();
+      default:
+        throw new Error("boom");
     }
-  };
-
-  // src/screens/main_screen.js
-  var EnemyAttackModifiers = class extends Component {
-    static template = xml`
-        <div class="${CARD} bg-white">
-          <div class="bg-gray p-1 d-flex space-between"  t-on-click="toggle">
-            <span>Enemy Attack Modifiers (<t t-esc="mods.deck.length"/> cards)</span>
-          </div>
-          <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;" t-if="state.open">
-            <div class="d-flex flex-column">
-              <div class="button mb-0" t-on-click="() => this.dealCard(1)">1 Card</div>
-              <div class="button" t-on-click="() => this.dealCard(2)">2 Cards</div>
-            </div>
-            <div class="d-flex py-1 flex-center">
-              <!-- sadf -->
-              <t t-foreach="currentModifiers()" t-as="mod" t-key="mod.id">
-                <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center" t-attf-style="width:35px;position:relative;background-color:{{mod.color || 'white'}};">
-                  <t t-if="mod.recycled">
-                    <span class="text-bold" style="position:absolute;bottom:0;right:0">♲</span>
-                  </t>
-                  <t t-foreach="mod.effects" t-as="effect" t-key="effect_index">
-                    <div class="text-bold text-larger"><t t-esc="effect"/></div>
-                  </t>
-                </div>
-              </t>
-            </div>
-            <div>
-              <div class="button mb-0" t-on-click="addCurse">+ Curse</div>
-              <div class="button" t-on-click="addBlessing">+ Blessing</div>
-            </div>
-          </div>
-        </div>`;
-    setup() {
-      this.mods = this.props.game.enemyModifiers;
-      this.state = useState({
-        open: true
+  }
+  function createInstance(Model, data = {}, doNotSetup = false) {
+    const inst = reactive(new Model());
+    inst.fields.id = { type: "char", default: generateId2 };
+    for (let field in inst.fields) {
+      const desc = inst.fields[field];
+      inst.data[field] = field in data ? data[field] : getDefaultValue(desc);
+      if (field in inst) {
+        throw new Error("boom");
+      }
+      Object.defineProperty(inst, field, {
+        get() {
+          return this.data[field];
+        },
+        set(value) {
+          BaseModel.isDirty = true;
+          this.data[field] = value;
+          setTimeout(() => {
+            if (BaseModel.isDirty) {
+              window.dispatchEvent(new CustomEvent("force_save"));
+              BaseModel.isDirty = false;
+            }
+          }, 1e3);
+        }
       });
     }
-    toggle() {
-      this.state.open = !this.state.open;
+    if (!doNotSetup) {
+      inst.setup();
     }
-    addCurse() {
-      this.props.game.addCurse();
+    return inst;
+  }
+  var BaseModel = class {
+    static isDirty = false;
+    data = {};
+    fields = {};
+    setup() {
     }
-    addBlessing() {
-      this.props.game.addBlessing();
+    isValid() {
+      return true;
     }
-    dealCard(n) {
-      this.mods.visible = n;
-      if (this.mods.deck.length < n) {
-        while (this.mods.discardPile.length) {
-          this.mods.deck.push(this.mods.discardPile.pop());
+    toJSON() {
+      const data = { ...this.data };
+      for (let field in this.fields) {
+        const desc = this.fields[field];
+        if (desc.type === "many2one" && data[field]) {
+          data[field] = data[field].id;
         }
       }
-      shuffleArray(this.mods.deck);
-      for (let i = 0; i < n; i++) {
-        this.mods.discardPile.unshift(this.mods.deck.pop());
-      }
-      this.props.game.isDirty = true;
+      return data;
     }
-    currentModifiers() {
-      const n = this.mods.visible;
-      const ids = this.mods.discardPile.slice(0, n);
-      const cards = ids.map((id) => {
+  };
+  function deserialize(Model, obj) {
+    const recs = [];
+    const recordMap = {};
+    const m2os = [];
+    function _deserialize(Model2, obj2) {
+      const fields = new Model2().fields;
+      const _m2os = [];
+      for (let field in fields) {
+        const desc = fields[field];
+        if (desc.type === "one2many") {
+          obj2[field] = (obj2[field] || []).map(
+            (o) => _deserialize(desc.comodel, o)
+          );
+        }
+        if (desc.type === "many2one") {
+          if (obj2[field]) {
+            _m2os.push(field);
+          }
+        }
+        if (desc.type === "instance") {
+          if (obj2[field]) {
+            Object.setPrototypeOf(obj2[field], desc.cls.prototype);
+            if (desc.deserialize) {
+              desc.deserialize(obj2[field]);
+            }
+          }
+        }
+      }
+      const record = createInstance(Model2, obj2, true);
+      recs.push(record);
+      for (let m of _m2os) {
+        m2os.push({ record, field: m, id: obj2[m] });
+      }
+      recordMap[record.id] = record;
+      return record;
+    }
+    const result = _deserialize(Model, obj);
+    for (let { record, field, id } of m2os) {
+      record.data[field] = recordMap[id];
+    }
+    return result;
+  }
+
+  // src/data.js
+  var CLASS_NAME = {
+    void_warden: "Gardienne du N\xE9ant",
+    red_guard: "Garde Rouge",
+    axe_thrower: "Lanceur de Haches",
+    artificer: "Artificier"
+  };
+  var MAX_HP_MAP = {
+    void_warden: [6, 7, 8, 9, 10, 11, 12, 13, 14],
+    red_guard: [10, 12, 14, 16, 18, 20, 22, 24, 26],
+    axe_thrower: [8, 9, 11, 12, 14, 15, 17, 18, 20],
+    artificer: [8, 9, 11, 12, 14, 15, 17, 18, 20]
+  };
+  var BOSS_ACTIONS = [
+    {
+      id: 1,
+      name: "Puissance Acc\xE9l\xE9r\xE9e",
+      initiative: 11,
+      recycled: false,
+      effects: ["Sp\xE9cial 2"]
+    },
+    {
+      id: 2,
+      name: "Puissance Acc\xE9l\xE9r\xE9e",
+      initiative: 14,
+      recycled: false,
+      effects: ["Sp\xE9cial 2"]
+    },
+    {
+      id: 3,
+      name: "Puissance Acc\xE9l\xE9r\xE9e",
+      initiative: 17,
+      recycled: true,
+      effects: ["Sp\xE9cial 2"]
+    },
+    {
+      id: 4,
+      name: "Force Durable",
+      initiative: 85,
+      recycled: true,
+      effects: ["Sp\xE9cial 1"]
+    },
+    {
+      id: 5,
+      name: "Force Durable",
+      initiative: 79,
+      recycled: false,
+      effects: ["Sp\xE9cial 1"]
+    },
+    {
+      id: 6,
+      name: "Force Durable",
+      initiative: 73,
+      recycled: false,
+      effects: ["Sp\xE9cial 1"]
+    },
+    {
+      id: 7,
+      name: "Rien de Particulier",
+      initiative: 36,
+      recycled: false,
+      effects: ["D\xE9placement +0", "Attaque +0"]
+    },
+    {
+      id: 8,
+      name: "Projectiles Jumeaux",
+      initiative: 54,
+      recycled: false,
+      effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3, cible 2"]
+    }
+  ];
+  var ENEMIES = [
+    // MARK: reanimated corpse
+    {
+      id: "reanimated_corpse",
+      name: "Cadavre R\xE9anim\xE9",
+      normalHp: [5, 7, 9, 10, 11, 13, 14, 16],
+      eliteHp: [10, 11, 14, 14, 16, 18, 23, 29],
+      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
+      eliteMove: [1, 1, 1, 2, 2, 2, 2, 2],
+      normalAttack: [3, 3, 3, 4, 4, 4, 4, 5],
+      eliteAttack: [3, 4, 4, 5, 5, 6, 6, 6],
+      normalModifiers: [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      eliteModifiers: [
+        "",
+        "",
+        "",
+        "",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "Empoisonnement"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "\xC9treinte Putride",
+          initiative: 21,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Confusion, immobilisation (cible un adversaire adjacent)",
+            "[terre]: la cible subit aussi 2 d\xE9gats"
+          ]
+        },
+        {
+          id: 2,
+          name: "Claque Violente",
+          initiative: 32,
+          recycled: false,
+          effects: [
+            "Attaque +2, pouss\xE9e 1",
+            "Si cette attaque est effectu\xE9e, le Cadavre R\xE9anim\xE9 subit 1 d\xE9gat"
+          ]
+        },
+        {
+          id: 3,
+          name: "Assaut Pr\xE9cipit\xE9",
+          initiative: 47,
+          recycled: false,
+          effects: ["D\xE9placement +1", "Attaque -1"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 68,
+          recycled: true,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 5,
+          name: "Rien de Particulier",
+          initiative: 68,
+          recycled: true,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 6,
+          name: "\xC9mission de Gaz",
+          initiative: 71,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +1",
+            "Empoisonnement (cible tous les adversaires adjacents)",
+            "Infuse: Terre"
+          ]
+        },
+        {
+          id: 7,
+          name: "Coup Calcul\xE9",
+          initiative: 81,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 8,
+          name: "Charge T\xE9m\xE9raire",
+          initiative: 91,
+          recycled: false,
+          effects: [
+            "D\xE9placement +2",
+            "Si ce d\xE9placement est effectu\xE9, le cadavre subit 1 d\xE9gat"
+          ]
+        }
+      ]
+    },
+    // MARK: chaos demon
+    {
+      id: "chaos_demon",
+      name: "D\xE9mon du Chaos",
+      normalHp: [7, 8, 11, 12, 15, 16, 20, 22],
+      eliteHp: [10, 12, 14, 18, 21, 26, 30, 35],
+      normalMove: [3, 3, 3, 3, 4, 4, 4, 4],
+      eliteMove: [4, 4, 4, 5, 5, 5, 5, 5],
+      normalAttack: [2, 3, 3, 4, 4, 5, 5, 6],
+      eliteAttack: [3, 4, 5, 5, 6, 6, 7, 8],
+      normalModifiers: [
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion"
+      ],
+      eliteModifiers: [
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Souffle Glacial",
+          initiative: 13,
+          recycled: false,
+          effects: [
+            "D\xE9placement -1",
+            "Attaque +0, cible 2 hex voisins adjacents",
+            "[Glace]: chaque fois qu'un personnage attaque le d\xE9mon, le personnage subit 2 d\xE9gats"
+          ]
+        },
+        {
+          id: 2,
+          name: "D\xE9flagration de Chaleur",
+          initiative: 1,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3", "[Feu]: blessure"]
+        },
+        {
+          id: 3,
+          name: "Coup Sismique",
+          initiative: 67,
+          recycled: false,
+          effects: [
+            "D\xE9placement -2",
+            "Attaque +1, pouss\xE9e 2",
+            "[Terre]: cible 2 hex adjacents voisins"
+          ]
+        },
+        {
+          id: 4,
+          name: "Tourbillon",
+          initiative: 20,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 2, cible 3 hex adjacents voisins",
+            "[Air]: bouclier 2"
+          ]
+        },
+        {
+          id: 5,
+          name: "Griffes Soudaines",
+          initiative: 41,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +0, avantage",
+            "[Lumi\xE8re]: soin 4 sur lui-m\xEAme"
+          ]
+        },
+        {
+          id: 6,
+          name: "Vrilles Noires",
+          initiative: 52,
+          recycled: false,
+          effects: [
+            "D\xE9placement -1",
+            "Attaque +1",
+            "[Obscurit\xE9]: tous les adversaires adjacents \xE0 la cible subissent 1 d\xE9gat"
+          ]
+        },
+        {
+          id: 7,
+          name: "Explosion de Mana",
+          initiative: 76,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +0",
+            "Infuse Feu, Glace, Air, Terre, Lumi\xE8re, Obscurit\xE9"
+          ]
+        },
+        {
+          id: 8,
+          name: "Gueule Affam\xE9e",
+          initiative: 98,
+          recycled: true,
+          effects: ["Attaque -1", "[n'importe quel \xE9l\xE9ment]: d\xE9sarmement"]
+        }
+      ]
+    },
+    // MARK: blood demon
+    {
+      id: "blood_demon",
+      name: "Diablotin de Sang",
+      normalHp: [3, 4, 5, 5, 7, 8, 9, 12],
+      eliteHp: [4, 6, 7, 10, 11, 13, 17, 21],
+      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
+      eliteAttack: [2, 2, 2, 2, 3, 3, 4, 4],
+      normalModifiers: [
+        "",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion"
+      ],
+      eliteModifiers: [
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion",
+        "confusion"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Hors Phase",
+          initiative: 5,
+          recycled: false,
+          effects: ["Bouclier 5", "Soin 1 sur lui m\xEAme", "Infuse 1 \xE9l\xE9ment"]
+        },
+        {
+          id: 2,
+          name: "Faire Pencher la Balance",
+          initiative: 24,
+          recycled: false,
+          effects: [
+            "Renforcement, cible tous les alli\xE9s \xE0 port\xE9e 2 et lui-m\xEAme",
+            "Confusion, cible tous les adversaires \xE0 port\xE9e 2"
+          ]
+        },
+        {
+          id: 3,
+          name: "Rien de Particulier",
+          initiative: 37,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 37,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 5,
+          name: "R\xE9cup\xE9ration",
+          initiative: 42,
+          recycled: true,
+          effects: ["D\xE9placement +1", "Soin 2, port\xE9e 3"]
+        },
+        {
+          id: 6,
+          name: "Estropier",
+          initiative: 42,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 3, cible 2, empoisonnement"
+          ]
+        },
+        {
+          id: 7,
+          name: "Sombre Charme",
+          initiative: 42,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 3, cible 2, mal\xE9diction"
+          ]
+        },
+        {
+          id: 8,
+          name: "Coup Calcul\xE9",
+          initiative: 76,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
+        }
+      ]
+    },
+    // MARK: black imp
+    {
+      id: "black_imp",
+      name: "Diablotin Noir",
+      normalHp: [3, 4, 5, 5, 7, 9, 10, 13],
+      eliteHp: [4, 6, 8, 8, 11, 14, 15, 19],
+      normalMove: [1, 1, 1, 1, 1, 1, 1, 1],
+      eliteMove: [1, 1, 1, 1, 1, 1, 1, 1],
+      normalAttack: [1, 1, 1, 2, 2, 2, 3, 3],
+      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+      normalModifiers: [
+        "",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      eliteModifiers: [
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement, attaquants gagnent d\xE9savantage",
+        "empoisonnement, attaquants gagnent d\xE9savantage",
+        "empoisonnement, attaquants gagnent d\xE9savantage",
+        "empoisonnement, attaquants gagnent d\xE9savantage",
+        "empoisonnement, attaquants gagnent d\xE9savantage"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Hors Phase",
+          initiative: 5,
+          recycled: false,
+          effects: ["Bouclier 5", "Soin 1 sur lui m\xEAme", "Infuse 1 \xE9l\xE9ment"]
+        },
+        {
+          id: 2,
+          name: "Faire Pencher la Balance",
+          initiative: 24,
+          recycled: false,
+          effects: [
+            "Renforcement, cible tous les alli\xE9s \xE0 port\xE9e 2 et lui-m\xEAme",
+            "Confusion, cible tous les adversaires \xE0 port\xE9e 2"
+          ]
+        },
+        {
+          id: 3,
+          name: "Rien de Particulier",
+          initiative: 37,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 37,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 5,
+          name: "R\xE9cup\xE9ration",
+          initiative: 42,
+          recycled: true,
+          effects: ["D\xE9placement +1", "Soin 2, port\xE9e 3"]
+        },
+        {
+          id: 6,
+          name: "Estropier",
+          initiative: 42,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 3, cible 2, empoisonnement"
+          ]
+        },
+        {
+          id: 7,
+          name: "Sombre Charme",
+          initiative: 42,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 3, cible 2, mal\xE9diction"
+          ]
+        },
+        {
+          id: 8,
+          name: "Coup Calcul\xE9",
+          initiative: 76,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
+        }
+      ]
+    },
+    // MARK: vermling scout
+    {
+      id: "vermling_scout",
+      name: "\xC9claireur Vermling",
+      normalHp: [2, 3, 3, 5, 6, 8, 10, 13],
+      eliteHp: [4, 5, 5, 7, 8, 11, 13, 17],
+      normalMove: [3, 3, 3, 3, 3, 3, 4, 4],
+      eliteMove: [3, 3, 4, 4, 4, 4, 5, 5],
+      normalAttack: [1, 1, 2, 2, 3, 3, 3, 3],
+      eliteAttack: [2, 2, 3, 3, 4, 4, 4, 4],
+      normalModifiers: ["", "", "", "", "", "", "", ""],
+      eliteModifiers: ["", "", "", "", "", "", "", ""],
+      actions: [
+        {
+          id: 1,
+          name: "Arc Court",
+          initiative: 29,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 3"]
+        },
+        {
+          id: 2,
+          name: "Assaut Pr\xE9cipit\xE9",
+          initiative: 40,
+          recycled: false,
+          effects: ["D\xE9placement +1", "Attaque -1"]
+        },
+        {
+          id: 3,
+          name: "Rien de Particulier",
+          initiative: 53,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 4,
+          name: "Fl\xE8che Rance",
+          initiative: 53,
+          recycled: false,
+          effects: ["D\xE9placement -2", "Attaque +0, port\xE9e 3, empoisonnement"]
+        },
+        {
+          id: 5,
+          name: "Coup Calcul\xE9",
+          initiative: 69,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 6,
+          name: "Lame D\xE9l\xE9t\xE8re",
+          initiative: 92,
+          recycled: true,
+          effects: ["Attaque +2, empoisonnement"]
+        },
+        {
+          id: 7,
+          name: "Carreaux Rapides",
+          initiative: 78,
+          recycled: false,
+          effects: ["Attaque -1, port\xE9e 4, cible 2"]
+        },
+        {
+          id: 8,
+          name: "Avidit\xE9",
+          initiative: 40,
+          recycled: true,
+          effects: ["D\xE9placement +1, saut", "Pillage 1"]
+        }
+      ]
+    },
+    // MARK: reanimated spirit
+    {
+      id: "reanimated_spirit",
+      name: "Esprit R\xE9anim\xE9",
+      normalHp: [3, 4, 5, 6, 6, 8, 9, 12],
+      eliteHp: [5, 5, 7, 8, 8, 11, 13, 17],
+      normalMove: [2, 2, 3, 3, 3, 3, 3, 3],
+      eliteMove: [3, 3, 4, 4, 4, 4, 4, 4],
+      normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+      eliteAttack: [3, 3, 3, 4, 4, 4, 5, 5],
+      normalModifiers: [
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 2"
+      ],
+      eliteModifiers: [
+        "Bouclier 1",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 3",
+        "Bouclier 3",
+        "Bouclier 3",
+        "Bouclier 3"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Saper l'\xC9nergie",
+          initiative: 22,
+          recycled: true,
+          effects: ["D\xE9placement -1", "Attaque -1, port\xE9e 4, confusion"]
+        },
+        {
+          id: 2,
+          name: "Cri Retentissant",
+          initiative: 33,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, cible tous les adversaires \xE0 port\xE9e 2"
+          ]
+        },
+        {
+          id: 3,
+          name: "Rien de Particulier",
+          initiative: 48,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 48,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 3"]
+        },
+        {
+          id: 5,
+          name: "Chaine Coupl\xE9e",
+          initiative: 61,
+          recycled: false,
+          effects: ["Attaque +0, port\xE9e 3, cible 2"]
+        },
+        {
+          id: 6,
+          name: "Aspirer la Chaleur",
+          initiative: 75,
+          recycled: false,
+          effects: [
+            "D\xE9placement -1",
+            "Attaque +1, port\xE9e 3",
+            "Soin 1 sur lui-m\xEAme",
+            "Infuse Glace"
+          ]
+        },
+        {
+          id: 7,
+          name: "Hurlement de Col\xE8re",
+          initiative: 55,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Mal\xE9diction, cible tous les adversaires \xE0 port\xE9e 3",
+            "Infuse Glace"
+          ]
+        },
+        {
+          id: 8,
+          name: "Regard Glacial",
+          initiative: 67,
+          recycled: false,
+          effects: [
+            "D\xE9placement -1",
+            "Attaque +1, port\xE9e 3",
+            "[Glace]: d\xE9sarmement"
+          ]
+        }
+      ]
+    },
+    // MARK: stone golem
+    {
+      id: "stone_golem",
+      name: "Golem de Pierre",
+      normalHp: [10, 10, 11, 11, 12, 13, 16, 16],
+      eliteHp: [10, 11, 13, 14, 16, 18, 20, 21],
+      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
+      eliteMove: [2, 2, 2, 2, 2, 3, 3, 3],
+      normalAttack: [3, 3, 4, 4, 4, 5, 5, 5],
+      eliteAttack: [4, 4, 5, 5, 6, 6, 7, 7],
+      normalModifiers: [
+        "",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 3"
+      ],
+      eliteModifiers: [
+        "Bouclier 1",
+        "Bouclier 2",
+        "Bouclier 2",
+        "Bouclier 3",
+        "Bouclier 3",
+        "Bouclier 3",
+        "Bouclier 3",
+        "Bouclier 4"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Progression \xC9prouvante",
+          initiative: 28,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque +0",
+            "Si la capacit\xE9 de d\xE9placement a \xE9t\xE9 effectu\xE9e, le golem subit 1 d\xE9gat"
+          ]
+        },
+        {
+          id: 2,
+          name: "Assaut Pr\xE9cipit\xE9",
+          initiative: 51,
+          recycled: true,
+          effects: ["D\xE9placement +1", "Attaque -1"]
+        },
+        {
+          id: 3,
+          name: "Marteler le Sol",
+          initiative: 83,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, cible tous les adversaires adjacents"
+          ]
+        },
+        {
+          id: 4,
+          name: "Coup Calcul\xE9",
+          initiative: 90,
+          recycled: true,
+          effects: ["D\xE9placement -1", "Attack +1"]
+        },
+        {
+          id: 5,
+          name: "R\xE9action Runique",
+          initiative: 10,
+          recycled: false,
+          effects: [
+            "Chaque fois qu'un personnage attaque le golem, le personnage subit 3 d\xE9gats"
+          ]
+        },
+        {
+          id: 6,
+          name: "Attraction Runique",
+          initiative: 28,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque -2, port\xE9e 3, traction 2, immobilisation"
+          ]
+        },
+        {
+          id: 7,
+          name: "Rien de Particulier",
+          initiative: 64,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 8,
+          name: "Lancer Sacrificiel",
+          initiative: 72,
+          recycled: false,
+          effects: [
+            "Attaque +1, port\xE9e 3. Si cette attaque est effectu\xE9e, le golem subit 2 d\xE9gats"
+          ]
+        }
+      ]
+    },
+    // MARK: monstruosité de sang
+    {
+      id: "blood_monster",
+      name: "Monstruosit\xE9 de Sang",
+      normalHp: [7, 9, 10, 12, 12, 13, 17, 20],
+      eliteHp: [12, 12, 15, 18, 18, 20, 23, 23],
+      normalMove: [2, 2, 2, 3, 3, 3, 3, 3],
+      eliteMove: [2, 2, 2, 3, 3, 3, 3, 3],
+      normalAttack: [2, 2, 3, 3, 3, 4, 4, 5],
+      eliteAttack: [3, 3, 4, 4, 4, 5, 6, 6],
+      normalModifiers: [
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 1"
+      ],
+      eliteModifiers: [
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 1",
+        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, Bouclier 2",
+        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 2",
+        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 2",
+        "\xE0 sa mort, tous les personnages adjacents subissent 5 d\xE9gats, Bouclier 3"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Bulles Explosives",
+          initiative: 9,
+          recycled: true,
+          effects: [
+            "D\xE9placement +1",
+            "Chaque fois qu'un personnage attaque la monstruosit\xE9, le personnage subit 2 d\xE9gats"
+          ]
+        },
+        {
+          id: 2,
+          name: "Nu\xE9e",
+          initiative: 21,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque -1",
+            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
+          ]
+        },
+        {
+          id: 3,
+          name: "Nu\xE9e",
+          initiative: 21,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque -1",
+            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
+          ]
+        },
+        {
+          id: 4,
+          name: "Morsure Affaiblissante",
+          initiative: 34,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, confusion"]
+        },
+        {
+          id: 5,
+          name: "Rien de Particulier",
+          initiative: 39,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 6,
+          name: "\xC9gratignure Incertaine",
+          initiative: 52,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +1",
+            "Si l'attaque est effectu\xE9e, la monstruosit\xE9 subit 1 d\xE9gat"
+          ]
+        },
+        {
+          id: 7,
+          name: "Coup Calcul\xE9",
+          initiative: 60,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 8,
+          name: "Fr\xE9n\xE9sie Incertaine",
+          initiative: 74,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "la Monstruosit\xE9 subit 1 d\xE9gat",
+            "Attaque +1, cible tous les adversaires adjacents"
+          ]
+        }
+      ]
+    },
+    // MARK: monstruosité ratine
+    {
+      id: "rat_monster",
+      name: "Monstruosit\xE9 ratine",
+      normalHp: [4, 4, 5, 6, 8, 10, 12, 12],
+      eliteHp: [6, 7, 8, 10, 12, 13, 14, 16],
+      normalMove: [1, 1, 2, 2, 2, 3, 3, 3],
+      eliteMove: [1, 1, 1, 2, 2, 2, 3, 3],
+      normalAttack: [1, 2, 2, 3, 3, 3, 3, 4],
+      eliteAttack: [2, 2, 3, 3, 3, 4, 4, 5],
+      normalModifiers: [
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats"
+      ],
+      eliteModifiers: [
+        "\xE0 sa mort, tous les personnages adjacents subissent 1 d\xE9gats",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 2 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 3 d\xE9gats, avantage",
+        "\xE0 sa mort, tous les personnages adjacents subissent 4 d\xE9gats, avantage"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Bulles explosives",
+          initiative: 9,
+          recycled: true,
+          effects: [
+            "D\xE9placement +1",
+            "Chaque fois qu'un h\xE9ro attaque la monstruosit\xE9, le h\xE9ro subit 2 d\xE9gats"
+          ]
+        },
+        {
+          id: 2,
+          name: "Nu\xE9e",
+          initiative: 21,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque -1",
+            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
+          ]
+        },
+        {
+          id: 3,
+          name: "Nu\xE9e",
+          initiative: 21,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1",
+            "Attaque -1",
+            "+1 \xE0 attaque si cible adjacente \xE0 un alli\xE9 de la monstruosit\xE9"
+          ]
+        },
+        {
+          id: 4,
+          name: "Morsure affaiblissante",
+          initiative: 34,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, confusion"]
+        },
+        {
+          id: 5,
+          name: "Rien de Particulier",
+          initiative: 39,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 6,
+          name: "\xC9gratignure incertaine",
+          initiative: 52,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +1",
+            "Si l'attaque est effectu\xE9e, la monstruosit\xE9 subit 1 d\xE9gat"
+          ]
+        },
+        {
+          id: 7,
+          name: "Coup Calcul\xE9",
+          initiative: 60,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 8,
+          name: "Fr\xE9n\xE9sie incertaine",
+          initiative: 74,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "la monstruosit\xE9 subit 1 d\xE9gat",
+            "Attaque +1, cible tous les adversaires adjacents"
+          ]
+        }
+      ]
+    },
+    // MARK: base vermling bandit
+    {
+      id: "base_vermling_bandit",
+      name: "Pillard Vermling de Base",
+      normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
+      eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
+      normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
+      eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
+      normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
+      eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
+      normalModifiers: ["", "", "", "", "", "", "", ""],
+      eliteModifiers: ["", "", "", "", "", "", "", ""],
+      actions: [
+        {
+          id: 1,
+          name: "Hurlements",
+          initiative: 85,
+          recycled: true,
+          effects: [
+            "Pouss\xE9e 1, ciblez tous les adversaires adjacents",
+            "Attaque +1, port\xE9e 2"
+          ]
+        },
+        {
+          id: 2,
+          name: "Lancer Pr\xE9cis",
+          initiative: 36,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque -1, port\xE9e 2"]
+        },
+        {
+          id: 3,
+          name: "Double Dagues",
+          initiative: 59,
+          recycled: false,
+          effects: ["Attaque +0, port\xE9e 2, cible 2"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 50,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        }
+      ]
+    },
+    // MARK: vermling bandit
+    {
+      id: "vermling_bandit",
+      name: "Pillard Vermling",
+      normalHp: [4, 5, 9, 11, 12, 15, 17, 19],
+      eliteHp: [8, 10, 14, 16, 19, 23, 27, 31],
+      normalMove: [1, 1, 2, 3, 3, 3, 4, 4],
+      eliteMove: [1, 1, 3, 3, 4, 4, 4, 4],
+      normalAttack: [2, 2, 2, 2, 3, 3, 3, 4],
+      eliteAttack: [2, 2, 3, 4, 4, 4, 5, 6],
+      normalModifiers: ["", "", "", "", "", "", "", ""],
+      eliteModifiers: ["", "", "", "", "", "", "", ""],
+      actions: [
+        {
+          id: 1,
+          name: "Fosse \xE0 Pointes",
+          initiative: 20,
+          recycled: false,
+          effects: [
+            "Attaque +0, port\xE9e 4",
+            "Cr\xE9ez un pi\xE8ge \xE0 3 d\xE9gats sur l'hexaxone vide adjacent le plus proche d'un adversaire"
+          ]
+        },
+        {
+          id: 2,
+          name: "Panser les Blessures",
+          initiative: 30,
+          recycled: true,
+          effects: ["D\xE9placement +1", "Soin 3 sur lui-m\xEAme"]
+        },
+        {
+          id: 3,
+          name: "Lancer Pr\xE9cis",
+          initiative: 36,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque -1, port\xE9e 4"]
+        },
+        {
+          id: 4,
+          name: "Rien de Particulier",
+          initiative: 50,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 5,
+          name: "Doubles Dagues",
+          initiative: 59,
+          recycled: false,
+          effects: ["Attaque +0, port\xE9e 3, cible 2"]
+        },
+        {
+          id: 6,
+          name: "Parade",
+          initiative: 70,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque -1, d\xE9sarmement"]
+        },
+        {
+          id: 7,
+          name: "M\xE9chant \xC9pieu",
+          initiative: 77,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +0, port\xE9e 3, blessure"]
+        },
+        {
+          id: 8,
+          name: "Hurlements Repoussants",
+          initiative: 85,
+          recycled: true,
+          effects: [
+            "Pouss\xE9e 1, ciblez tous les adversaires adjacents",
+            "Attaque +1, port\xE9e 2"
+          ]
+        }
+      ]
+    },
+    // MARK: black vase
+    {
+      id: "black_vase",
+      name: "Vase Noire",
+      normalHp: [4, 5, 7, 8, 9, 10, 12, 16],
+      eliteHp: [8, 9, 11, 11, 13, 15, 16, 18],
+      normalMove: [1, 1, 1, 1, 2, 2, 2, 2],
+      eliteMove: [1, 1, 1, 2, 2, 3, 3, 3],
+      normalAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+      eliteAttack: [2, 2, 3, 3, 4, 4, 4, 5],
+      normalModifiers: [
+        "",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1, empoisonnement",
+        "Bouclier 1, empoisonnement"
+      ],
+      eliteModifiers: [
+        "",
+        "Bouclier 1",
+        "Bouclier 1",
+        "Bouclier 1, empoisonnement",
+        "Bouclier 1, empoisonnement",
+        "Bouclier 1, empoisonnement",
+        "Bouclier 2, empoisonnement",
+        "Bouclier 2, empoisonnement"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Assaut Pr\xE9cipit\xE9",
+          initiative: 36,
+          recycled: false,
+          effects: ["D\xE9placement +1", "Attaque -1, port\xE9e 3"]
+        },
+        {
+          id: 2,
+          name: "Rien de Particulier",
+          initiative: 57,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0, port\xE9e 2"]
+        },
+        {
+          id: 3,
+          name: "Explosion Toxique",
+          initiative: 57,
+          recycled: false,
+          effects: [
+            "Attaque +0, port\xE9e 2, cible 2, empoisonnement",
+            "[Terre]: +1 cible"
+          ]
+        },
+        {
+          id: 4,
+          name: "Coup Calcul\xE9",
+          initiative: 66,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1, port\xE9e 3"]
+        },
+        {
+          id: 5,
+          name: "Repas",
+          initiative: 66,
+          recycled: false,
+          effects: [
+            "D\xE9placement +0",
+            "Pillage 1",
+            "Soin 2 sur elle-m\xEAme",
+            "[Obscurit\xE9]: +1 soin"
+          ]
+        },
+        {
+          id: 6,
+          name: "Sceau Plasmique",
+          initiative: 85,
+          recycled: false,
+          effects: [
+            "Pouss\xE9e 1, empoisonnement, cible tous les adversaires adjacents",
+            "Attaque +1, port\xE9e 2"
+          ]
+        },
+        {
+          id: 7,
+          name: "Noire Damnation",
+          initiative: 85,
+          recycled: true,
+          effects: [
+            "L'adversaire en ligne de vue le plus proche, sans consid\xE9ration de port\xE9e, subit 1+NS/2 d\xE9gats (arrondis au sup\xE9rieur)",
+            "Soin 1 sur elle-m\xEAme",
+            "Infuse Obscurit\xE9"
+          ]
+        },
+        {
+          id: 8,
+          name: "Damnation Infectieuse",
+          initiative: 85,
+          recycled: true,
+          effects: [
+            "L'adversaire en ligne de vue le plus proche, sans consid\xE9ration de port\xE9e, subit 1+NS/2 d\xE9gats (arrondis au sup\xE9rieur)",
+            "Soin 1 sur elle-m\xEAme",
+            "Infuse Terre"
+          ]
+        }
+      ]
+    },
+    // MARK: base giant viper
+    {
+      id: "base_giant_viper",
+      name: "Vip\xE8re G\xE9ante de Base",
+      normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
+      eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
+      normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
+      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
+      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+      normalModifiers: [
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      eliteModifiers: [
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Constriction",
+          initiative: 58,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1, immobilisation"]
+        },
+        {
+          id: 2,
+          name: "Crocs Rapides",
+          initiative: 33,
+          recycled: false,
+          effects: ["D\xE9placement +1, saut", "Attaque +0, cible 2"]
+        },
+        {
+          id: 3,
+          name: "\xC0 couvert",
+          initiative: 18,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1, saut",
+            "Attaque -1",
+            "Toutes les attaques ciblant la vip\xE8re gagnent d\xE9savantage ce round"
+          ]
+        },
+        {
+          id: 4,
+          name: "Fr\xE9n\xE9sie Toxique",
+          initiative: 43,
+          recycled: true,
+          effects: [
+            "D\xE9placement +1, saut",
+            "Attaque -1, cible tous les adversaires adjacents"
+          ]
+        }
+      ]
+    },
+    // MARK: giant viper
+    {
+      id: "giant_viper",
+      name: "Vip\xE8re G\xE9ante",
+      normalHp: [2, 3, 4, 4, 6, 7, 8, 10],
+      eliteHp: [3, 5, 7, 8, 11, 13, 14, 18],
+      normalMove: [2, 2, 3, 3, 3, 3, 4, 4],
+      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      normalAttack: [1, 1, 1, 2, 2, 3, 3, 3],
+      eliteAttack: [2, 2, 2, 3, 3, 3, 4, 4],
+      normalModifiers: [
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      eliteModifiers: [
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement",
+        "empoisonnement"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Crocs Rapides",
+          initiative: 33,
+          recycled: false,
+          effects: ["D\xE9placement +1, saut", "Attaque +0, cible 2"]
+        },
+        {
+          id: 2,
+          name: "\xC0 couvert",
+          initiative: 18,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1, saut",
+            "Attaque -1",
+            "Toutes les attaques ciblant la vip\xE8re gagnent d\xE9savantage ce round"
+          ]
+        },
+        {
+          id: 3,
+          name: "Coup Calcul\xE9",
+          initiative: 58,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 4,
+          name: "Fr\xE9n\xE9sie Toxique",
+          initiative: 43,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1, saut",
+            "Attaque -1, cible tous les adversaires adjacents"
+          ]
+        },
+        {
+          id: 5,
+          name: "Cerner",
+          initiative: 32,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +0",
+            "Ajoute +2 attaque si la cible est adjacente \xE0 un alli\xE9 de la vip\xE8re"
+          ]
+        },
+        {
+          id: 6,
+          name: "Cerner",
+          initiative: 32,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque +0",
+            "Ajoute +2 attaque si la cible est adjacente \xE0 un alli\xE9 de la vip\xE8re"
+          ]
+        },
+        {
+          id: 7,
+          name: "Coup D\xE9fensif",
+          initiative: 11,
+          recycled: false,
+          effects: ["Bouclier 1", "Attaque +0"]
+        },
+        {
+          id: 8,
+          name: "Constriction",
+          initiative: 23,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque -1, immobilisation", "Attaque -1"]
+        }
+      ]
+    },
+    // MARK: base_zealot
+    {
+      id: "base_zealot",
+      name: "Z\xE9lote de Base",
+      normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
+      eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
+      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
+      eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
+      normalModifiers: [
+        "",
+        "",
+        "",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure"
+      ],
+      eliteModifiers: [
+        "",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Sang Bouillant",
+          initiative: 46,
+          recycled: false,
+          effects: ["Attaque +1, port\xE9e 2, confusion"]
+        },
+        {
+          id: 2,
+          name: "Fouet de Damnation",
+          initiative: 19,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque -1, mal\xE9diction"]
+        },
+        {
+          id: 3,
+          name: "Drain de Vie",
+          initiative: 27,
+          recycled: true,
+          effects: [
+            "Soin 1 sur lui-m\xEAme",
+            "D\xE9placement +1",
+            "Attaque -1, port\xE9e 2"
+          ]
+        },
+        {
+          id: 4,
+          name: "Fl\xE9au Infame",
+          initiative: 77,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque -1, empoisonnement"]
+        }
+      ]
+    },
+    // MARK: zealot
+    {
+      id: "zealot",
+      name: "Z\xE9lote",
+      normalHp: [4, 6, 7, 8, 10, 12, 14, 16],
+      eliteHp: [7, 8, 11, 13, 17, 18, 22, 26],
+      normalMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      eliteMove: [2, 2, 3, 3, 3, 4, 4, 4],
+      normalAttack: [2, 2, 3, 3, 3, 3, 4, 5],
+      eliteAttack: [3, 3, 3, 4, 4, 5, 6, 7],
+      normalModifiers: [
+        "",
+        "",
+        "",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure"
+      ],
+      eliteModifiers: [
+        "",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure",
+        "blessure"
+      ],
+      actions: [
+        {
+          id: 1,
+          name: "Fouet de Damnation",
+          initiative: 19,
+          recycled: false,
+          effects: [
+            "D\xE9placement +1, saut",
+            "Attaque -1, mal\xE9diction",
+            "infuse Air"
+          ]
+        },
+        {
+          id: 2,
+          name: "Drain de Vie",
+          initiative: 27,
+          recycled: true,
+          effects: [
+            "D\xE9placement +0",
+            "Attaque -1, port\xE9e 2",
+            "Soin X sur lui-m\xEAme (X=montant d\xE9gats attaque)",
+            "infuse Obscurit\xE9"
+          ]
+        },
+        {
+          id: 3,
+          name: "Assaut Pr\xE9cipit\xE9",
+          initiative: 35,
+          recycled: false,
+          effects: ["D\xE9placement +1", "Attaque -1"]
+        },
+        {
+          id: 4,
+          name: "Sang Bouillant",
+          initiative: 46,
+          recycled: false,
+          effects: [
+            "Attaque -1, port\xE9e 2, cible 2, confusion",
+            "[Feu]: +2 port\xE9e"
+          ]
+        },
+        {
+          id: 5,
+          name: "Rien de Particulier",
+          initiative: 50,
+          recycled: false,
+          effects: ["D\xE9placement +0", "Attaque +0"]
+        },
+        {
+          id: 6,
+          name: "Coup Calcul\xE9",
+          initiative: 65,
+          recycled: false,
+          effects: ["D\xE9placement -1", "Attaque +1"]
+        },
+        {
+          id: 7,
+          name: "Fl\xE9au Infame",
+          initiative: 77,
+          recycled: false,
+          effects: [
+            "D\xE9placement -1",
+            "Attaque -1, empoisonnement (cible 2 hexes adjacents voisins",
+            "[Air]: +1 attaque"
+          ]
+        },
+        {
+          id: 8,
+          name: "Flamme impie",
+          initiative: 82,
+          recycled: true,
+          effects: ["Attaque +1, port\xE9e 3", "Infuse Feu"]
+        }
+      ]
+    },
+    // MARK: horreur de sang
+    {
+      id: "blood_horror",
+      name: "Horreur de sang",
+      boss: true,
+      hp: [
+        (a) => 7 * a,
+        (a) => 10 * a,
+        (a) => 12 * a,
+        (a) => 15 * a,
+        (a) => 17 * a,
+        (a) => 20 * a,
+        (a) => 23 * a,
+        (a) => 28 * a
+      ],
+      move: [3, 3, 4, 4, 5, 5, 5, 5],
+      attack: [
+        (a) => a - 1,
+        (a) => a,
+        (a) => a,
+        (a) => a + 1,
+        (a) => a + 1,
+        (a) => a + 2,
+        (a) => a + 3,
+        (a) => a + 4
+      ],
+      immunities: [
+        "immobilisation",
+        "d\xE9sarmement",
+        "confusion",
+        "\xE9tourdissement"
+      ],
+      special1: [
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`,
+        () => `saute jusqu'au z\xE9lote mort le plus \xE9loign\xE9 et le ressuscite, ou saute jusqu'a l'aventurier le plus \xE9loign\xE9 et Attaque +0`
+      ],
+      special2: [
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`,
+        () => `d\xE9placement +0, attaque +0. ressuscite tous les z\xE9lotes morts dans la salle`
+      ],
+      actions: BOSS_ACTIONS
+    },
+    // MARK: primat de l'ordre
+    {
+      id: "primat_de_ordre",
+      name: "Primat de l'Ordre",
+      boss: true,
+      hp: [
+        (a) => 10 * a,
+        (a) => 14 * a,
+        (a) => 17 * a,
+        (a) => 20 * a,
+        (a) => 24 * a,
+        (a) => 28 * a,
+        (a) => 32 * a,
+        (a) => 36 * a
+      ],
+      move: [2, 2, 2, 2, 3, 3, 3, 3],
+      attack: [
+        () => 3,
+        () => 4,
+        () => 4,
+        () => 5,
+        () => 5,
+        () => 6,
+        () => 7,
+        () => 8
+      ],
+      immunities: [
+        "immobilisation",
+        "d\xE9sarmement",
+        "confusion",
+        "\xE9tourdissement",
+        "mal\xE9diction"
+      ],
+      special1: [
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`,
+        (a) => `tous les adversaires \xE0 port\xE9e 2 subissent 2 d\xE9gats, g\xE9n\xE9rez ${a / 2} diablotins de sang`
+      ],
+      special2: [
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`,
+        () => `attaque +0, attaque -1 \xE0 port\xE9e 2 de la cible, attaque -2 \xE0 port\xE9e 2 de la cible`
+      ],
+      actions: BOSS_ACTIONS
+    },
+    // MARK: tumeur de sang
+    {
+      id: "tumeur_de_sang",
+      name: "Tumeur de Sang",
+      boss: true,
+      hp: [
+        (a) => 7 * a,
+        (a) => 10 * a,
+        (a) => 12 * a,
+        (a) => 15 * a,
+        (a) => 17 * a,
+        (a) => 20 * a,
+        (a) => 23 * a,
+        (a) => 28 * a
+      ],
+      move: [0, 0, 0, 0, 0, 0, 0, 0],
+      attack: [
+        (a) => a - 1,
+        (a) => a,
+        (a) => a,
+        (a) => a + 1,
+        (a) => a + 1,
+        (a) => a + 2,
+        (a) => a + 2,
+        (a) => a + 3
+      ],
+      immunities: ["d\xE9sarmement", "confusion", "\xE9tourdissement"],
+      special1: [
+        (a) => `Soin ${a} sur elle-m\xEAme`,
+        (a) => `Soin ${a} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 1} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 1} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 2} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 2} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 3} sur elle-m\xEAme`,
+        (a) => `Soin ${a + 3} sur elle-m\xEAme`
+      ],
+      special2: [
+        () => `Soin 2 sur tous les alli\xE9s`,
+        () => `Soin 2 sur tous les alli\xE9s`,
+        () => `Soin 3 sur tous les alli\xE9s`,
+        () => `Soin 3 sur tous les alli\xE9s`,
+        () => `Soin 4 sur tous les alli\xE9s`,
+        () => `Soin 4 sur tous les alli\xE9s`,
+        () => `Soin 5 sur tous les alli\xE9s`,
+        () => `Soin 5 sur tous les alli\xE9s`
+      ],
+      actions: BOSS_ACTIONS
+    }
+  ];
+  var ENEMIES_MAP = {};
+  for (let enemies of ENEMIES) {
+    ENEMIES_MAP[enemies.id] = enemies;
+  }
+  var BATTLE_GOALS = [
+    {
+      id: 1,
+      title: "Maraudeur",
+      description: "Effectuer deux actions pr\xE9sentant l'icone Perdue durant le m\xEAme round"
+    },
+    {
+      id: 2,
+      title: "Reclus",
+      description: "Ne jamais terminer votre tour adjacent \xE0 un de vos alli\xE9s"
+    },
+    {
+      id: 3,
+      title: "Vite sur pied",
+      description: "Terminer le sc\xE9nario avec un nombre de points de vie \xE9gal \xE0 votre valeur maximale de points de vie"
+    },
+    {
+      id: 4,
+      title: "Feinteur",
+      description: "\xC9liminer un monstre qui ne vous est pas adjacent alors que vous \xEAtes adjacent \xE0 un autre"
+    },
+    {
+      id: 5,
+      title: "T\xEAte br\xFBl\xE9e",
+      description: "Effectuer deux actions pr\xE9sentant l'icone Perdue avant votre premier repos"
+    },
+    {
+      id: 6,
+      title: "Insomniaque",
+      description: "Subir des d\xE9g\xE2ts d'une attaque intervenant le m\xEAme round o\xF9 vous prenez un repos long"
+    },
+    {
+      id: 7,
+      title: "Pacifiste",
+      description: "\xC9liminer au maximum trois monstres"
+    },
+    {
+      id: 8,
+      title: "Acrobate",
+      description: "Perdre une carte pour \xE9viter de subir 5 d\xE9gats ou plus"
+    },
+    {
+      id: 9,
+      title: "Abstinent",
+      description: "Ne jamais consommer de potion"
+    },
+    {
+      id: 10,
+      title: "Fin de match",
+      description: "\xCAtre le dernier \xE0 \xE9liminer un monstre lors de ce sc\xE9nario"
+    },
+    {
+      id: 11,
+      title: "Conservateur",
+      description: "Ne jamais perdre une carte pour \xE9viter de subir des d\xE9gats"
+    },
+    {
+      id: 12,
+      title: "Dur \xE0 cuire",
+      description: "Ne jamais laisser votre nombre de points de vie descendre sous la moiti\xE9 de votre valeur maximale de points de vie (arrondie au sup\xE9rieur)"
+    },
+    {
+      id: 13,
+      title: "Comp\xE9titeur",
+      description: "Ne jamais quitter un hexagone adjacent \xE0 un monstre"
+    },
+    {
+      id: 14,
+      title: "Vol \xE0 la tire",
+      description: "Ramasser au moins un pion Monnaie en effectuant une action Pillage lorsque vous \xEAtes sur un hexagone adjacents \xE0 deux monstres ou plus"
+    },
+    {
+      id: 15,
+      title: "Pelote \xE0 \xE9pingles",
+      description: "\xCAtre la cible d'attaque d'au moins trois monstres durant le m\xEAme round"
+    },
+    {
+      id: 16,
+      title: "Pl\xE9b\xE9ien",
+      description: "Ne jamais \xE9liminer un monstre d'\xE9lite ou un boss"
+    },
+    {
+      id: 17,
+      title: "\xC9goiste",
+      description: "Amasser plus de pions Monnaie que tout autre aventurier"
+    },
+    {
+      id: 18,
+      title: "Vecteur",
+      description: "Appliquer un \xE9tat n\xE9gatif \xE0 un monstre alors que vous \xEAtes vous-m\xEAme sous le coup d'un \xE9tat n\xE9gatif"
+    },
+    {
+      id: 19,
+      title: "Gringalet",
+      description: "Finir \xE9puis\xE9 avant tout autre aventurier"
+    },
+    {
+      id: 20,
+      title: "Joueur",
+      description: "\xC9liminer un monstre gr\xE2ce \xE0 une attaque avec d\xE9savantage"
+    },
+    {
+      id: 21,
+      title: "Pionnier",
+      description: "Ouvrir une porte et terminer le m\xEAme tour dans la salle r\xE9v\xE9l\xE9e"
+    },
+    {
+      id: 22,
+      title: "Tra\xEEnard",
+      description: "Ne jamais prendre de repos court"
+    },
+    {
+      id: 23,
+      title: "Assistant",
+      description: "\xC9liminer un monstre pr\xE9c\xE9demment attaqu\xE9 par un de vos alli\xE9s durant le m\xEAme round"
+    },
+    {
+      id: 24,
+      title: "Altruiste",
+      description: "Amasser moins de pions monnaie que tout autre aventurier"
+    },
+    {
+      id: 25,
+      title: "Sp\xE9cialiste",
+      description: "Ne jamais entreprendre d'action par d\xE9faut"
+    },
+    {
+      id: 26,
+      title: "Agoraphobe",
+      description: "Terminer tous vos tours adjacent \xE0 un mur ou \xE0 un obstacle"
+    },
+    {
+      id: 27,
+      title: "Hyperactif",
+      description: "Ne jamais prendre un repos long"
+    },
+    {
+      id: 28,
+      title: "Ombre",
+      description: "Terminer tous vos tours adjacents \xE0 un de vos alli\xE9s"
+    },
+    {
+      id: 29,
+      title: "Sadique",
+      description: "\xC9liminer au moins cinq monstres"
+    },
+    {
+      id: 30,
+      title: "Masochiste",
+      description: "Terminer le sc\xE9nario avec 3 points de vie au maximum"
+    },
+    {
+      id: 31,
+      title: "Premier sang",
+      description: "\xCAtre le premier \xE0 \xE9liminer un monstre lors de ce sc\xE9nario"
+    },
+    {
+      id: 32,
+      title: "Coupe-jarret",
+      description: "\xC9liminer un monstre et piller le pion Monnaie qu'il laisse tomber au cours du m\xEAme tour"
+    }
+  ];
+  var MONSTER_MODIFIERS_DECK = [
+    {
+      id: 1,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 2,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 3,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 4,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 5,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 6,
+      effects: ["+0"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: 7,
+      effects: ["-1"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 8,
+      effects: ["-1"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 9,
+      effects: ["-1"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 10,
+      effects: ["-1"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 11,
+      effects: ["-1"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 12,
+      effects: ["-2"],
+      recycled: false,
+      color: "#fff0f0"
+    },
+    {
+      id: 13,
+      effects: ["+1"],
+      recycled: false,
+      color: "#ebfceb"
+    },
+    {
+      id: 14,
+      effects: ["+1"],
+      recycled: false,
+      color: "#ebfceb"
+    },
+    {
+      id: 15,
+      effects: ["+1"],
+      recycled: false,
+      color: "#ebfceb"
+    },
+    {
+      id: 16,
+      effects: ["+1"],
+      recycled: false,
+      color: "#ebfceb"
+    },
+    {
+      id: 17,
+      effects: ["+1"],
+      recycled: false,
+      color: "#ebfceb"
+    },
+    {
+      id: 18,
+      effects: ["x0"],
+      recycled: true,
+      color: "#ffffd9"
+    },
+    {
+      id: 19,
+      effects: ["x2"],
+      recycled: true,
+      color: "#ffc7ff"
+    },
+    {
+      id: 20,
+      effects: ["+2"],
+      recycled: false,
+      color: "#ebfceb"
+    }
+  ];
+
+  // src/hero_model.js
+  var heroClasses = [{ value: "", text: "" }];
+  for (let c in CLASS_NAME) {
+    heroClasses.push({ value: c, text: CLASS_NAME[c] });
+  }
+  var levels = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((l) => ({
+    value: l,
+    text: `Level ${l}`
+  }));
+  var Hero = class extends BaseModel {
+    fields = {
+      name: { type: "char", label: "Name", placeholder: "Hero Name" },
+      cls: { type: "select", label: "Class", choices: heroClasses },
+      level: {
+        type: "select",
+        label: "Level",
+        default: 1,
+        choices: levels,
+        isNumber: true
+      },
+      campaign: { type: "many2one", label: "Campaign", comodel: Campaign }
+    };
+    // constructor(data) {
+    //   super(data);
+    //   /** @type { string } */
+    //   this.name;
+    //   /** @type { string } */
+    //   this.cls;
+    //   /** @type { number } */
+    //   this.level;
+    // }
+    isValid() {
+      return !!(this.name && this.cls);
+    }
+    get className() {
+      return CLASS_NAME[this.cls];
+    }
+    get maxHp() {
+      return MAX_HP_MAP[this.cls][this.level - 1];
+    }
+  };
+
+  // src/character_model.js
+  var mapping = {
+    poisoned: "poison",
+    wound: "blessure",
+    confusion: "confusion",
+    immobilisation: "immobilisation",
+    stunned: "\xE9tourdissement",
+    renforced: "renforcement",
+    disarmed: "d\xE9sarm\xE9"
+  };
+  var Character = class extends BaseModel {
+    fields = {
+      hero: { type: "many2one", label: "Hero", comodel: Hero },
+      scenario: { type: "many2one", label: "Scenario", comodel: Scenario },
+      battleGoal: { type: "number", label: "Battle Goal" },
+      battleGoalChoices: { type: "any" },
+      hp: { type: "number", label: "HP" },
+      maxHp: { type: "number", label: "Max HP" },
+      xp: { type: "number", label: "XP Gained" },
+      gold: { type: "number", label: "Gold Gained" },
+      didStart: { type: "boolean" },
+      // statuses
+      poisoned: { type: "boolean" },
+      wound: { type: "boolean" },
+      confusion: { type: "number" },
+      immobilisation: { type: "number" },
+      stunned: { type: "number" },
+      renforced: { type: "number" },
+      disarmed: { type: "number" }
+    };
+    setup() {
+      this.maxHp = this.hero.maxHp;
+      this.hp = this.maxHp;
+    }
+    isActive() {
+      return this.scenario.activeEntityId === this.id;
+    }
+    get status() {
+      const s = [];
+      for (let key in mapping) {
+        if (this[key]) {
+          s.push(mapping[key]);
+        }
+      }
+      return s.join(", ");
+    }
+  };
+
+  // src/deck.js
+  var Deck = class {
+    constructor(cards) {
+      this._cards = cards.slice();
+      this._discardPile = [];
+    }
+    shuffle() {
+      shuffle(this._cards);
+    }
+    take(n) {
+      const result = this._cards.slice(0, n);
+      this._cards = this._cards.slice(n);
+      return result;
+    }
+    deal(n) {
+      let result = [];
+      if (this._cards.length < n) {
+        while (this._discardPile.length) {
+          this._cards.push(this._discardPile.pop());
+        }
+      }
+      shuffle(this._cards);
+      for (let i = 0; i < n; i++) {
+        const card = this._cards.pop();
+        result.push(card);
+        this._discardPile.unshift(card);
+      }
+      return result;
+    }
+    length() {
+      return this._cards.length;
+    }
+    addCard(card) {
+      this._cards.push(card);
+    }
+    count(predicate) {
+      let result = 0;
+      for (let c of this._cards) {
+        if (predicate(c)) {
+          result++;
+        }
+      }
+      return result;
+    }
+    filterDiscardPile(predicate) {
+      this._discardPile = this._discardPile.filter(predicate);
+    }
+    hasInDiscardPile(predicate) {
+      return this._discardPile.some(predicate);
+    }
+    moveDiscarPileToDeck() {
+      this._cards = this._cards.concat(this._discardPile);
+      this._discardPile = [];
+      this.shuffle();
+    }
+  };
+
+  // src/enemy_model.js
+  var types = ENEMIES.map((e) => {
+    const text2 = e.name + (e.boss ? " (BOSS)" : "");
+    return { value: e.id, text: text2 };
+  });
+  var Enemy = class extends BaseModel {
+    fields = {
+      scenario: { type: "many2one", label: "Scenario", comodel: Scenario },
+      hp: { type: "number", label: "HP" },
+      maxHp: { type: "number", label: "Max HP" },
+      attack: { type: "number", label: "Attack" },
+      move: { type: "number", label: "Move" },
+      visibleId: { type: "number", label: "Visible Id" },
+      type: {
+        type: "char",
+        label: "Type",
+        choices: [{ value: "", text: "" }].concat(types)
+      },
+      isElite: { type: "boolean", label: "Is Elite" },
+      didStart: { type: "boolean" },
+      didEnd: { type: "boolean" },
+      // statuses
+      poisoned: { type: "boolean" },
+      wound: { type: "boolean" },
+      confusion: { type: "number" },
+      immobilisation: { type: "number" },
+      stunned: { type: "number" },
+      renforced: { type: "number" },
+      disarmed: { type: "number" }
+    };
+    cache = null;
+    setup() {
+    }
+    get moveValue() {
+      return 10;
+    }
+    get attackValue() {
+      return 10;
+    }
+    isValid() {
+      return !!this.type;
+    }
+    get name() {
+      return this.descr.name;
+    }
+    get fullName() {
+      let result = this.isElite ? "Elite " : "";
+      result += this.name;
+      if (this.isBoss) {
+        result += " [BOSS]";
+      }
+      if (!this.isBoss && this.visibleId) {
+        result += ` [${this.visibleId}]`;
+      }
+      return result;
+    }
+    get initiative() {
+      const action = this.scenario.enemyActions.getAction(this.type);
+      return action ? action.initiative : false;
+    }
+    get isBoss() {
+      return this.descr?.boss;
+    }
+    get modifiers() {
+      if (this.isBoss) {
+        return "";
+      }
+      const lvl = this.scenario.level;
+      if (this.isElite) {
+        return this.descr.eliteModifiers[lvl - 1];
+      }
+      return this.descr.normalModifiers[lvl - 1];
+    }
+    get immunities() {
+      const immunities = this.descr.immunities;
+      return immunities ? this.descr.immunities.join(", ") : "";
+    }
+    get descr() {
+      if (!this.cache || this.cache.id !== this.type) {
+        this.cache = ENEMIES.find((e) => e.id === this.type);
+      }
+      return this.cache;
+    }
+    get special1() {
+      const lvl = this.scenario.level;
+      const A = this.scenario.characters.length;
+      return this.descr.special1[lvl - 1](A);
+    }
+    get special2() {
+      const lvl = this.scenario.level;
+      const A = this.scenario.characters.length;
+      return this.descr.special2[lvl - 1](A);
+    }
+    computeValues() {
+      const lvl = this.scenario.level;
+      const descr = this.descr;
+      if (this.isBoss) {
+        const A = this.scenario.characters.length;
+        this.maxHp = descr.hp[lvl - 1](A);
+        this.hp = this.maxHp;
+        this.attack = descr.attack[lvl - 1](A);
+        this.move = descr.move[lvl - 1];
+      } else if (this.isElite) {
+        this.maxHp = descr.eliteHp[lvl - 1];
+        this.hp = this.maxHp;
+        this.attack = descr.eliteAttack[lvl - 1];
+        this.move = descr.eliteMove[lvl - 1];
+      } else {
+        this.maxHp = descr.normalHp[lvl - 1];
+        this.hp = this.maxHp;
+        this.attack = descr.normalAttack[lvl - 1];
+        this.move = descr.normalMove[lvl - 1];
+      }
+    }
+    get status() {
+      const s = [];
+      for (let key in mapping) {
+        if (this[key]) {
+          s.push(mapping[key]);
+        }
+      }
+      return s.join(", ");
+    }
+    isActive() {
+      return this.scenario.activeEntityId === this.type;
+    }
+  };
+
+  // src/scenario_model.js
+  var levels2 = [1, 2, 3, 4, 5, 6, 7].map((l) => ({ value: l, text: l }));
+  var EnemyActions = class {
+    decks = {};
+    shown = {};
+    addType(type) {
+      if (!(type in this.decks)) {
+        const cards = ENEMIES_MAP[type].actions.map((a) => a.id);
+        this.decks[type] = new Deck(cards);
+      }
+    }
+    hasEnemyAction(type) {
+      return this.shown[type];
+    }
+    getEnemyDeck(type) {
+      return this.decks[type];
+    }
+    selectAction(type) {
+      if (this.shown[type]) {
+        return;
+      }
+      this.shown[type] = true;
+      this.decks[type].deal(1);
+    }
+    getAction(type) {
+      if (!this.shown[type]) {
+        return false;
+      }
+      const cardId = this.decks[type]._discardPile[0];
+      const card = ENEMIES_MAP[type].actions.find((c) => c.id === cardId);
+      return card;
+    }
+    nextRound() {
+      this.shown = {};
+    }
+  };
+  var Scenario = class extends BaseModel {
+    fields = {
+      name: { type: "char", label: "Description", placeholder: "New Scenario" },
+      createDate: { type: "char", label: "Create Date", default: today },
+      level: {
+        type: "select",
+        label: "Level",
+        choices: levels2,
+        default: 1,
+        isNumber: true
+      },
+      campaign: { type: "many2one", label: "Campaign", comodel: Campaign },
+      characters: { type: "one2many", label: "Heroes", comodel: Character },
+      enemies: { type: "one2many", label: "Enemies", comodel: Enemy },
+      rounds: { type: "number", label: "Rounds" },
+      activeEntityId: { type: "char", label: "Id of ActiveEntity" },
+      actionSelected: { type: "boolean" },
+      // true if actions have been selected
+      enemyAttackMods: {
+        type: "instance",
+        cls: Deck,
+        default: () => new Deck(MONSTER_MODIFIERS_DECK.map((c) => c.id))
+      },
+      enemyActions: {
+        type: "instance",
+        cls: EnemyActions,
+        deserialize: (e) => {
+          for (let t in e.decks) {
+            Object.setPrototypeOf(e.decks[t], Deck.prototype);
+          }
+        }
+      },
+      // elements
+      fire: { type: "number", label: "Fire" },
+      ice: { type: "number", label: "Ice" },
+      air: { type: "number", label: "Air" },
+      earth: { type: "number", label: "Earth" },
+      light: { type: "number", label: "Light" },
+      darkness: { type: "number", label: "Darkness" },
+      // stats
+      enemyCount: { type: "number", label: "Spawned Enemies" }
+    };
+    // constructor(data) {
+    //   super(data);
+    //   /** @type { string } */
+    //   this.name;
+    //   /** @type { Campaign } */
+    //   this.campaign;
+    //   if (!this.campaign) {
+    //     throw new Error("boom");
+    //   }
+    setup() {
+      const battleGoals = new Deck(BATTLE_GOALS);
+      battleGoals.shuffle();
+      this.characters = this.campaign.heroes.map((h) => {
+        const battleGoalChoices = battleGoals.take(2).map((g) => g.id);
+        return createInstance(Character, {
+          hero: h,
+          scenario: this,
+          battleGoalChoices
+        });
+      });
+    }
+    isValid() {
+      return !!this.name;
+    }
+    nextRound() {
+      this.endCurrentTurn();
+      this.rounds++;
+      if (this.fire > 0) {
+        this.fire--;
+      }
+      if (this.ice > 0) {
+        this.ice--;
+      }
+      if (this.air > 0) {
+        this.air--;
+      }
+      if (this.earth > 0) {
+        this.earth--;
+      }
+      if (this.light > 0) {
+        this.light--;
+      }
+      if (this.darkness > 0) {
+        this.darkness--;
+      }
+      this.enemyAttackMods.filterDiscardPile(
+        (e) => e !== "curse" && e !== "blessing"
+      );
+      if (this.enemyAttackMods.hasInDiscardPile((id) => {
+        const card = MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+        return card.recycled;
+      })) {
+        this.enemyAttackMods.moveDiscarPileToDeck();
+      }
+      this.enemyActions.nextRound();
+      this.actionSelected = false;
+      for (let char of this.characters) {
+        char.didStart = false;
+      }
+      for (let enemy of this.enemies) {
+        enemy.didStart = false;
+        enemy.didEnd = false;
+      }
+      this.activeEntityId = null;
+    }
+    startCharTurn(id) {
+      this.endCurrentTurn();
+      const char = this.characters.find((c) => c.id === id);
+      char.didStart = true;
+      this.activeEntityId = id;
+      if (char.wound) {
+        char.hp--;
+      }
+    }
+    startEnemyTurn(type) {
+      this.endCurrentTurn();
+      this.activeEntityId = type;
+      for (let enemy of this.enemies) {
+        if (!enemy.didStart && enemy.type === type) {
+          enemy.didStart = true;
+          if (enemy.wound) {
+            enemy.hp--;
+          }
+        }
+      }
+    }
+    removeSomeStatus(entity) {
+      if (entity.confusion > 0) {
+        entity.confusion--;
+      }
+      if (entity.immobilisation > 0) {
+        entity.immobilisation--;
+      }
+      if (entity.stunned > 0) {
+        entity.stunned--;
+      }
+      if (entity.renforced > 0) {
+        entity.renforced--;
+      }
+      if (entity.disarmed > 0) {
+        entity.disarmed--;
+      }
+    }
+    endCurrentTurn() {
+      if (!this.activeEntityId) {
+        return;
+      }
+      const char = this.characters.find((c) => c.id === this.activeEntityId);
+      if (char) {
+        this.removeSomeStatus(char);
+      } else {
+        for (let enemy of this.enemies) {
+          if (enemy.type === this.activeEntityId && enemy.didStart && !enemy.didEnd) {
+            enemy.didEnd = true;
+            this.removeSomeStatus(enemy);
+          }
+        }
+      }
+    }
+    cycleElement(elem) {
+      this[elem] = this[elem] - 1;
+      if (this[elem] < 0) {
+        this[elem] = 2;
+      }
+    }
+    addEnemy(enemy) {
+      this.enemyCount++;
+      this.enemies.push(enemy);
+      this.enemyActions.addType(enemy.type);
+    }
+    addCurseToEnemies() {
+      const ncurses = this.enemyAttackMods.count((c) => c === "curse");
+      if (ncurses < 10) {
+        this.enemyAttackMods.addCard("curse");
+        this.enemyAttackMods.shuffle();
+      }
+    }
+    addBlessingToEnemies() {
+      const nBlessings = this.enemyAttackMods.count((c) => c === "blessing");
+      if (nBlessings < 10) {
+        this.enemyAttackMods.addCard("blessing");
+        this.enemyAttackMods.shuffle();
+      }
+    }
+    removeEnemy(enemy) {
+      const index = this.enemies.findIndex((e) => e.id === enemy.id);
+      if (index >= 0) {
+        this.enemies.splice(index, 1);
+      }
+    }
+    getEnemyActions() {
+      const result = [];
+      const obj = {};
+      for (let e of this.enemies) {
+        if (!obj[e.id]) {
+          obj[e.id] = true;
+          result.push({
+            id: e.id,
+            enemyName: e.name,
+            card: this.enemyActions.getAction(e.type),
+            ncards: this.enemyActions.getEnemyDeck(e.type).length()
+          });
+        }
+      }
+      return result;
+    }
+    hasAllEnemyActions() {
+      for (let e of this.enemies) {
+        if (!this.enemyActions.hasEnemyAction(e.type)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    selectActions() {
+      for (let e of this.enemies) {
+        if (!this.enemyActions.hasEnemyAction(e.type)) {
+          this.enemyActions.selectAction(e.type);
+        }
+      }
+      this.actionSelected = true;
+    }
+  };
+
+  // src/campaign_model.js
+  var levels3 = [1, 2, 3, 4, 5, 6, 7].map((l) => ({
+    value: l,
+    text: l
+  }));
+  var Campaign = class extends BaseModel {
+    fields = {
+      name: { type: "char", label: "Name", placeholder: "New Campaign" },
+      createDate: { type: "char", label: "Creation Date", default: today },
+      level: {
+        type: "select",
+        label: "Scenario Level",
+        choices: levels3,
+        default: 1,
+        isNumber: true
+      },
+      heroes: { type: "one2many", comodel: Hero },
+      scenarios: { type: "one2many", comodel: Scenario }
+    };
+    // constructor(data) {
+    //   super(data);
+    //   /** @type { string } */
+    //   this.name;
+    //   /** @type { Hero[] } */
+    //   this.heroes;
+    //   /** @type { Scenario[] } */
+    //   this.scenarios;
+    // }
+    /**
+     * @param {Hero} hero
+     */
+    addHero(hero) {
+      if (!(hero instanceof Hero)) {
+        throw new Error("nope");
+      }
+      this.heroes.push(hero);
+    }
+    /**
+     * @param {Hero} hero
+     */
+    deleteHero(hero) {
+      this.heroes = this.heroes.filter((h) => h.id !== hero.id);
+    }
+    /**
+     * @param {Scenario} scenario
+     */
+    deleteScenario(scenario) {
+      this.scenarios = this.scenarios.filter((s) => s.id !== scenario.id);
+    }
+    /**
+     * @param {Scenario} scenario
+     */
+    addScenario(scenario) {
+      if (!(scenario instanceof Scenario)) {
+        throw new Error("nope");
+      }
+      this.scenarios.push(scenario);
+    }
+    isValid() {
+      return !!this.name;
+    }
+    heroList() {
+      return this.heroes.map((h) => `${h.name} (${h.className})`).join(", ");
+    }
+  };
+
+  // src/field_components.js
+  var TwoColForm = class extends Component {
+    static props = {
+      label: String,
+      value: true,
+      labelWidth: { type: String, optional: true }
+    };
+    static template = xml`
+        <div class="d-flex align-center mx-2 my-3" >
+            <div class="text-right" t-attf-style="width:{{props.labelWidth}}">
+                <t t-esc="props.label"/>:
+            </div>
+            <div class="mx-2 flex-grow text-bold">
+              <t t-esc="props.value"/>
+            </div>
+        </div>
+  `;
+  };
+  var FieldChar = class extends Component {
+    static props = {
+      name: String,
+      record: BaseModel,
+      labelWidth: { type: String, optional: true },
+      readonly: { type: Boolean, optional: true },
+      editable: { type: Boolean, optional: true },
+      cls: { type: String, optional: true }
+    };
+    static defaultProps = {
+      labelWidth: "50px"
+    };
+    static template = xml`
+    <div class="d-flex align-center mx-2 my-3" t-att-class="props.cls">
+        <div class="text-right" t-attf-style="width:{{props.labelWidth}}">
+          <t t-esc="field.label"/>:
+        </div>
+        <t t-if="state.readonly">
+          <span class="mx-2 flex-grow d-flex space-between">
+             <span class="text-bold" t-esc="props.record[props.name]"/>
+             <span class="px-2" t-if="props.editable" t-on-click="switchToEdit">✎</span>
+          </span>
+        </t>
+        <t t-else="">
+          <input class="mx-2 flex-grow" t-model="props.record[props.name]" t-att-placeholder="placeholder" t-on-focusout="onFocusout"/>
+        </t>
+      </div>`;
+    setup() {
+      this.state = useState({ readonly: this.props.readonly });
+      const record = this.props.record;
+      this.field = record.fields[this.props.name];
+      this.placeholder = this.field.placeholder || "";
+    }
+    switchToEdit() {
+      this.state.readonly = false;
+    }
+    onFocusout() {
+      if (!this.state.readonly && this.props.readonly) {
+        this.state.readonly = true;
+      }
+    }
+  };
+  var FieldSelect = class extends Component {
+    static props = {
+      name: String,
+      record: BaseModel,
+      labelWidth: { type: String, optional: true },
+      readonly: { type: Boolean, optional: true },
+      editable: { type: Boolean, optional: true }
+    };
+    static defaultProps = {
+      labelWidth: "50px"
+    };
+    static template = xml`
+      <div class="d-flex align-center mx-2 my-3">
+        <div class="text-right" t-attf-style="width:{{props.labelWidth}}">
+          <t t-esc="field.label"/>:
+        </div>
+        <t t-if="state.readonly">
+          <span class="mx-2 flex-grow d-flex space-between">
+             <span class="text-bold" t-esc="props.record[props.name]"/>
+             <span class="px-2" t-if="props.editable" t-on-click="switchToEdit">✎</span>
+          </span>
+        </t>
+        <t t-else="">
+          <t t-if="field.isNumber">
+            <select class="mx-2 flex-grow" t-model.number="props.record[props.name]" t-on-change="onChange">
+                <t t-foreach="field.choices" t-as="choice" t-key="choice_index">
+                  <option t-att-value="choice.value"><t t-esc="choice.text"/></option>
+                </t>
+              </select>
+          </t>
+          <t t-else="">
+            <select class="mx-2 flex-grow" t-model="props.record[props.name]" t-on-change="onChange">
+              <t t-foreach="field.choices" t-as="choice" t-key="choice_index">
+                <option t-att-value="choice.value"><t t-esc="choice.text"/></option>
+              </t>
+            </select>
+          </t>
+        </t>
+      </div>
+    `;
+    setup() {
+      const record = this.props.record;
+      this.field = record.fields[this.props.name];
+      this.state = useState({ readonly: this.props.readonly });
+    }
+    switchToEdit() {
+      this.state.readonly = false;
+    }
+    onChange() {
+      if (!this.state.readonly && this.props.readonly) {
+        this.state.readonly = true;
+      }
+    }
+  };
+
+  // src/campaign_screen.js
+  var ControlPanel = class extends Component {
+    static props = ["campaign"];
+    static template = xml`
+      <button class="button secondary me-1" t-on-click="showInfo">Show Info</button>
+      <span>
+        <button class="button me-1" t-on-click="addHero">Add Hero</button>
+        <button class="button me-1" t-on-click="addScenario">Add Scenario</button>
+      </span>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    addHero() {
+      this.game.openBottomSheet(AddHero, { campaign: this.props.campaign });
+    }
+    addScenario() {
+      this.game.openBottomSheet(AddScenario, {
+        campaign: this.props.campaign,
+        addScenario: (scenario) => {
+          this.props.campaign.addScenario(scenario);
+          this.game.save();
+          this.game.closeBottomSheet();
+        }
+      });
+    }
+    showInfo() {
+      this.game.openBottomSheet(
+        ShowInfo,
+        { campaign: this.props.campaign },
+        () => {
+          this.game.updateNavbarText(`Campaign: ${this.props.campaign.name}`);
+        }
+      );
+    }
+  };
+  var ShowInfo = class extends Component {
+    static template = xml`
+    <FieldChar name="'name'" record="props.campaign" labelWidth="'150px'" readonly="!!props.campaign.name" editable="true"/>
+    <FieldChar name="'createDate'" record="props.campaign" labelWidth="'150px'" readonly="true"/>
+    <FieldSelect name="'level'" record="props.campaign" labelWidth="'150px'" readonly="true" editable="true"/>
+    <TwoColForm label="'# scenarios'" value="props.campaign.scenarios.length" labelWidth="'150px'"/>
+    `;
+    static components = { FieldChar, FieldSelect, TwoColForm };
+    static props = ["campaign"];
+  };
+  var Content = class extends Component {
+    static template = xml`
+        <div class="d-flex space-between" style="margin-top:20px;">
+          <h2 class="m-1 ms-2 text-primary">Heroes</h2>
+        </div>
+        <t t-foreach="props.campaign.heroes" t-as="hero" t-key="hero.id">
+          <div class="m-2 p-3 bg-lightgreen border-gray border-radius-4 d-flex space-between"
+              t-att-class="{ 'border-bold': hero.id === state.active}"
+              t-on-touchstart="() => this.onTouchStart(hero)"
+              t-on-touchend="() => this.onTouchEnd(hero)">
+              <span class="text-bold">
+                <t t-esc="hero.name"/>
+              </span> 
+              <span>
+                <t t-esc="hero.className"/> (level <t t-esc="hero.level"/>)
+              </span>
+          </div>
+        </t>
+        <t t-if="!props.campaign.heroes.length">
+          <div class="m-2 p-2 text-center text-gray text-larger" style="margin-top:10px;">
+            No heroes yet!
+          </div>
+        </t>
+        <div class="d-flex space-between mt-3" style="margin-top:30px;">
+          <h2 class="m-1 ms-2 text-primary">Scenarios</h2>
+        </div>
+        <t t-if="props.campaign.scenarios.length">
+          <t t-foreach="props.campaign.scenarios" t-as="scenario" t-key="scenario.id">
+            <div class="m-2 p-3 bg-white border-gray border-radius-4 d-flex space-between"
+                t-att-class="{ 'border-bold': scenario.id === state.active}"
+                t-on-touchstart="() => this.onTouchStart(scenario)"
+                t-on-touchend="() => this.onTouchEnd(scenario)">
+                <span>
+                  <span class="text-bold">
+                    <t t-esc="scenario_index + 1"/>. <t t-esc="scenario.name"/>
+                  </span> 
+                </span> 
+                <span>
+                  Created: <t t-esc="scenario.createDate"/>
+                </span>
+            </div>
+          </t>
+        </t>
+        <t t-else="">
+          <div class="m-2 p-2 text-center text-gray text-larger" style="margin-top:30px;">
+            Add a scenario to start your adventures!
+          </div>
+        </t>
+
+    `;
+    static components = { FieldChar, FieldSelect, TwoColForm };
+    setup() {
+      this.game = useGame();
+      this.state = useState({ active: null });
+      this.longPress = null;
+    }
+    openEntityMenu(entity) {
+      this.state.active = entity.id;
+      const campaign = this.props.campaign;
+      this.game.openBottomSheet(EntityMenu, { entity, campaign }, () => {
+        this.state.active = null;
+      });
+    }
+    onTouchStart(target) {
+      this.longPress = setTimeout(() => {
+        this.openEntityMenu(target);
+        this.longPress = null;
+      }, 400);
+    }
+    onTouchEnd(target) {
+      if (this.longPress) {
+        if (target instanceof Hero) {
+          this.game.openHero(target);
+        } else {
+          this.game.openScenario(target);
+        }
+        clearTimeout(this.longPress);
+        this.longPress = null;
+      }
+    }
+  };
+  var AddHero = class extends Component {
+    static props = {
+      campaign: Campaign
+    };
+    static template = xml`
+        <FieldChar name="'name'" record="hero"/>
+        <FieldSelect name="'cls'" record="hero"/>
+        <div class="d-flex flex-end me-2">
+            <button class="button" t-att-class="{ disabled: !hero.isValid()}" t-on-click="addHero">Add</button>
+        </div>
+    `;
+    static components = { FieldChar, FieldSelect };
+    setup() {
+      this.hero = useState(
+        createInstance(Hero, { campaign: this.props.campaign })
+      );
+      this.game = useGame();
+    }
+    addHero() {
+      this.props.campaign.addHero(this.hero);
+      this.game.closeBottomSheet();
+    }
+  };
+  var EntityMenu = class extends Component {
+    static props = {
+      entity: true,
+      campaign: Campaign
+    };
+    static template = xml`
+        <div class="d-flex space-between">
+          <span class="text-bold p-1">
+            <t t-esc="props.entity.name"/>
+          </span>
+          <span>
+            <button class="button secondary" t-on-click="delete">Delete</button>
+            <button class="button" t-on-click="open">Open</button>
+          </span>
+        </div>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    delete() {
+      if (confirm("Are you sure that you want to delete this hero?")) {
+        if (this.props.entity instanceof Hero) {
+          this.props.campaign.deleteHero(this.props.entity);
+        } else {
+          this.props.campaign.deleteScenario(this.props.entity);
+        }
+      }
+      this.game.closeBottomSheet();
+    }
+    open() {
+      if (this.props.entity instanceof Hero) {
+        this.game.openHero(this.props.entity);
+      } else {
+        this.game.openScenario(this.props.entity);
+      }
+    }
+  };
+  var AddScenario = class extends Component {
+    static props = {
+      campaign: Campaign,
+      addScenario: Function
+    };
+    static template = xml`
+        <FieldChar name="'name'" record="scenario" labelWidth="'90px'"/>
+        <FieldSelect name="'level'" record="scenario" labelWidth="'90px'"/>
+        <div class="d-flex flex-end me-2">
+            <button class="button" t-att-class="{ disabled: !scenario.isValid()}" t-on-click="addScenario">Add</button>
+        </div>
+    `;
+    static components = { FieldChar, FieldSelect };
+    setup() {
+      const campaign = this.props.campaign;
+      this.scenario = useState(
+        createInstance(Scenario, { level: campaign.level, campaign })
+      );
+    }
+    addScenario() {
+      this.props.addScenario(this.scenario);
+    }
+  };
+  var CAMPAIGN_SCREEN = (campaign) => {
+    return {
+      navbarText: `Campaign: ${campaign.name}`,
+      backButton: true,
+      ControlPanel,
+      Content,
+      props: { campaign }
+    };
+  };
+
+  // src/hero_screen.js
+  var Content2 = class extends Component {
+    static template = xml`
+        <FieldChar name="'name'" record="props.hero" labelWidth="'120px'" readonly="!!props.hero.name" editable="true"/>
+        <TwoColForm label="'Class'" value="props.hero.className" labelWidth="'120px'"/>
+        <FieldSelect name="'level'" record="props.hero" labelWidth="'120px'" readonly="true" editable="true"/>
+        <TwoColForm label="'Max HP'" value="props.hero.maxHp" labelWidth="'120px'"/>
+    `;
+    static components = { FieldChar, FieldSelect, TwoColForm };
+    setup() {
+      this.game = useGame();
+    }
+  };
+  var HERO_SCREEN = (hero) => {
+    return {
+      navbarText: `Gloomhaven: Hero`,
+      backButton: true,
+      Content: Content2,
+      props: { hero }
+    };
+  };
+
+  // src/main_menu_screen.js
+  var ControlPanel2 = class extends Component {
+    static template = xml`
+        <span class="ms-1"></span>
+        <button class="button me-1" t-on-click="addNewCampaign">New Campaign</button>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    addNewCampaign() {
+      this.game.openBottomSheet(AddCampaign);
+    }
+  };
+  var AddCampaign = class extends Component {
+    static template = xml`
+      <div class="d-flex">
+        <!-- <div class="d-flex flex-grow"> -->
+          <FieldChar name="'name'" record="campaign" cls="'flex-grow'"/>
+        <!-- </div> -->
+        <button class="button me-2" t-att-class="{ disabled: !campaign.isValid()}" t-on-click="add">Add</button>
+      </div>
+    `;
+    static components = { FieldChar };
+    setup() {
+      this.game = useGame();
+      this.campaign = useState(createInstance(Campaign));
+    }
+    add() {
+      this.game.addNewCampaign(this.campaign);
+      this.game.closeBottomSheet();
+    }
+  };
+  var Content3 = class extends Component {
+    static template = xml`
+    <t t-if="game.campaigns.length">
+      <t t-foreach="game.campaigns" t-as="campaign" t-key="campaign.id">
+        <div 
+          class="m-2 p-3 bg-white border-gray border-radius-4" 
+          t-att-class="{'border-bold': campaign.id===state.active}" 
+          t-on-touchstart="() => this.onTouchStart(campaign)"
+          t-on-touchend="() => this.onTouchEnd(campaign)">
+            <div class="d-flex space-between mb-1">
+              <span class="text-bold text-larger"><t t-esc="campaign.name || 'New Campaign'"/></span>
+              <span><t t-esc="campaign.scenarios.length"/> scenario(s)</span>
+            </div>
+            <div>
+              <t t-if="campaign.heroes.length">
+                <t t-if="campaign.heroes.length === 1">
+                  <t t-esc="campaign.heroes[0].name"/>
+                </t>
+                <t t-else="">
+                  <ul class="m-0">
+                    <t t-foreach="campaign.heroes" t-as="hero" t-key="hero.id">
+                      <li><t t-esc="hero.name"/> (<t t-esc="hero.className"/>)</li>
+                    </t>
+                  </ul>
+                </t>
+              </t>
+              <t t-else="">
+                No heroes!
+              </t>
+            </div>
+        </div>
+      </t>
+      <div class="text-gray text-larger text-center mt-2" style="padding:24px;">
+          Hint: long press on some elements to get an additional menu
+      </div>
+    </t>
+    <t t-else="">
+        <div class="text-gray text-larger text-center mt-2" style="padding:24px;">
+            No active campaign yet.
+        </div>
+    </t>
+    `;
+    setup() {
+      this.state = useState({ active: null });
+      this.game = useGame();
+      this.longPress = null;
+    }
+    openCampaignMenu(campaign) {
+      this.state.active = campaign.id;
+      this.game.openBottomSheet(OpenCampaign, { campaign }, () => {
+        this.state.active = null;
+      });
+    }
+    onTouchStart(campaign) {
+      this.longPress = setTimeout(() => {
+        this.openCampaignMenu(campaign);
+        this.longPress = null;
+      }, 400);
+    }
+    onTouchEnd(campaign) {
+      if (this.longPress) {
+        this.game.openCampaign(campaign);
+        clearTimeout(this.longPress);
+        this.longPress = null;
+      }
+    }
+  };
+  var OpenCampaign = class extends Component {
+    static props = {
+      campaign: Campaign
+    };
+    static template = xml`
+        <div class="d-flex space-between">
+          <span class="text-bold p-1">
+            <t t-esc="props.campaign.name || 'New Campaign'"/>
+          </span>
+          <span>
+            <button class="button secondary" t-on-click="deleteCampaign">Delete</button>
+            <button class="button" t-on-click="openCampaign">Open</button>
+          </span>
+        </div>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    deleteCampaign() {
+      if (confirm("Are you sure that you want to delete this campaign?")) {
+        this.game.deleteCampaign(this.props.campaign);
+      }
+      this.game.closeBottomSheet();
+    }
+    openCampaign() {
+      this.game.openCampaign(this.props.campaign);
+    }
+  };
+  var MAIN_MENU = () => ({
+    navbarText: "Gloomhaven",
+    ControlPanel: ControlPanel2,
+    Content: Content3
+  });
+
+  // src/main_screen.js
+  var ControlPanel3 = class extends Component {
+    static props = { scenario: Scenario };
+    static template = xml`
+      <span>
+        <button class="button me-1" t-on-click="addEnemy">Add Enemy</button>
+        <button class="button me-1" t-on-click="attackModifiers">Attack Modifiers</button>
+      </span>
+      <button class="button me-1" t-att-class="{'disabled': !isNextRoundActive()}" t-on-click="nextRound">Next Round</button>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    addEnemy() {
+      const scenario = this.props.scenario;
+      this.game.openBottomSheet(AddEnemy, { scenario });
+    }
+    isNextRoundActive() {
+      for (let char of this.props.scenario.characters) {
+        if (!char.didStart) {
+          return false;
+        }
+      }
+      for (let enemy of this.props.scenario.enemies) {
+        if (!enemy.didStart) {
+          return false;
+        }
+      }
+      return true;
+    }
+    nextRound() {
+      const scenario = this.props.scenario;
+      scenario.nextRound();
+      this.game.updateNavbarText(`${scenario.name}, round ${scenario.rounds}`);
+    }
+    attackModifiers() {
+      const scenario = this.props.scenario;
+      this.game.openBottomSheet(AttackModifiers, { scenario });
+    }
+  };
+  var AttackModifiers = class extends Component {
+    static props = ["scenario"];
+    static template = xml`
+      <div class="p-1 d-flex space-between" >
+        <span>Enemy Attack Modifiers (<t t-esc="deck.length()"/> cards)</span>
+      </div>
+      <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;">
+        <div class="d-flex flex-column">
+          <div class="button mb-0 py-2" t-on-click="() => this.dealCard(1)">1 Card</div>
+          <div class="button py-2" t-on-click="() => this.dealCard(2)">2 Cards</div>
+        </div>
+        <div class="d-flex py-1 flex-center">
+          <t t-foreach="state.visible" t-as="mod" t-key="mod.id">
+            <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center" t-attf-style="width:35px;position:relative;background-color:{{mod.color || 'white'}};">
+              <t t-if="mod.recycled">
+                <span class="text-bold" style="position:absolute;bottom:0;right:0">♲</span>
+              </t>
+              <t t-foreach="mod.effects" t-as="effect" t-key="effect_index">
+                <div class="text-bold text-larger"><t t-esc="effect"/></div>
+              </t>
+            </div>
+          </t>
+        </div>
+        <div>
+          <div class="button mb-0 py-2" t-on-click="addCurse">+ Curse</div>
+          <div class="button py-2" t-on-click="addBlessing">+ Blessing</div>
+        </div>
+      </div>`;
+    setup() {
+      this.deck = this.props.scenario.enemyAttackMods;
+      this.state = useState({
+        visible: []
+      });
+    }
+    addCurse() {
+      this.props.scenario.addCurseToEnemies();
+    }
+    addBlessing() {
+      this.props.scenario.addBlessingToEnemies();
+    }
+    dealCard(n) {
+      const cards = this.deck.deal(n).map((id) => {
         if (typeof id === "string") {
-          if (id.startsWith("curse")) {
+          if (id === "curse") {
             return {
               id,
               effects: [" Cx0"],
@@ -7702,7 +8308,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
               color: "#ffffd9"
             };
           }
-          if (id.startsWith("blessing")) {
+          if (id === "blessing") {
             return {
               id,
               effects: [" Bx2"],
@@ -7713,12 +8319,454 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         }
         return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
       });
-      return cards;
+      this.state.visible = cards;
     }
   };
-  var BattleGoal = class extends Component {
+  var ElementPane = class extends Component {
+    static props = ["scenario"];
     static template = xml`
-          <div class="mx-3 my-2 p-1 border-gray border-radius-4" t-on-click="onClick">
+    <div class="p-1" style="display:grid;grid-template-columns:1fr 1fr 1fr;">
+      <div class="element-card" t-att-class="{'text-bold': scenario.fire > 1, 'text-gray': !scenario.fire}" t-on-click="() => this.updateElement('fire')">
+        Feu <t t-if="scenario.fire" t-esc="scenario.fire"/>
+      </div>
+      <div class="element-card" t-att-class="{'text-bold': scenario.ice > 1, 'text-gray': !scenario.ice}" t-on-click="() => this.updateElement('ice')">
+        Glace <t t-if="scenario.ice" t-esc="scenario.ice"/>
+      </div>
+      <div class="element-card" t-att-class="{'text-bold': scenario.air > 1, 'text-gray': !scenario.air}" t-on-click="() => this.updateElement('air')">
+        Air <t t-if="scenario.air" t-esc="scenario.air"/>
+      </div>
+      <div class="element-card" t-att-class="{'text-bold': scenario.earth > 1, 'text-gray': !scenario.earth}" t-on-click="() => this.updateElement('earth')">
+        Terre <t t-if="scenario.earth" t-esc="scenario.earth"/>
+      </div>
+      <div class="element-card" t-att-class="{'text-bold': scenario.light > 1, 'text-gray': !scenario.light}" t-on-click="() => this.updateElement('light')">
+        Lumière <t t-if="scenario.light" t-esc="scenario.light"/>
+      </div>
+      <div class="element-card" t-att-class="{'text-bold': scenario.darkness > 1, 'text-gray': !scenario.darkness}" t-on-click="() => this.updateElement('darkness')">
+        Obscurité <t t-if="scenario.darkness" t-esc="scenario.darkness"/>
+      </div>
+    </div>
+  `;
+    setup() {
+      this.scenario = this.props.scenario;
+    }
+    updateElement(elem) {
+      this.scenario.cycleElement(elem);
+    }
+  };
+  var ElementTracker = class extends Component {
+    static props = ["scenario"];
+    static template = xml`
+    <div class="m-1 px-2 py-3 bg-white border-gray border-radius-4" t-on-click="showInfo">
+      <span class="text-bold">Elements: </span>
+      <t t-set="elems" t-value="elements"/>
+      <t t-foreach="elems" t-as="elem" t-key="elem.name">
+        <span class="" t-att-class="{'text-bold': elem.value > 1}"><t t-esc="elem.name"/></span>
+        <t t-if="!elem_last">, </t>
+      </t>
+      <t t-if="!elems.length">
+        none
+      </t>
+    </div>
+  `;
+    setup() {
+      this.game = useGame();
+    }
+    get elements() {
+      const scenario = this.props.scenario;
+      let result = [];
+      if (scenario.fire) {
+        result.push({ name: "feu", value: scenario.fire });
+      }
+      if (scenario.ice) {
+        result.push({ name: "glace", value: scenario.ice });
+      }
+      if (scenario.air) {
+        result.push({ name: "air", value: scenario.air });
+      }
+      if (scenario.earth) {
+        result.push({ name: "terre", value: scenario.earth });
+      }
+      if (scenario.light) {
+        result.push({ name: "lumi\xE8re", value: scenario.light });
+      }
+      if (scenario.darkness) {
+        result.push({ name: "obscurit\xE9", value: scenario.darkness });
+      }
+      return result;
+    }
+    showInfo() {
+      this.game.openBottomSheet(ElementPane, { scenario: this.props.scenario });
+    }
+  };
+  var Counter = class extends Component {
+    static props = ["obj", "key", "slots"];
+    static template = xml`
+    <div class="d-flex align-center p-1" style="font-size:14px;">
+      <span class="button m-1 py-2 px-3" t-on-click="() => props.obj[props.key]--">-</span>
+      <t t-slot="default"/>
+      <span class="button m-1 py-2 px-3" t-on-click="() => props.obj[props.key]++">+</span>
+    </div>`;
+  };
+  var StatusEditor = class extends Component {
+    static props = ["entity"];
+    static template = xml`
+    <div class="d-grid mt-1" style="grid-template-columns: repeat(3, 1fr);gap:10px;">
+      <div 
+          class="border-radius-2 text-smallcaps text-center p-1 " 
+          t-att-class="{'bg-darker text-bold': entity.poisoned}"
+          t-on-click="() => entity.poisoned = !entity.poisoned"
+        >
+          poison
+        </div>
+        <div 
+          class="border-radius-2 text-smallcaps text-center p-1 " 
+          t-att-class="{'bg-darker text-bold': entity.wound}"
+          t-on-click="() => entity.wound = !entity.wound"
+        >
+        blessure
+        </div>
+        <div
+          class="border-radius-2 text-smallcaps text-center p-1 "
+          t-att-class="{'bg-darker text-bold': entity.confusion}"
+          t-on-click="() => this.toggleStatus('confusion')"
+        >
+          confusion
+        </div>
+        <div
+          class="border-radius-2 text-smallcaps text-center p-1 "
+          t-att-class="{'bg-darker text-bold': entity.immobilisation}"
+          t-on-click="() => this.toggleStatus('immobilisation')"
+        >
+          immobilisation
+        </div>
+        <div
+          class="border-radius-2 text-smallcaps text-center p-1 "
+          t-att-class="{'bg-darker text-bold': entity.stunned}"
+          t-on-click="() => this.toggleStatus('stunned')"
+        >
+          étourdissement
+        </div>
+        <div
+          class="border-radius-2 text-smallcaps text-center p-1 "
+          t-att-class="{'bg-darker text-bold': entity.disarmed}"
+          t-on-click="() => this.toggleStatus('disarmed')"
+        >
+          désarmement
+        </div>
+        <div
+          class="border-radius-2 text-smallcaps text-center p-1 "
+          t-att-class="{'bg-darker text-bold': entity.renforced}"
+          t-on-click="() => this.toggleStatus('renforced')"
+        >
+          renforcement
+        </div>
+    </div>
+    `;
+    setup() {
+      this.entity = this.props.entity;
+    }
+    toggleStatus(effect) {
+      if (this.entity[effect]) {
+        this.entity[effect] = 0;
+      } else {
+        this.entity[effect] = this.entity.isActive() ? 2 : 1;
+      }
+    }
+  };
+  var HeroPanel = class extends Component {
+    static props = ["char"];
+    static components = { Counter, StatusEditor };
+    static template = xml`
+    <div class="px-2 py-1"><span class="text-bold"><t t-esc="props.char.hero.name"/></span></div>
+    <div class="d-flex space-between mb-3">
+      <Counter obj="props.char" key="'hp'">HP: <t t-esc="props.char.hp"/></Counter>
+      <Counter obj="props.char" key="'xp'">XP: <t t-esc="props.char.xp"/></Counter>
+      <Counter obj="props.char" key="'gold'">Gold: <t t-esc="props.char.gold"/></Counter>
+    </div>
+    <StatusEditor entity="props.char"/>
+  `;
+  };
+  var EnemyPanel = class extends Component {
+    static props = ["enemy"];
+    static components = { Counter, StatusEditor };
+    static template = xml`
+    <div class="px-2 py-1"><span class="text-bold"><t t-esc="props.enemy.fullName"/></span></div>
+    <StatusEditor entity="props.enemy"/>
+    <div class="d-flex space-between mb-3 align-center">
+      <Counter obj="props.enemy" key="'hp'">HP: <t t-esc="props.enemy.hp"/></Counter>
+      <span t-if="!props.enemy.isBoss">
+        <span class="me-1">ID</span>
+        <input style="width:40px" type="number" t-model.number="props.enemy.visibleId"/>
+      </span>
+      <button class="button" t-on-click="removeEnemy">Remove</button>
+    </div>
+  `;
+    setup() {
+      this.game = useGame();
+    }
+    removeEnemy() {
+      if (confirm("Are you sure that you want to remove this enemy?")) {
+        this.props.enemy.scenario.removeEnemy(this.props.enemy);
+        this.game.closeBottomSheet();
+      }
+    }
+  };
+  var AddEnemy = class extends Component {
+    static props = ["scenario"];
+    static components = { FieldSelect };
+    static template = xml`
+    <FieldSelect record="enemy" name="'type'" labelWidth="'80px'"/>
+    <div class="d-flex align-center mx-2 my-3"  t-if="!enemy.isBoss" >
+      <div class="text-right" style="width:80px">ID</div>
+      <input class="mx-2 flex-grow" type="number" t-model.number="enemy.visibleId"/>
+    </div>
+    <div class="d-flex align-center mx-2 my-3" >
+      <label class="text-right" style="width:80px" t-if="!enemy.isBoss">Elite</label>
+      <div class="flex-grow mx-2 d-flex space-between me-2 align-center">
+        <span><input t-if="!enemy.isBoss" type="checkbox" t-model="enemy.isElite"/></span>
+          <button class="button" t-att-class="{ disabled: !enemy.isValid()}" t-on-click="addEnemy">Add</button>
+      </div>
+    </div>
+    `;
+    setup() {
+      this.game = useGame();
+      this.enemy = useState(
+        createInstance(Enemy, { scenario: this.props.scenario })
+      );
+    }
+    addEnemy() {
+      this.enemy.computeValues();
+      this.props.scenario.addEnemy(this.enemy);
+      this.game.closeBottomSheet();
+    }
+  };
+  var EnemyActions2 = class extends Component {
+    static props = ["scenario"];
+    static template = xml`
+      <div class="d-flex space-between align-center justify-center mb-1" t-if="!props.scenario.hasAllEnemyActions()">
+        <button class="button mx-2" t-on-click="selectActions">Choisir Actions</button>
+      </div>
+      <t t-foreach="props.scenario.getEnemyActions()" t-as="action" t-key="action.id">
+        <div class="bg-gray px-1 py-2 d-flex space-between">
+          <span class="text-bold"><t t-esc="action.enemyName"/></span>
+          <span>Deck: <t t-esc="action.ncards"/> cards</span>
+        </div>
+        <div class="p-1 m-2 border-gray border-radius-4" t-if="action.card">
+            <div class="d-flex align-center">
+                <span class="text-bold text-larger"><t t-esc="action.card.initiative"/></span>
+                <span class="mx-1"><t t-esc="action.card.name"/><t t-if="action.card.recycled"> <span class="text-bold">♲</span></t></span>
+            </div>
+            <ul class="my-1 text-smaller text-italic">
+                <li t-foreach="action.card.effects" t-as="effect" t-key="effect">
+                    <t t-esc="effect"/>
+                </li>
+            </ul>
+        </div>
+        <div t-else="" class="text-center m-2 p-2 text-gray text-larger">
+          No action yet
+        </div>
+      </t>
+  `;
+    setup() {
+      this.game = useGame();
+    }
+    selectActions() {
+      this.props.scenario.selectActions();
+      this.game.save();
+    }
+  };
+  var TurnTracker = class extends Component {
+    static props = ["scenario"];
+    static template = xml`
+    <t t-set="hasAllEnAct" t-value="props.scenario.hasAllEnemyActions()"/>
+    <div class="m-1 px-2 py-1 bg-white border-gray border-radius-4">
+      <div class="d-flex space-between align-center">
+        <span class="text-bold">Turn Tracker</span>
+        <div class="button m-0" t-att-class="{ 'disabled': !props.scenario.enemies.length, 'secondary': hasAllEnAct}" t-on-click="showActions">Enemy Actions</div>
+      </div>
+      <div t-att-class="{'disabled': !hasAllEnAct}" class="d-flex flex-wrap">
+        <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+          <t t-if="char.didStart">
+            <div class="button disabled" t-att-class="{'text-bold': props.scenario.activeEntityId===char.id}"><t t-esc="char.hero.name"/></div>
+          </t>
+          <div t-else="" class="button" t-on-click="() => this.startCharTurn(char.id)">
+            <t t-esc="char.hero.name"/>
+          </div>
+        </t>
+        <t t-foreach="enemyTurns()" t-as="enemy" t-key="enemy.type">
+          <t t-if="enemy.didStart">
+            <div class="button disabled" ><t t-esc="enemy.name"/></div>
+          </t>
+          <div t-else="" class="button" t-on-click="() => this.startEnemyTurn(enemy.type)">
+            <t t-if="enemy.initiative">[<t t-esc="enemy.initiative"/>] </t>
+            <t t-esc="enemy.name"/>
+          </div>
+        </t>
+
+      </div>
+    </div>
+  `;
+    setup() {
+      this.game = useGame();
+    }
+    showActions() {
+      const scenario = this.props.scenario;
+      this.game.openBottomSheet(EnemyActions2, { scenario });
+    }
+    startCharTurn(id) {
+      this.props.scenario.startCharTurn(id);
+    }
+    startEnemyTurn(type) {
+      this.props.scenario.startEnemyTurn(type);
+    }
+    enemyTurns() {
+      let mapping2 = {};
+      for (let enemy of this.props.scenario.enemies) {
+        if (enemy.type in mapping2 && !enemy.didStart) {
+          mapping2[enemy.type] = enemy;
+        } else {
+          mapping2[enemy.type] = enemy;
+        }
+      }
+      return Object.values(mapping2);
+    }
+  };
+  var Content4 = class extends Component {
+    static props = ["scenario"];
+    static template = xml`
+    <ElementTracker scenario="props.scenario"/>
+    <TurnTracker scenario="props.scenario"/>
+    <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+        <div class="m-1 p-1 bg-lightgreen border-gray border-radius-4"
+            t-on-click="() => this.editHero(char)"
+            t-att-class="{ 'border-bold': char.id === state.active}">
+            <div class="d-flex space-between mb-2 mx-1">
+              <span class="text-bold">
+                <t t-esc="char.hero.name"/>
+              </span> 
+              <span>
+              <t t-esc="char.hero.className"/> (level <t t-esc="char.hero.level"/>)
+              </span>
+            </div>
+            <div class="d-flex space-between mx-1">
+              <span t-att-class="{'text-red': char.hp lte 0}">
+                HP: <span class="text-bold"><t t-esc="char.hp"/> / <t t-esc="char.maxHp"/></span>
+              </span> 
+              <span>
+                XP: <span class="text-bold"><t t-esc="char.xp"/></span>
+              </span>
+              <span>
+                Gold: <span class="text-bold"><t t-esc="char.gold"/></span>
+              </span>
+            </div>
+            <div class="d-flex space-between p-1" t-if="char.status">
+              <span>Status: <span class="text-bold" t-esc="char.status"/> </span>
+            </div>
+        </div>
+    </t>
+    <t t-foreach="props.scenario.enemies" t-as="enemy" t-key="enemy.id">
+        <div class="m-1 p-1 bg-lightred border-gray border-radius-4"
+            t-on-click="() => this.editEnemy(enemy)"
+            t-att-class="{ 'border-bold': enemy.id === state.active}">
+            <div class="d-flex space-between mb-2 mx-1">
+              <span class="text-bold"><t t-esc="enemy.fullName"/></span> 
+              <span>
+              Move: <span class="text-bold" t-esc="enemy.move"/>
+              </span>
+            </div>
+            <div class="d-flex space-between mx-1">
+              <span t-att-class="{'text-red': enemy.hp lte 0}">
+                HP: <span class="text-bold"><t t-esc="enemy.hp"/> / <t t-esc="enemy.maxHp"/></span>
+              </span> 
+              <span>
+                Attack: <span class="text-bold"><t t-esc="enemy.attack"/></span>
+              </span>
+            </div>
+            <div class="d-flex space-between p-1" t-if="enemy.status">
+              <span>Status: <span class="text-bold" t-esc="enemy.status"/> </span>
+            </div>
+            <div class="px-1 mt-1" t-if="enemy.modifiers">
+              <span class="me-1">Modifiers: </span> <span class="text-italic"><t t-esc="enemy.modifiers"/></span>
+            </div>
+            <div class="px-1 mt-1" t-if="enemy.immunities">
+              <span class="me-1">Immunités: </span> <span class="text-italic"><t t-esc="enemy.immunities"/></span>
+            </div>
+            <t t-if="enemy.isBoss">
+              <div class="p-1 border-top-gray mt-1 pt-1 pb-0">
+                <span class="text-bold">Spécial 1</span> <span class="text-italic"><t t-esc="enemy.special1"/></span>
+              </div>
+              <div class="p-1 pb-0">
+                <span class="text-bold">Spécial 2</span> <span class="text-italic"><t t-esc="enemy.special2"/></span>
+              </div>          
+            </t>
+        </div>
+    </t>
+    `;
+    static components = { ElementTracker, TurnTracker };
+    setup() {
+      this.game = useGame();
+      this.state = useState({ active: null });
+    }
+    editHero(char) {
+      this.state.active = char.id;
+      this.game.openBottomSheet(HeroPanel, { char }, () => {
+        this.state.active = null;
+      });
+    }
+    editEnemy(enemy) {
+      this.state.active = enemy.id;
+      this.game.openBottomSheet(EnemyPanel, { enemy }, () => {
+        this.state.active = null;
+      });
+    }
+  };
+  var MAIN_SCREEN = (scenario) => {
+    if (scenario.rounds === 0) {
+      scenario.rounds = 1;
+    }
+    return {
+      navbarText: `${scenario.name}, round ${scenario.rounds}`,
+      backButton: true,
+      ControlPanel: ControlPanel3,
+      Content: Content4,
+      props: { scenario }
+    };
+  };
+
+  // src/scenario_screen.js
+  var ControlPanel4 = class extends Component {
+    static props = { scenario: Scenario };
+    static template = xml`
+      <button class="button secondary me-1" t-on-click="showInfo">Show Info</button>
+      <span>Level: <t t-esc="props.scenario.level"/></span>
+      <button class="button me-1 px-3" t-on-click="play">Play</button>
+    `;
+    setup() {
+      this.game = useGame();
+    }
+    showInfo() {
+      const scenario = this.props.scenario;
+      this.game.openBottomSheet(ShowInfo2, { scenario }, () => {
+        this.game.updateNavbarText(`Scenario: ${scenario.name}`);
+      });
+    }
+    play() {
+      this.game.pushScreen(MAIN_SCREEN(this.props.scenario));
+    }
+  };
+  var ShowInfo2 = class extends Component {
+    static template = xml`
+        <FieldChar name="'name'" record="props.scenario" labelWidth="'150px'" readonly="true" editable="true"/>
+        <FieldChar name="'createDate'" record="props.scenario" labelWidth="'150px'" readonly="true"/>
+        <FieldSelect name="'level'" record="props.scenario" labelWidth="'150px'" readonly="true" editable="true"/>
+    `;
+    static components = { FieldChar, FieldSelect };
+    static props = ["scenario"];
+  };
+  var BattleGoal = class extends Component {
+    static props = ["id", "onClick?"];
+    static template = xml`
+          <div class="mx-3 my-2 p-2 border-gray border-radius-4" t-on-click="onClick">
             <div class="text-bold"><t t-esc="goal.title"/></div>
             <div><t t-esc="goal.description"/></div>
           </div>`;
@@ -7732,465 +8780,202 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       }
     }
   };
-  var BattleGoalTracker = class extends Component {
+  var BattleGoalSelector = class extends Component {
     static template = xml`
-        <div class="${CARD} bg-white">
-          <div class="d-flex space-between bg-gray p-1 align-center">
-            <span>Battle Goals</span>
-            <span class="text-bold text-primary text-larger" t-on-click="close">×</span>
-          </div>
-          <div class="d-flex">
-            <t t-foreach="props.game.heroes" t-as="hero" t-key="hero.id">
-                  <div class="button" t-on-click="() => this.toggleHero(hero)" t-att-class="{'text-bold': state.hero and state.hero.id === hero.id}">
-                    <t t-esc="hero.name"/>
-                    <t t-if="props.game.battleGoals[hero.id]"><span class="ms-1">✓</span></t>
-                  </div>
-            </t>
-          </div>
-          <div t-if="state.hero">
-                <t t-if="props.game.battleGoals[state.hero.id]">
-                  <BattleGoal id="props.game.battleGoals[state.hero.id]"/>
-                </t>
-                <t t-else="">
-                  <t t-set="i" t-value="getHeroIndex(state.hero.id)"/>
-                  <BattleGoal id="goals[2*i]" onClick="() => this.selectGoal(2*i)"/>
-                  <BattleGoal id="goals[2*i+1]" onClick="() => this.selectGoal(2*i+1)"/>
-                </t>
-            <div>
-            </div>
-          </div>
-        </div>`;
+    <div class="m-1 p-1">
+    <t t-if="props.character.battleGoal">
+      <BattleGoal id="props.character.battleGoal"/>
+    </t>
+    <t t-else="">
+      <div class="text-bold">Choose a battle goal for <t t-esc="props.character.hero.name"/>:</div>
+      <BattleGoal id="props.character.battleGoalChoices[0]" onClick="() => this.selectGoal(0)"/>
+      <BattleGoal id="props.character.battleGoalChoices[1]" onClick="() => this.selectGoal(1)"/>
+    </t>
+    </div>`;
     static components = { BattleGoal };
+    static props = ["character"];
     setup() {
-      this.state = useState({
-        hero: false
-      });
-      this.goals = shuffleArray(BATTLE_GOALS.map((g) => g.id));
+      this.game = useGame();
     }
-    getHeroIndex(heroId) {
-      return this.props.game.heroes.findIndex((h) => h.id === heroId);
-    }
-    toggleHero(hero) {
-      if (this.state.hero === hero) {
-        this.state.hero = false;
-      } else {
-        this.state.hero = hero;
-      }
-    }
-    selectGoal(goalIndex) {
-      const heroId = this.state.hero.id;
-      this.props.game.battleGoals[heroId] = this.goals[goalIndex];
-      this.state.hero = false;
-      this.props.game.isDirty = true;
-    }
-    close() {
-      this.props.game.config.battleGoals = false;
+    selectGoal(index) {
+      const char = this.props.character;
+      char.battleGoal = char.battleGoalChoices[index];
+      this.game.closeBottomSheet();
     }
   };
-  var TurnTracker = class extends Component {
+  var Content5 = class extends Component {
     static template = xml`
-        <div class="${CARD} bg-white">
-          <div class="bg-gray p-1 d-flex space-between align-center" t-on-click="toggle">
-            <span t-if="game.activeEntity">Current turn: <t t-esc="activeEntityName()"/></span>
-            <span t-else="">Turn Tracker</span>
-          </div>
-          <div class="p-1" t-if="state.open">
-            <div t-if="game.round === 1">Select each hero/monster when its turn starts</div>
-            <div class="d-flex align-center flex-wrap">
-              <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-                <t t-if="game.turnTracker[hero.id]">
-                  <div class="button disabled" t-att-class="{'text-bold': game.activeEntity===hero.id}"><t t-esc="hero.name"/></div>
-                </t>
-                <div t-else="" class="button" t-on-click="() => this.startTurn(hero.id)">
-                  <t t-esc="hero.name"/>
-                </div>
-              </t>
-              <t t-foreach="enemies()" t-as="type" t-key="type">
-                <t t-set="initiative" t-value="enemyInitiative(type)"/>
-                <t t-if="game.turnTracker[type]">
-                  <div class="button disabled"  t-att-class="{'text-bold': game.activeEntity===type}">
-                    <t t-if="initiative">[<t t-esc="initiative"/>] </t>
-                    <t t-esc="enemyName(type)"/>
-                  </div>
-                </t>
-                <div t-else="" class="button" t-on-click="() => this.startTurn(type)">
-                  <t t-if="initiative">[<t t-esc="initiative"/>] </t>
-                  <t t-esc="enemyName(type)"/>
-                </div>
-              </t>
-            </div>
-          </div>
+      <h2 class="m-1 ms-2 text-primary" style="margin-top: 10px;">Battle Goals</h2>
+      <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+        <div class="m-2 p-3 bg-white border-gray border-radius-4 d-flex space-between"
+            t-att-class="{ 'border-bold': char.id === state.active}"
+            t-on-click="() => this.onBattleGoalClicked(char)">
+            <span><t t-esc="char.hero.name"/></span>
+            <span t-if="!char.battleGoal">⬜</span>
+            <span t-if="char.battleGoal">✅</span>
         </div>
-      `;
-    setup() {
-      this.state = useState({ open: true });
-      this.game = this.props.game;
-    }
-    toggle() {
-      this.state.open = !this.state.open;
-    }
-    startTurn(entity) {
-      this.game.startTurn(entity);
-    }
-    enemyInitiative(type) {
-      return this.game.monsterActions[type].initiative;
-    }
-    enemyName(type) {
-      return ENEMIES_MAP[type].name;
-    }
-    activeEntityName() {
-      const entity = this.game.activeEntity;
-      if (typeof entity === "number") {
-        const hero = this.game.heroes.find((hero2) => hero2.id === entity);
-        return hero.name;
-      } else {
-        return ENEMIES_MAP[entity].name;
-      }
-    }
-    enemies() {
-      const types = /* @__PURE__ */ new Set();
-      for (let enemy of this.game.enemies) {
-        types.add(enemy.type);
-      }
-      return [...types];
-    }
-  };
-  var ElementTracker = class extends Component {
-    static template = xml`
-        <div class="${CARD} bg-white p-1" style="display:grid;grid-template-columns:1fr 1fr 1fr;">
-          <div class="element-card" t-att-class="{'text-bold': game.fire > 1, 'text-gray': !game.fire}" t-on-click="() => this.updateElement('fire')">
-            Feu <t t-if="game.fire" t-esc="game.fire"/>
-          </div>
-          <div class="element-card" t-att-class="{'text-bold': game.ice > 1, 'text-gray': !game.ice}" t-on-click="() => this.updateElement('ice')">
-            Glace <t t-if="game.ice" t-esc="game.ice"/>
-          </div>
-          <div class="element-card" t-att-class="{'text-bold': game.air > 1, 'text-gray': !game.air}" t-on-click="() => this.updateElement('air')">
-            Air <t t-if="game.air" t-esc="game.air"/>
-          </div>
-          <div class="element-card" t-att-class="{'text-bold': game.earth > 1, 'text-gray': !game.earth}" t-on-click="() => this.updateElement('earth')">
-            Terre <t t-if="game.earth" t-esc="game.earth"/>
-          </div>
-          <div class="element-card" t-att-class="{'text-bold': game.light > 1, 'text-gray': !game.light}" t-on-click="() => this.updateElement('light')">
-            Lumière <t t-if="game.light" t-esc="game.light"/>
-          </div>
-          <div class="element-card" t-att-class="{'text-bold': game.darkness > 1, 'text-gray': !game.darkness}" t-on-click="() => this.updateElement('darkness')">
-            Obscurité <t t-if="game.darkness" t-esc="game.darkness"/>
-          </div>
-        </div>
-    `;
-    setup() {
-      this.game = this.props.game;
-    }
-    updateElement(elem) {
-      this.game[elem] = this.game[elem] - 1;
-      if (this.game[elem] < 0) {
-        this.game[elem] = 2;
-      }
-      this.game.isDirty = true;
-    }
-  };
-  var EnemyCard = class extends Component {
-    static template = xml`
-        <div class="${CARD} bg-lightred py-1" t-on-click="toggle">
-          <div class="d-flex space-between px-2 align-center">
-            <span class="text-bold">
-              <span t-if="props.enemy.elite" style="font-variant: smallcaps;">Elite </span>
-              <t t-esc="props.enemy.name"/>
-              <t t-if="props.enemy.boss"> [BOSS]</t>
-              <t t-if="!props.enemy.boss and props.enemy.nbr"> [<t t-esc="props.enemy.nbr"/>]</t>
-            </span>
-            <span>Move: <span class="text-bold" t-esc="props.enemy.move"/></span>
-          </div>
-          <div class="d-flex space-between px-2  align-center">
-            <span t-att-class="{'text-red': props.enemy.hp lt 1}">
-              HP: <span class="text-bold" t-esc="props.enemy.hp"/> / <span class="text-bold" t-esc="props.enemy.maxHp"/>
-            </span>
-            <span>Attack: <span class="text-bold" t-esc="props.enemy.attack"/></span>
-          </div>
-          <div class="d-flex space-between px-2 " t-if="statuses">
-            <span>Status: <span class="text-bold" t-esc="statuses"/> </span>
-          </div>
-          <div class="d-flex px-2" t-if="props.enemy.modifiers">
-            <span class="me-1">Modificateurs: </span> <span class="text-italic"><t t-esc="props.enemy.modifiers"/></span>
-          </div>
-          <div class="d-flex px-2 " t-if="props.enemy.immunities">
-            <span>Immunités: <span class="text-italic" t-esc="props.enemy.immunities"/></span>
-          </div>
-          <t t-if="props.enemy.boss">
-            <div class="px-2 border-top-gray mt-1 pt-1 ">
-              <span class="text-bold">Spécial 1</span> <span class="text-italic"><t t-esc="props.enemy.special1"/></span>
-            </div>
-            <div class="px-2" t-if="props.enemy.boss">
-              <span class="text-bold">Spécial 2</span> <span class="text-italic"><t t-esc="props.enemy.special2"/></span>
-            </div>          
-          </t>
-          <div t-if="state.isOpen" t-on-click.stop="" class="p-1  border-top-gray">
-            <div class="d-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-              <StatusEditor status="props.enemy.status"  isActive="props.enemy.type === props.game.activeEntity"  />
-            </div>
-            <div class="d-flex space-between align-center">
-              <Counter dec="() => props.enemy.hp--" inc="() => props.enemy.hp++">HP</Counter>
-              <div t-if="!props.enemy.boss">
-                <span>ID </span>
-                <select t-model.number="props.enemy.nbr">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                </select>
-              </div>
-              <div><span class="button p-2" t-on-click="remove">Remove</span></div>
-            </div>
-          </div>
-  
-          <!-- <div class="d-flex space-between px-2 py-1">
-            <span>XP: <span class="text-bold" t-esc="props.hero.xp"/></span>
-            <span>Gold: <span class="text-bold" t-esc="props.hero.gold"/></span>
-          </div>
-          <div class="d-flex space-between px-2 py-1" t-if="statuses">
-            <span>Status: <t t-esc="statuses"/> </span>
-          </div> -->
-        </div>`;
-    static components = { StatusEditor, Counter };
-    setup() {
-      this.state = useState({
-        isOpen: false
-      });
-    }
-    toggle() {
-      this.state.isOpen = !this.state.isOpen;
-    }
-    get statuses() {
-      if (this.props.enemy.hp <= 0) {
-        return "";
-      }
-      return statusString(this.props.enemy.status);
-    }
-    remove() {
-      if (confirm("Are you sure that you want to remove this enemy?")) {
-        const index = this.props.game.enemies.findIndex(
-          (e) => e.id === this.props.enemy.id
-        );
-        if (index >= 0) {
-          this.props.game.enemies.splice(index, 1);
-        }
-      }
-      this.isDirty = true;
-    }
-  };
-  var EnemyActions = class extends Component {
-    static template = xml`
-      <div class="${CARD} bg-white">
-        <t t-foreach="enemyTypes" t-as="type" t-key="type">
-            <t t-set="actions" t-value="enemyActions(type)"/>
-            <div class="">
-                <div class="p-2 d-flex space-between" style="background-color: #eee;">
-                    <span class="text-bold"><t t-esc="enemyName(type)"/></span>
-                    <span class="text-smaller">deck: <t t-esc="actions.deck.length"/> cartes</span>
-                </div>
-                <div class="d-flex flex-end" t-if="actions.active === false">
-                    <span class="button m-2 p-1" t-on-click="() => this.selectAction(type)">Choisir action</span>
-                </div>
-                <div t-if="actions.active" class="p-1" >
-                    <t t-set="action" t-value="activeAction(type)"/>
-                    <div class="d-flex align-center">
-                        <span class="text-bold text-larger"><t t-esc="action.initiative"/></span>
-                        <span class="mx-1"><t t-esc="action.name"/><t t-if="action.recycled"> <span class="text-bold">♲</span></t></span>
-                    </div>
-                    <ul class="my-1 text-smaller text-italic">
-                        <li t-foreach="action.effects" t-as="effect" t-key="effect">
-                            <t t-esc="effect"/>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </t>
-      </div>`;
-    get enemyTypes() {
-      const types = /* @__PURE__ */ new Set();
-      for (let enemy of this.props.game.enemies) {
-        types.add(enemy.type);
-      }
-      return [...types];
-    }
-    enemyActions(type) {
-      return this.props.game.monsterActions[type];
-    }
-    enemyName(type) {
-      return ENEMIES_MAP[type].name;
-    }
-    selectAction(type) {
-      const monsterAction = this.enemyActions(type);
-      if (!monsterAction.deck.length) {
-        const deck = monsterAction.discardPile;
-        shuffleArray(deck);
-        monsterAction.discardPile = [];
-        monsterAction.deck = deck;
-      }
-      const action = monsterAction.deck.pop();
-      monsterAction.discardPile.unshift(action);
-      monsterAction.active = true;
-      const actionObj = this.activeAction(type);
-      monsterAction.initiative = actionObj.initiative;
-      this.props.game.isDirty = true;
-    }
-    activeAction(type) {
-      const actions = this.enemyActions(type);
-      if (actions.active === false) {
-        throw new Error("boom");
-      }
-      const activeId = actions.discardPile[0];
-      const action = ENEMIES_MAP[type].actions.find((a) => a.id === activeId);
-      console.log(action);
-      return action;
-    }
-  };
-  var MainScreen = class extends Component {
-    static template = xml`
-    <t t-set="game" t-value="props.game"/>
-    <t t-set="ui" t-value="props.ui"/>
-    <Layout>
-      <t t-set-slot="navbar">
-        <span class="mx-2"><t t-if="game.round">Round <t t-esc="game.round"/> <t t-if="game.isDirty">(*)</t></t></span>
-        <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
       </t>
-      <ControlPanel>
-        <div class="button ms-1" t-on-click="() => game.pushScreen('ADD_ENEMY')">Add Enemy</div>
-        <div class="button ms-1" t-on-click="goToNextRound" t-att-class="{disabled: !game.isNextRoundEnabled() }">
-          <t t-if="game.round">Next Round</t>
-          <t t-else="">Start Scenario</t>
-        </div>
-      </ControlPanel>
-      <t t-if="game.config.battleGoals">
-        <BattleGoalTracker game="game"/>
-      </t>
-      <TurnTracker t-if="game.config.turnTracker" game="props.game" />
-      <t t-if="game.enemies.length and game.config.enemyActions">
-        <EnemyActions game="game"/>
-      </t>
-      <ElementTracker t-if="game.config.elements" game="props.game" />
-      <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-        <CharacterCard hero="hero" game="game"/>
-      </t>
-      <t t-foreach="game.enemies" t-as="enemy" t-key="enemy.id">
-        <EnemyCard enemy="enemy" game="game"/>
-      </t>
-      <t t-if="game.config.attackModifiers and game.enemies.length">
-        <EnemyAttackModifiers game="game"/>
-      </t>
-    </Layout>`;
-    static components = {
-      Layout,
-      ControlPanel,
-      CharacterCard,
-      EnemyActions,
-      EnemyCard,
-      ElementTracker,
-      TurnTracker,
-      BattleGoalTracker,
-      EnemyAttackModifiers
-    };
-    setup() {
-      this.game = this.props.game;
-    }
-    goToNextRound() {
-      this.props.game.incrementRound();
-    }
-  };
-
-  // src/screens/start_screen.js
-  var StartScreen = class extends Component {
-    static template = xml`
-        <t t-set="game" t-value="props.game"/>
-        <t t-set="ui" t-value="props.ui"/>
-        <Layout>
-          <t t-set-slot="navbar">
-            <span class="mx-2">GloomHaven</span>
-            <div class="m-3 text-bold text-larger" t-on-click="() => game.pushScreen('CONFIG')">⚙</div>
-          </t>
-          <ControlPanel>
-            <div class="button ms-1" t-on-click="() => game.pushScreen('CHAR_EDITOR')">Add Hero</div>
-            <select class="border-none bg-white" t-model.number="game.scenarioLevel">
-              <option value="1">Scenario Level 1</option>
-              <option value="2">Scenario Level 2</option>
-              <option value="3">Scenario Level 3</option>
-              <option value="4">Scenario Level 4</option>
-              <option value="5">Scenario Level 5</option>
-              <option value="6">Scenario Level 6</option>
-              <option value="7">Scenario Level 7</option>
-            </select>
-            <div class="me-2 button me-2" t-att-class="{disabled: !canStartGame() }" t-on-click="start">Start Game</div>
-          </ControlPanel>
-          <t t-if="game.heroes.length">
-            <t t-foreach="game.heroes" t-as="hero" t-key="hero.id">
-              <CharacterCard hero="hero" game="game"/>
+      <h2 class="m-1 ms-2 text-primary" style="margin-top: 30px;">Summary</h2>
+      <div class="border-gray bg-white border-radius-4 m-2 d-flex">
+        <table class="table m-0 flex-grow">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="text-right">XP gained</th>
+              <th class="text-right">Gold gained</th>
+            </tr>
+          </thead>
+          <tbody>
+            <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+              <tr>
+                <td><t t-esc="char.hero.name"/></td>
+                <td class="text-right"><t t-esc="char.xp"/></td>
+                <td class="text-right"><t t-esc="char.gold"/></td>
+              </tr>
             </t>
-          </t>
-          <div t-else="" class="text-gray" style="padding:24px;">
-            Prepare your team of heroes, then start a game!
-            <t t-if="canRestore()">(or <a href="" t-on-click.prevent="restore">restore from local storage</a>)</t>
-          </div>
-        </Layout>
-      `;
-    static components = {
-      Layout,
-      ControlPanel,
-      CharacterCard
+          </tbody>
+        </table>
+        </div>
+        <div class="p-2">
+        <ul>
+          <li>Rounds played: <t t-esc="props.scenario.rounds"/></li>
+          <li>Spawned Enemies: <t t-esc="props.scenario.enemyCount"/></li>
+        </ul>
+      </div>
+        <h2 class="m-1 ms-2 text-primary" style="margin-top: 30px;">City Event</h2>
+        <div>todo </div>
+        `;
+    static components = { FieldChar, FieldSelect };
+    static props = { scenario: Scenario };
+    setup() {
+      this.game = useGame();
+      this.state = useState({ active: null });
+    }
+    onBattleGoalClicked(character) {
+      this.state.active = character.id;
+      this.game.openBottomSheet(BattleGoalSelector, { character }, () => {
+        this.state.active = null;
+      });
+    }
+  };
+  var SCENARIO_SCREEN = (scenario) => {
+    return {
+      navbarText: `Scenario: ${scenario.name}`,
+      backButton: true,
+      Content: Content5,
+      ControlPanel: ControlPanel4,
+      props: { scenario }
     };
-    canStartGame() {
-      return this.props.game.heroes.length;
-    }
-    canRestore() {
-      const value = localStorage.getItem("game_state");
-      return !!value;
-    }
-    restore() {
-      this.props.game.restore();
-    }
-    start() {
-      this.props.game.round = 1;
-      this.props.game.pushScreen("MAIN");
-    }
   };
 
-  // src/app.js
-  var SCREEN_MAP = {
-    START: StartScreen,
-    CONFIG: ConfigScreen,
-    CHAR_EDITOR: CharacterEditor,
-    MAIN: MainScreen,
-    ADD_ENEMY: AddEnemyScreen
-  };
-  var GameModel = class extends GameState {
-    setScreen(screen) {
-      if (!(screen in SCREEN_MAP)) {
-        throw new Error("Nope...");
-      }
-      super.setScreen(screen);
+  // src/game.js
+  var LOCAL_STORAGE_KEY = "gh_data";
+  var Game = class {
+    screens = [MAIN_MENU()];
+    BottomSheet = null;
+    campaigns = [];
+    constructor() {
+      this.load();
+      window.addEventListener("force_save", () => this.save());
     }
-    pushScreen(screen, state = null) {
-      if (!(screen in SCREEN_MAP)) {
-        throw new Error("Nope...");
-      }
-      super.pushScreen(screen, state);
+    pushScreen(screen) {
+      this.closeBottomSheet();
+      this.screens.push(screen);
     }
-  };
-  var App2 = class extends Component {
-    static template = xml`<t t-component="screen" game="game"/>`;
-    setup() {
-      this.game = useState(new GameModel());
-      preventSleep();
-      window.app = this;
+    popScreen() {
+      this.closeBottomSheet();
+      this.screens.pop();
     }
     get screen() {
-      return SCREEN_MAP[this.game.screen];
+      return this.screens.at(-1);
+    }
+    updateNavbarText(newText) {
+      this.screen.navbarText = newText;
+    }
+    openBottomSheet(Comp, props, onClose = () => {
+    }) {
+      this.BottomSheet = { Comp, props, onClose };
+    }
+    closeBottomSheet() {
+      this.BottomSheet?.onClose();
+      this.BottomSheet = null;
+    }
+    addNewCampaign(campaign) {
+      this.campaigns.push(campaign);
+    }
+    openCampaign(campaign) {
+      this.pushScreen(CAMPAIGN_SCREEN(campaign));
+    }
+    deleteCampaign(campaign) {
+      this.campaigns = this.campaigns.filter((c) => c.id !== campaign.id);
+    }
+    openHero(hero) {
+      this.pushScreen(HERO_SCREEN(hero));
+    }
+    openScenario(scenario) {
+      this.pushScreen(SCENARIO_SCREEN(scenario));
+    }
+    save() {
+      const data = JSON.stringify(this.campaigns);
+      localStorage.setItem(LOCAL_STORAGE_KEY, data);
+      console.log("saving", data);
+    }
+    load() {
+      const str = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (str) {
+        const obj = JSON.parse(str);
+        const campaigns = obj.map((obj2) => deserialize(Campaign, obj2));
+        this.campaigns = campaigns;
+        console.log(campaigns);
+      }
     }
   };
-  mount(App2, document.body);
+  function useGame() {
+    const env = useEnv();
+    return useState(env.game);
+  }
+
+  // src/app.js
+  var GloomHaven = class extends Component {
+    static template = xml`
+    <t t-set="screen" t-value="game.screen"/>
+    <div class="h-100 d-flex flex-column" t-att-class="{ inactive: game.BottomSheet }">
+      <div class="bg-primary text-white d-flex align-center space-between" style="flex:0 0 40px;">
+        <span class="ps-2"><t t-esc="screen.navbarText"/></span>
+        <t t-if="screen.backButton">
+          <button class="button text-bold border-none" t-on-click="goBack">
+          ❬ Back
+          </button>
+        </t>
+      </div>
+        <t t-if="screen.ControlPanel">
+            <div class="bg-white d-flex align-center border-bottom-gray space-between" style="flex: 0 0 50px;">
+                <t t-component="screen.ControlPanel" t-props="screen.props"/>
+            </div>
+        </t>
+      <div class="overflow-y-auto">
+        <t t-component="screen.Content" t-props="screen.props"/>
+      </div>
+    </div>
+    <div class="overlay" t-att-class="{active: game.BottomSheet}" t-on-touchend="removeBottomSheet"/>
+    <div class="bottom-sheet" t-att-class="{active: game.BottomSheet}">
+        <t t-if="game.BottomSheet">
+            <t t-component="game.BottomSheet.Comp" t-props="game.BottomSheet.props"/>
+        </t>
+    </div>
+    `;
+    setup() {
+      preventSleep();
+      this.game = useState(new Game());
+      useSubEnv({ game: this.game });
+    }
+    removeBottomSheet() {
+      this.game.closeBottomSheet();
+    }
+    goBack() {
+      this.game.popScreen();
+    }
+  };
+  mount(GloomHaven, document.body, { dev: true });
 })();
 //# sourceMappingURL=app.js.map

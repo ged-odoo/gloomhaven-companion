@@ -1865,7 +1865,7 @@ export const BATTLE_GOALS = [
   {
     id: 20,
     title: "Joueur",
-    description: "Éliminer un monstre grâce à une attaque avec désaventage",
+    description: "Éliminer un monstre grâce à une attaque avec désavantage",
   },
   {
     id: 21,

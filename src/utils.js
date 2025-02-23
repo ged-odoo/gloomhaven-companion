@@ -1,8 +1,8 @@
-// -----------------------------------------------------------------------------
-// MARK: utils
-// -----------------------------------------------------------------------------
+export function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
 
-export function shuffleArray(array) {
+export function shuffle(array) {
   for (var i = array.length - 1; i >= 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
     var temp = array[i];
@@ -24,4 +24,9 @@ export function preventSleep() {
       { once: true },
     );
   }
+}
+
+export function today() {
+  const d = new Date();
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
