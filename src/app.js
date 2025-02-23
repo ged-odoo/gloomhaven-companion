@@ -1,51 +1,40 @@
-import { GameState } from "./game_state";
-import { AddEnemyScreen } from "./screens/add_enemy_screen";
-import { CharacterEditor } from "./screens/character_editor_screen";
-import { ConfigScreen } from "./screens/config_screen";
-import { MainScreen } from "./screens/main_screen";
-import { StartScreen } from "./screens/start_screen";
+import { Component, mount, useState, useSubEnv, xml } from "@odoo/owl";
 import { preventSleep } from "./utils";
+import { Game } from "./game";
 
-import { Component, mount, useState, xml } from "@odoo/owl";
-
-const SCREEN_MAP = {
-  START: StartScreen,
-  CONFIG: ConfigScreen,
-  CHAR_EDITOR: CharacterEditor,
-  MAIN: MainScreen,
-  ADD_ENEMY: AddEnemyScreen,
-};
-
-class GameModel extends GameState {
-  setScreen(screen) {
-    if (!(screen in SCREEN_MAP)) {
-      throw new Error("Nope...");
-    }
-    super.setScreen(screen);
-  }
-
-  pushScreen(screen, state = null) {
-    if (!(screen in SCREEN_MAP)) {
-      throw new Error("Nope...");
-    }
-    super.pushScreen(screen, state);
-  }
-}
-
-class App extends Component {
-  static template = xml`<t t-component="screen" game="game"/>`;
+class GloomHaven extends Component {
+  static template = xml`
+    <t t-set="screen" t-value="game.screen"/>
+    <div class="h-100 d-flex flex-column" t-att-class="{ inactive: game.BottomSheet }">
+      <div class="bg-primary text-white d-flex align-center space-between" style="flex:0 0 40px;">
+        <span class="ps-1"><t t-esc="screen.navbarText"/></span>
+      </div>
+        <t t-if="screen.ControlPanel">
+            <div class="bg-white d-flex align-center border-bottom-gray space-between" style="flex: 0 0 50px;">
+                <t t-component="screen.ControlPanel" t-props="screen.props"/>
+            </div>
+        </t>
+      <div class="overflow-y-auto">
+        <t t-component="screen.Content" t-props="screen.props"/>
+      </div>
+    </div>
+    <div class="overlay" t-att-class="{active: game.BottomSheet}" t-on-click="removeBottomSheet"/>
+    <div class="bottom-sheet" t-att-class="{active: game.BottomSheet}">
+        <t t-if="game.BottomSheet">
+            <t t-component="game.BottomSheet.Comp" t-props="game.BottomSheet.props"/>
+        </t>
+    </div>
+    `;
 
   setup() {
-    this.game = useState(new GameModel());
-
     preventSleep();
-    // @ts-ignore (for debug purpose)
-    window.app = this;
+    this.game = useState(new Game());
+    useSubEnv({ game: this.game });
   }
 
-  get screen() {
-    return SCREEN_MAP[this.game.screen];
+  removeBottomSheet() {
+    this.game.closeBottomSheet();
   }
 }
 
-mount(App, document.body);
+mount(GloomHaven, document.body, { dev: true });

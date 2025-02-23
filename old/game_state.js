@@ -1,5 +1,5 @@
 import { ENEMIES_MAP, MONSTER_MODIFIERS_DECK } from "./data";
-import { shuffleArray } from "./utils";
+import { shuffle } from "./utils";
 
 // -----------------------------------------------------------------------------
 // MARK: Game state
@@ -20,7 +20,7 @@ export class GameState {
   monsterActions = {};
   enemyModifiers = {
     visible: 0, // number of discarded cards to show
-    deck: shuffleArray(MONSTER_MODIFIERS_DECK.map((c) => c.id)),
+    deck: shuffle(MONSTER_MODIFIERS_DECK.map((c) => c.id)),
     discardPile: [],
   };
   battleGoals = {};
@@ -162,7 +162,7 @@ export class GameState {
     this.turnTracker[enemyObj.type] = false;
     if (!this.monsterActions[enemyObj.type]) {
       const deck = ENEMIES_MAP[enemyObj.type].actions.map((a) => a.id);
-      shuffleArray(deck);
+      shuffle(deck);
       this.monsterActions[enemyObj.type] = {
         deck,
         discardPile: [],
@@ -256,7 +256,7 @@ export class GameState {
       }
       if (shouldShuffle) {
         const deck = ENEMIES_MAP[type].actions.map((a) => a.id);
-        shuffleArray(deck);
+        shuffle(deck);
         this.monsterActions[type].deck = deck;
         this.monsterActions[type].discardPile = [];
       }
@@ -275,7 +275,7 @@ export class GameState {
       while (mods.discardPile.length) {
         mods.deck.push(mods.discardPile.pop());
       }
-      shuffleArray(mods.deck);
+      shuffle(mods.deck);
     }
 
     // reset turntracker to false
@@ -294,7 +294,7 @@ export class GameState {
     });
     if (curses.length < 10) {
       this.enemyModifiers.deck.push(`curse${-this.nextId++}`);
-      shuffleArray(this.enemyModifiers.deck);
+      shuffle(this.enemyModifiers.deck);
     }
     this.isDirty = true;
   }
@@ -304,7 +304,7 @@ export class GameState {
     });
     if (blessings.length < 10) {
       this.enemyModifiers.deck.push(`blessing${-this.nextId++}`);
-      shuffleArray(this.enemyModifiers.deck);
+      shuffle(this.enemyModifiers.deck);
     }
     this.isDirty = true;
   }
