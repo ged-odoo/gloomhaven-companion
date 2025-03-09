@@ -8298,11 +8298,11 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this.props.scenario.addBlessingToEnemies();
     }
     dealCard(n) {
-      const cards = this.deck.deal(n).map((id) => {
+      const cards = this.deck.deal(n).map((id, index) => {
         if (typeof id === "string") {
           if (id === "curse") {
             return {
-              id,
+              id: `curse_${index}`,
               effects: [" Cx0"],
               recycled: false,
               color: "#ffffd9"
@@ -8310,7 +8310,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
           }
           if (id === "blessing") {
             return {
-              id,
+              id: `blessing_${index}`,
               effects: [" Bx2"],
               recycled: false,
               color: "#ffc7ff"
