@@ -172,6 +172,7 @@ class AddHero extends Component {
   }
 
   addHero() {
+    this.hero.perks.cls = this.hero.cls;
     this.props.campaign.addHero(this.hero);
     this.game.closeBottomSheet();
   }

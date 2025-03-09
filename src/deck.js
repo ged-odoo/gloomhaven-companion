@@ -1,7 +1,7 @@
 import { shuffle } from "./utils";
 
 export class Deck {
-  constructor(cards) {
+  constructor(cards = []) {
     this._cards = cards.slice();
     this._discardPile = [];
   }

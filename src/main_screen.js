@@ -4,7 +4,7 @@ import { Scenario } from "./scenario_model";
 import { createInstance } from "./base_model";
 import { Enemy } from "./enemy_model";
 import { FieldSelect } from "./field_components";
-import { MONSTER_MODIFIERS_DECK } from "./data";
+import { ATTACK_MODS, MONSTER_MODIFIERS_DECK } from "./data";
 
 class ControlPanel extends Component {
   static props = { scenario: Scenario };
@@ -50,11 +50,13 @@ class ControlPanel extends Component {
   }
 }
 
-class AttackModifiers extends Component {
-  static props = ["scenario"];
+const CARDS = ATTACK_MODS.concat(MONSTER_MODIFIERS_DECK).slice();
+
+class AttackModifier extends Component {
+  static props = ["deck", "descr", "scenario"];
   static template = xml`
       <div class="p-1 d-flex space-between" >
-        <span>Enemy Attack Modifiers (<t t-esc="deck.length()"/> cards)</span>
+        <span><t t-esc="props.descr"/> (<t t-esc="props.deck.length()"/> cards)</span>
       </div>
       <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;">
         <div class="d-flex flex-column">
@@ -62,13 +64,13 @@ class AttackModifiers extends Component {
           <div class="button py-2" t-on-click="() => this.dealCard(2)">2 Cards</div>
         </div>
         <div class="d-flex py-1 flex-center">
-          <t t-foreach="state.visible" t-as="mod" t-key="mod.id">
-            <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center" t-attf-style="width:35px;position:relative;background-color:{{mod.color || 'white'}};">
+          <t t-foreach="state.visible" t-as="mod" t-key="mod_index">
+            <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center flex-column" t-attf-style="width:50px;position:relative;background-color:{{mod.color || 'white'}};">
               <t t-if="mod.recycled">
                 <span class="text-bold" style="position:absolute;bottom:0;right:0">♲</span>
               </t>
               <t t-foreach="mod.effects" t-as="effect" t-key="effect_index">
-                <div class="text-bold text-larger"><t t-esc="effect"/></div>
+                <div class="text-bold" t-att-class="{'text-larger': effect.length lt 3, 'text-smaller': effect.length gt 7}"><t t-esc="effect"/></div>
               </t>
             </div>
           </t>
@@ -80,22 +82,22 @@ class AttackModifiers extends Component {
       </div>`;
 
   setup() {
-    this.deck = this.props.scenario.enemyAttackMods;
     this.state = useState({
       visible: [],
     });
+    this.game = useGame();
   }
 
   addCurse() {
-    this.props.scenario.addCurseToEnemies();
+    this.props.scenario.addCurse(this.props.deck);
   }
 
   addBlessing() {
-    this.props.scenario.addBlessingToEnemies();
+    this.props.scenario.addBlessing(this.props.deck);
   }
 
   dealCard(n) {
-    const cards = this.deck.deal(n).map((id, index) => {
+    const cards = this.props.deck.deal(n).map((id, index) => {
       if (typeof id === "string") {
         if (id === "curse") {
           return {
@@ -114,10 +116,23 @@ class AttackModifiers extends Component {
           };
         }
       }
-      return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+      return CARDS.find((m) => m.id === id);
     });
+    this.props.deck.filterDiscardPile((e) => e !== "curse" && e !== "blessing");
     this.state.visible = cards;
+    this.game.save();
   }
+}
+
+class AttackModifiers extends Component {
+  static props = ["scenario"];
+  static components = { AttackModifier };
+  static template = xml`
+    <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+      <AttackModifier scenario="props.scenario" deck="char.attackMods" descr="char.hero.name"/>
+    </t>
+    <AttackModifier scenario="props.scenario" deck="props.scenario.enemyAttackMods" descr="'Enemy Attack Modifiers'"/>
+    `;
 }
 
 class ElementPane extends Component {

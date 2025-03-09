@@ -19,6 +19,513 @@ export const MAX_CARD_MAP = {
   axe_thrower: 10,
 };
 
+function removeCard(cards, effect) {
+  let index = cards.findIndex((id) => {
+    let card = MONSTER_MODIFIERS_DECK.find((c) => c.id === id);
+    return card.effects[0] === effect;
+  });
+  if (index >= 0) {
+    cards.splice(index, 1);
+  } else {
+    throw new Error("nope");
+  }
+}
+
+function addCard(cards, id) {
+  if (!ATTACK_MODS.find((c) => c.id === id)) {
+    throw new Error("boom");
+  }
+  cards.push(id);
+}
+
+export const ATTACK_MODS = [
+  {
+    id: "+2confusion",
+    effects: ["+2", "confusion"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+0heal",
+    effects: ["+0", "soin 1 allié"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+0poison",
+    effects: ["+0", "poison"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+0stun",
+    effects: ["+0", "étourdissement"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1",
+    effects: ["+1"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1heal",
+    effects: ["+1", "soin 1 allié"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1stun",
+    effects: ["+1", "étourdissement"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1poison",
+    effects: ["+1", "poison"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1wound",
+    effects: ["+1", "blessure"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1immobilisation",
+    effects: ["+1", "immobilisation"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1dark",
+    effects: ["+1", "obscurité"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1frost",
+    effects: ["+1", "glace"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1push",
+    effects: ["+1", "poussée 2"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1shield",
+    effects: ["+1", "bouclier 1"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1curse",
+    effects: ["+1", "malédiction"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+1feulum",
+    effects: ["+1", "feu", "lumiere"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+2",
+    effects: ["+2"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+2earth",
+    effects: ["+2", "terre"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+2fire",
+    effects: ["+2", "feu"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+2air",
+    effects: ["+2", "air"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+2light",
+    effects: ["+2", "lumiere"],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+0boom",
+    effects: ["+0", "1degat enn. adj."],
+    recycled: false,
+    color: false,
+  },
+  {
+    id: "+3",
+    effects: ["+3"],
+    recycled: false,
+    color: false,
+  },
+];
+
+export const PERKS = {
+  artificer: [
+    {
+      id: 1,
+      text: "Retirer quatre carte (+0)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+      },
+    },
+    {
+      id: 2,
+      text: "Retirer deux cartes (-1)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "-1");
+        removeCard(cards, "-1");
+      },
+    },
+    {
+      id: 3,
+      text: "Retirer une carte (-2) et une carte (+1)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-2");
+        removeCard(cards, "+1");
+      },
+    },
+    {
+      id: 4,
+      text: "Remplacer une carte (+0) par une carte (+2) (CONFUSION)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard("+2confusion");
+      },
+    },
+    {
+      id: 5,
+      text: "Remplacer une carte (-1) par une carte (+0) (EMPOISONNEMENT)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-1");
+        addCard("+0poison");
+      },
+    },
+    {
+      id: 6,
+      text: "Ajouter une carte (+2)",
+      arity: 3,
+      apply(cards) {
+        addCard("+2");
+      },
+    },
+    {
+      id: 7,
+      text: "Remplacer une carte (+1) par une carte (+2) (terre)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+2earth");
+      },
+    },
+    {
+      id: 8,
+      text: "Remplacer une carte (+1) par une carte (+2) (feu)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+2fire");
+      },
+    },
+    {
+      id: 9,
+      text: "Ajouter une carte (+0) (1degat enn. adj.)",
+      arity: 2,
+      apply(cards) {
+        addCard(cards, "+0boom");
+      },
+    },
+  ],
+  axe_thrower: [
+    {
+      id: 1,
+      text: "Retirer deux cartes (-1)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "-1");
+        removeCard(cards, "-1");
+      },
+    },
+    {
+      id: 2,
+      text: "Remplacer une carte (+0) par une carte (+2) (CONFUSION)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+2confusion");
+      },
+    },
+    {
+      id: 3,
+      text: "Remplacer une carte (+0) par une carte (+1) (EMPOISONNEMENT)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1poison");
+      },
+    },
+    {
+      id: 4,
+      text: "Remplacer une carte (+0) par une carte (+1) (BLESSURE)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1wound");
+      },
+    },
+    {
+      id: 5,
+      text: "Remplacer une carte (+0) par une carte (+1) (IMMOBILISATION)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1immobilisation");
+      },
+    },
+    {
+      id: 6,
+      text: "Remplacer une carte (+0) par une carte (+1) (POUSSEE 2)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1push");
+      },
+    },
+    {
+      id: 7,
+      text: "Remplacer une carte (+0) par une carte (+0) (ETOURDISSEMENT)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+0stun");
+      },
+    },
+    {
+      id: 8,
+      text: "Remplacer une carte (+1) par une carte (+1) (ETOURDISSEMENT)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+1stun");
+      },
+    },
+    {
+      id: 9,
+      text: "Ajouter une carte (+2) (air)",
+      arity: 3,
+      apply(cards) {
+        addCard(cards, "+2air");
+      },
+    },
+    {
+      id: 10,
+      text: "Remplacer une carte (+1) par une carte (+3)",
+      arity: 3,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+3");
+      },
+    },
+  ],
+  red_guard: [
+    {
+      id: 1,
+      text: "Retirer quatre carte (+0)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+        removeCard(cards, "+0");
+      },
+    },
+    {
+      id: 2,
+      text: "Retirer deux cartes (-1)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-1");
+        removeCard(cards, "-1");
+      },
+    },
+    {
+      id: 3,
+      text: "Retirer une carte (-2) et une carte (+1)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-2");
+        removeCard(cards, "+1");
+      },
+    },
+    {
+      id: 4,
+      text: "Remplacer une carte (-1) par une carte (+1)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "-1");
+        addCard(cards, "+1");
+      },
+    },
+    {
+      id: 5,
+      text: "Remplacer une carte (+1) par une carte (+2) (feu)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+2fire");
+      },
+    },
+    {
+      id: 6,
+      text: "Remplacer une carte (+1) par une carte (+2) (lumière)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+1");
+        addCard(cards, "+2light");
+      },
+    },
+    {
+      id: 7,
+      text: "Ajouter une carte (+1) (feu) (lumiere)",
+      arity: 2,
+      apply(cards) {
+        addCard(cards, "+1feulum");
+      },
+    },
+    {
+      id: 8,
+      text: "Ajouter une carte (+1) (bouclier 1)",
+      arity: 2,
+      apply(cards) {
+        addCard(cards, "+1shield");
+      },
+    },
+    {
+      id: 9,
+      text: "Remplacer une carte (+0) par une carte (+1) (IMMOBILISATION)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1immobilisation");
+      },
+    },
+    {
+      id: 10,
+      text: "Remplacer une carte (+0) par une carte (+1) (BLESSURE)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1wound");
+      },
+    },
+  ],
+  void_warden: [
+    {
+      id: 1,
+      text: "Retirer deux cartes (-1)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-1");
+        removeCard(cards, "-1");
+      },
+    },
+    {
+      id: 2,
+      text: "Retirer une carte (-2)",
+      arity: 1,
+      apply(cards) {
+        removeCard(cards, "-2");
+      },
+    },
+    {
+      id: 3,
+      text: "Remplacer une carte (+0) par une carte (+1) (obscurité)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1dark");
+      },
+    },
+    {
+      id: 4,
+      text: "Remplacer une carte (+0) par une carte (+1) (glace)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "+0");
+        addCard(cards, "+1frost");
+      },
+    },
+    {
+      id: 5,
+      text: "Remplacer une carte (-1) par une carte (+0) (soin 1 allié)",
+      arity: 2,
+      apply(cards) {
+        removeCard(cards, "-1");
+        addCard(cards, "+0heal");
+      },
+    },
+    {
+      id: 6,
+      text: "Ajouter une carte (+1) (soin 1 allié)",
+      arity: 3,
+      apply(cards) {
+        addCard(cards, "+1heal");
+      },
+    },
+    {
+      id: 7,
+      text: "Ajouter une carte (+1) (empoisonnement)",
+      arity: 1,
+      apply(cards) {
+        addCard(cards, "+1poison");
+      },
+    },
+    {
+      id: 8,
+      text: "Ajouter une carte (+3)",
+      arity: 1,
+      apply(cards) {
+        addCard(cards, "+3");
+      },
+    },
+    {
+      id: 9,
+      text: "Ajouter une carte (+1) (malédiction)",
+      arity: 2,
+      apply(cards) {
+        addCard(cards, "+1curse");
+      },
+    },
+  ],
+};
+
 const BOSS_ACTIONS = [
   {
     id: 1,

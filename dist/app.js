@@ -5136,6 +5136,509 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     axe_thrower: [8, 9, 11, 12, 14, 15, 17, 18, 20],
     artificer: [8, 9, 11, 12, 14, 15, 17, 18, 20]
   };
+  function removeCard(cards, effect) {
+    let index = cards.findIndex((id) => {
+      let card = MONSTER_MODIFIERS_DECK.find((c) => c.id === id);
+      return card.effects[0] === effect;
+    });
+    if (index >= 0) {
+      cards.splice(index, 1);
+    } else {
+      throw new Error("nope");
+    }
+  }
+  function addCard(cards, id) {
+    if (!ATTACK_MODS.find((c) => c.id === id)) {
+      throw new Error("boom");
+    }
+    cards.push(id);
+  }
+  var ATTACK_MODS = [
+    {
+      id: "+2confusion",
+      effects: ["+2", "confusion"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+0heal",
+      effects: ["+0", "soin 1 alli\xE9"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+0poison",
+      effects: ["+0", "poison"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+0stun",
+      effects: ["+0", "\xE9tourdissement"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1",
+      effects: ["+1"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1heal",
+      effects: ["+1", "soin 1 alli\xE9"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1stun",
+      effects: ["+1", "\xE9tourdissement"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1poison",
+      effects: ["+1", "poison"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1wound",
+      effects: ["+1", "blessure"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1immobilisation",
+      effects: ["+1", "immobilisation"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1dark",
+      effects: ["+1", "obscurit\xE9"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1frost",
+      effects: ["+1", "glace"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1push",
+      effects: ["+1", "pouss\xE9e 2"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1shield",
+      effects: ["+1", "bouclier 1"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1curse",
+      effects: ["+1", "mal\xE9diction"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+1feulum",
+      effects: ["+1", "feu", "lumiere"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+2",
+      effects: ["+2"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+2earth",
+      effects: ["+2", "terre"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+2fire",
+      effects: ["+2", "feu"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+2air",
+      effects: ["+2", "air"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+2light",
+      effects: ["+2", "lumiere"],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+0boom",
+      effects: ["+0", "1degat enn. adj."],
+      recycled: false,
+      color: false
+    },
+    {
+      id: "+3",
+      effects: ["+3"],
+      recycled: false,
+      color: false
+    }
+  ];
+  var PERKS = {
+    artificer: [
+      {
+        id: 1,
+        text: "Retirer quatre carte (+0)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+        }
+      },
+      {
+        id: 2,
+        text: "Retirer deux cartes (-1)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "-1");
+          removeCard(cards, "-1");
+        }
+      },
+      {
+        id: 3,
+        text: "Retirer une carte (-2) et une carte (+1)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-2");
+          removeCard(cards, "+1");
+        }
+      },
+      {
+        id: 4,
+        text: "Remplacer une carte (+0) par une carte (+2) (CONFUSION)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard("+2confusion");
+        }
+      },
+      {
+        id: 5,
+        text: "Remplacer une carte (-1) par une carte (+0) (EMPOISONNEMENT)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-1");
+          addCard("+0poison");
+        }
+      },
+      {
+        id: 6,
+        text: "Ajouter une carte (+2)",
+        arity: 3,
+        apply(cards) {
+          addCard("+2");
+        }
+      },
+      {
+        id: 7,
+        text: "Remplacer une carte (+1) par une carte (+2) (terre)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+2earth");
+        }
+      },
+      {
+        id: 8,
+        text: "Remplacer une carte (+1) par une carte (+2) (feu)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+2fire");
+        }
+      },
+      {
+        id: 9,
+        text: "Ajouter une carte (+0) (1degat enn. adj.)",
+        arity: 2,
+        apply(cards) {
+          addCard(cards, "+0boom");
+        }
+      }
+    ],
+    axe_thrower: [
+      {
+        id: 1,
+        text: "Retirer deux cartes (-1)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "-1");
+          removeCard(cards, "-1");
+        }
+      },
+      {
+        id: 2,
+        text: "Remplacer une carte (+0) par une carte (+2) (CONFUSION)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+2confusion");
+        }
+      },
+      {
+        id: 3,
+        text: "Remplacer une carte (+0) par une carte (+1) (EMPOISONNEMENT)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1poison");
+        }
+      },
+      {
+        id: 4,
+        text: "Remplacer une carte (+0) par une carte (+1) (BLESSURE)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1wound");
+        }
+      },
+      {
+        id: 5,
+        text: "Remplacer une carte (+0) par une carte (+1) (IMMOBILISATION)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1immobilisation");
+        }
+      },
+      {
+        id: 6,
+        text: "Remplacer une carte (+0) par une carte (+1) (POUSSEE 2)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1push");
+        }
+      },
+      {
+        id: 7,
+        text: "Remplacer une carte (+0) par une carte (+0) (ETOURDISSEMENT)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+0stun");
+        }
+      },
+      {
+        id: 8,
+        text: "Remplacer une carte (+1) par une carte (+1) (ETOURDISSEMENT)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+1stun");
+        }
+      },
+      {
+        id: 9,
+        text: "Ajouter une carte (+2) (air)",
+        arity: 3,
+        apply(cards) {
+          addCard(cards, "+2air");
+        }
+      },
+      {
+        id: 10,
+        text: "Remplacer une carte (+1) par une carte (+3)",
+        arity: 3,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+3");
+        }
+      }
+    ],
+    red_guard: [
+      {
+        id: 1,
+        text: "Retirer quatre carte (+0)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+          removeCard(cards, "+0");
+        }
+      },
+      {
+        id: 2,
+        text: "Retirer deux cartes (-1)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-1");
+          removeCard(cards, "-1");
+        }
+      },
+      {
+        id: 3,
+        text: "Retirer une carte (-2) et une carte (+1)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-2");
+          removeCard(cards, "+1");
+        }
+      },
+      {
+        id: 4,
+        text: "Remplacer une carte (-1) par une carte (+1)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "-1");
+          addCard(cards, "+1");
+        }
+      },
+      {
+        id: 5,
+        text: "Remplacer une carte (+1) par une carte (+2) (feu)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+2fire");
+        }
+      },
+      {
+        id: 6,
+        text: "Remplacer une carte (+1) par une carte (+2) (lumi\xE8re)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+1");
+          addCard(cards, "+2light");
+        }
+      },
+      {
+        id: 7,
+        text: "Ajouter une carte (+1) (feu) (lumiere)",
+        arity: 2,
+        apply(cards) {
+          addCard(cards, "+1feulum");
+        }
+      },
+      {
+        id: 8,
+        text: "Ajouter une carte (+1) (bouclier 1)",
+        arity: 2,
+        apply(cards) {
+          addCard(cards, "+1shield");
+        }
+      },
+      {
+        id: 9,
+        text: "Remplacer une carte (+0) par une carte (+1) (IMMOBILISATION)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1immobilisation");
+        }
+      },
+      {
+        id: 10,
+        text: "Remplacer une carte (+0) par une carte (+1) (BLESSURE)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1wound");
+        }
+      }
+    ],
+    void_warden: [
+      {
+        id: 1,
+        text: "Retirer deux cartes (-1)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-1");
+          removeCard(cards, "-1");
+        }
+      },
+      {
+        id: 2,
+        text: "Retirer une carte (-2)",
+        arity: 1,
+        apply(cards) {
+          removeCard(cards, "-2");
+        }
+      },
+      {
+        id: 3,
+        text: "Remplacer une carte (+0) par une carte (+1) (obscurit\xE9)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1dark");
+        }
+      },
+      {
+        id: 4,
+        text: "Remplacer une carte (+0) par une carte (+1) (glace)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "+0");
+          addCard(cards, "+1frost");
+        }
+      },
+      {
+        id: 5,
+        text: "Remplacer une carte (-1) par une carte (+0) (soin 1 alli\xE9)",
+        arity: 2,
+        apply(cards) {
+          removeCard(cards, "-1");
+          addCard(cards, "+0heal");
+        }
+      },
+      {
+        id: 6,
+        text: "Ajouter une carte (+1) (soin 1 alli\xE9)",
+        arity: 3,
+        apply(cards) {
+          addCard(cards, "+1heal");
+        }
+      },
+      {
+        id: 7,
+        text: "Ajouter une carte (+1) (empoisonnement)",
+        arity: 1,
+        apply(cards) {
+          addCard(cards, "+1poison");
+        }
+      },
+      {
+        id: 8,
+        text: "Ajouter une carte (+3)",
+        arity: 1,
+        apply(cards) {
+          addCard(cards, "+3");
+        }
+      },
+      {
+        id: 9,
+        text: "Ajouter une carte (+1) (mal\xE9diction)",
+        arity: 2,
+        apply(cards) {
+          addCard(cards, "+1curse");
+        }
+      }
+    ]
+  };
   var BOSS_ACTIONS = [
     {
       id: 1,
@@ -7124,99 +7627,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     }
   ];
 
-  // src/hero_model.js
-  var heroClasses = [{ value: "", text: "" }];
-  for (let c in CLASS_NAME) {
-    heroClasses.push({ value: c, text: CLASS_NAME[c] });
-  }
-  var levels = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((l) => ({
-    value: l,
-    text: `Level ${l}`
-  }));
-  var Hero = class extends BaseModel {
-    fields = {
-      name: { type: "char", label: "Name", placeholder: "Hero Name" },
-      cls: { type: "select", label: "Class", choices: heroClasses },
-      level: {
-        type: "select",
-        label: "Level",
-        default: 1,
-        choices: levels,
-        isNumber: true
-      },
-      campaign: { type: "many2one", label: "Campaign", comodel: Campaign }
-    };
-    // constructor(data) {
-    //   super(data);
-    //   /** @type { string } */
-    //   this.name;
-    //   /** @type { string } */
-    //   this.cls;
-    //   /** @type { number } */
-    //   this.level;
-    // }
-    isValid() {
-      return !!(this.name && this.cls);
-    }
-    get className() {
-      return CLASS_NAME[this.cls];
-    }
-    get maxHp() {
-      return MAX_HP_MAP[this.cls][this.level - 1];
-    }
-  };
-
-  // src/character_model.js
-  var mapping = {
-    poisoned: "poison",
-    wound: "blessure",
-    confusion: "confusion",
-    immobilisation: "immobilisation",
-    stunned: "\xE9tourdissement",
-    renforced: "renforcement",
-    disarmed: "d\xE9sarm\xE9"
-  };
-  var Character = class extends BaseModel {
-    fields = {
-      hero: { type: "many2one", label: "Hero", comodel: Hero },
-      scenario: { type: "many2one", label: "Scenario", comodel: Scenario },
-      battleGoal: { type: "number", label: "Battle Goal" },
-      battleGoalChoices: { type: "any" },
-      hp: { type: "number", label: "HP" },
-      maxHp: { type: "number", label: "Max HP" },
-      xp: { type: "number", label: "XP Gained" },
-      gold: { type: "number", label: "Gold Gained" },
-      didStart: { type: "boolean" },
-      // statuses
-      poisoned: { type: "boolean" },
-      wound: { type: "boolean" },
-      confusion: { type: "number" },
-      immobilisation: { type: "number" },
-      stunned: { type: "number" },
-      renforced: { type: "number" },
-      disarmed: { type: "number" }
-    };
-    setup() {
-      this.maxHp = this.hero.maxHp;
-      this.hp = this.maxHp;
-    }
-    isActive() {
-      return this.scenario.activeEntityId === this.id;
-    }
-    get status() {
-      const s = [];
-      for (let key in mapping) {
-        if (this[key]) {
-          s.push(mapping[key]);
-        }
-      }
-      return s.join(", ");
-    }
-  };
-
   // src/deck.js
   var Deck = class {
-    constructor(cards) {
+    constructor(cards = []) {
       this._cards = cards.slice();
       this._discardPile = [];
     }
@@ -7268,6 +7681,135 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this._cards = this._cards.concat(this._discardPile);
       this._discardPile = [];
       this.shuffle();
+    }
+  };
+
+  // src/hero_model.js
+  var heroClasses = [{ value: "", text: "" }];
+  for (let c in CLASS_NAME) {
+    heroClasses.push({ value: c, text: CLASS_NAME[c] });
+  }
+  var levels = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((l) => ({
+    value: l,
+    text: `Level ${l}`
+  }));
+  var Perks = class {
+    cls = null;
+    perks = {};
+    // mapping perkid -> arity
+    toggle(id) {
+      const perk = PERKS[this.cls].find((p) => p.id === id);
+      if (!(id in this.perks)) {
+        this.perks[id] = 0;
+      }
+      this.perks[id]++;
+      if (this.perks[id] > perk.arity) {
+        this.perks[id] = 0;
+      }
+    }
+    isActive(id, index) {
+      if (!(id in this.perks)) {
+        return false;
+      }
+      return this.perks[id] > index;
+    }
+    makeDeck() {
+      const cards = MONSTER_MODIFIERS_DECK.map((c) => c.id);
+      for (let pid in this.perks) {
+        let perkId = parseInt(pid);
+        const perk = PERKS[this.cls].find((p) => p.id === perkId);
+        for (let i = 0; i < this.perks[pid]; i++) {
+          perk.apply(cards);
+        }
+      }
+      return new Deck(cards);
+    }
+  };
+  var Hero = class extends BaseModel {
+    fields = {
+      name: { type: "char", label: "Name", placeholder: "Hero Name" },
+      cls: { type: "select", label: "Class", choices: heroClasses },
+      level: {
+        type: "select",
+        label: "Level",
+        default: 1,
+        choices: levels,
+        isNumber: true
+      },
+      campaign: { type: "many2one", label: "Campaign", comodel: Campaign },
+      perks: { type: "instance", cls: Perks }
+    };
+    // constructor(data) {
+    //   super(data);
+    //   /** @type { string } */
+    //   this.name;
+    //   /** @type { string } */
+    //   this.cls;
+    //   /** @type { number } */
+    //   this.level;
+    // }
+    isValid() {
+      return !!(this.name && this.cls);
+    }
+    get className() {
+      return CLASS_NAME[this.cls];
+    }
+    get maxHp() {
+      return MAX_HP_MAP[this.cls][this.level - 1];
+    }
+  };
+
+  // src/character_model.js
+  var mapping = {
+    poisoned: "poison",
+    wound: "blessure",
+    confusion: "confusion",
+    immobilisation: "immobilisation",
+    stunned: "\xE9tourdissement",
+    renforced: "renforcement",
+    disarmed: "d\xE9sarm\xE9"
+  };
+  var Character = class extends BaseModel {
+    fields = {
+      hero: { type: "many2one", label: "Hero", comodel: Hero },
+      scenario: { type: "many2one", label: "Scenario", comodel: Scenario },
+      battleGoal: { type: "number", label: "Battle Goal" },
+      battleGoalChoices: { type: "any" },
+      hp: { type: "number", label: "HP" },
+      maxHp: { type: "number", label: "Max HP" },
+      xp: { type: "number", label: "XP Gained" },
+      gold: { type: "number", label: "Gold Gained" },
+      didStart: { type: "boolean" },
+      attackMods: {
+        type: "instance",
+        cls: Deck
+        // default: ({ hero}) => hero.perks.makeDeck(),
+      },
+      // statuses
+      poisoned: { type: "boolean" },
+      wound: { type: "boolean" },
+      confusion: { type: "number" },
+      immobilisation: { type: "number" },
+      stunned: { type: "number" },
+      renforced: { type: "number" },
+      disarmed: { type: "number" }
+    };
+    setup() {
+      this.maxHp = this.hero.maxHp;
+      this.hp = this.maxHp;
+      this.attackMods = this.hero.perks.makeDeck();
+    }
+    isActive() {
+      return this.scenario.activeEntityId === this.id;
+    }
+    get status() {
+      const s = [];
+      for (let key in mapping) {
+        if (this[key]) {
+          s.push(mapping[key]);
+        }
+      }
+      return s.join(", ");
     }
   };
 
@@ -7522,14 +8064,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       if (this.darkness > 0) {
         this.darkness--;
       }
-      this.enemyAttackMods.filterDiscardPile(
-        (e) => e !== "curse" && e !== "blessing"
-      );
-      if (this.enemyAttackMods.hasInDiscardPile((id) => {
-        const card = MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
-        return card.recycled;
-      })) {
-        this.enemyAttackMods.moveDiscarPileToDeck();
+      this.updateAttackMods(this.enemyAttackMods);
+      for (let char of this.characters) {
+        this.updateAttackMods(char.attackMods);
       }
       this.enemyActions.nextRound();
       this.actionSelected = false;
@@ -7541,6 +8078,15 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         enemy.didEnd = false;
       }
       this.activeEntityId = null;
+    }
+    updateAttackMods(deck) {
+      deck.filterDiscardPile((e) => e !== "curse" && e !== "blessing");
+      if (deck.hasInDiscardPile((id) => {
+        const card = MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+        return card && card.recycled;
+      })) {
+        deck.moveDiscarPileToDeck();
+      }
     }
     startCharTurn(id) {
       this.endCurrentTurn();
@@ -7607,18 +8153,18 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this.enemies.push(enemy);
       this.enemyActions.addType(enemy.type);
     }
-    addCurseToEnemies() {
-      const ncurses = this.enemyAttackMods.count((c) => c === "curse");
+    addCurse(deck) {
+      const ncurses = deck.count((c) => c === "curse");
       if (ncurses < 10) {
-        this.enemyAttackMods.addCard("curse");
-        this.enemyAttackMods.shuffle();
+        deck.addCard("curse");
+        deck.shuffle();
       }
     }
-    addBlessingToEnemies() {
-      const nBlessings = this.enemyAttackMods.count((c) => c === "blessing");
+    addBlessing(deck) {
+      const nBlessings = deck.count((c) => c === "blessing");
       if (nBlessings < 10) {
-        this.enemyAttackMods.addCard("blessing");
-        this.enemyAttackMods.shuffle();
+        deck.addCard("blessing");
+        deck.shuffle();
       }
     }
     removeEnemy(enemy) {
@@ -7988,6 +8534,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this.game = useGame();
     }
     addHero() {
+      this.hero.perks.cls = this.hero.cls;
       this.props.campaign.addHero(this.hero);
       this.game.closeBottomSheet();
     }
@@ -8064,15 +8611,36 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
 
   // src/hero_screen.js
   var Content2 = class extends Component {
+    static props = ["hero"];
     static template = xml`
         <FieldChar name="'name'" record="props.hero" labelWidth="'120px'" readonly="!!props.hero.name" editable="true"/>
         <TwoColForm label="'Class'" value="props.hero.className" labelWidth="'120px'"/>
         <FieldSelect name="'level'" record="props.hero" labelWidth="'120px'" readonly="true" editable="true"/>
         <TwoColForm label="'Max HP'" value="props.hero.maxHp" labelWidth="'120px'"/>
+        <hr/>
+        <h2 class="m-1 ms-2 text-primary">Perks</h2>
+        <div class="bg-white border-radius-4 border-gray m-1 p-1">
+
+        <t t-foreach="perks" t-as="perk" t-key="perk.id">
+          <div class="pt-1 pb-2 px-1" t-on-click="() => this.togglePerk(perk)">
+            <t t-foreach="new Array(perk.arity)" t-as="i" t-key="i_index">
+              <input style="vertical-align:middle; height:14px;" type="checkbox" t-att-checked="props.hero.perks.isActive(perk.id, i_index)"/>
+            </t>
+            <t t-esc="perk.text"/>
+          </div>
+        </t>
+        </div>
     `;
     static components = { FieldChar, FieldSelect, TwoColForm };
     setup() {
       this.game = useGame();
+    }
+    get perks() {
+      return PERKS[this.props.hero.cls];
+    }
+    togglePerk(perk) {
+      this.props.hero.perks.toggle(perk.id);
+      this.game.save();
     }
   };
   var HERO_SCREEN = (hero) => {
@@ -8257,11 +8825,12 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
       this.game.openBottomSheet(AttackModifiers, { scenario });
     }
   };
-  var AttackModifiers = class extends Component {
-    static props = ["scenario"];
+  var CARDS = ATTACK_MODS.concat(MONSTER_MODIFIERS_DECK).slice();
+  var AttackModifier = class extends Component {
+    static props = ["deck", "descr", "scenario"];
     static template = xml`
       <div class="p-1 d-flex space-between" >
-        <span>Enemy Attack Modifiers (<t t-esc="deck.length()"/> cards)</span>
+        <span><t t-esc="props.descr"/> (<t t-esc="props.deck.length()"/> cards)</span>
       </div>
       <div class="d-grid" style="grid-template-columns: 90px 1fr 95px;">
         <div class="d-flex flex-column">
@@ -8269,13 +8838,13 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
           <div class="button py-2" t-on-click="() => this.dealCard(2)">2 Cards</div>
         </div>
         <div class="d-flex py-1 flex-center">
-          <t t-foreach="state.visible" t-as="mod" t-key="mod.id">
-            <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center" t-attf-style="width:35px;position:relative;background-color:{{mod.color || 'white'}};">
+          <t t-foreach="state.visible" t-as="mod" t-key="mod_index">
+            <div class="border-gray border-radius-4 p-2 mx-1 d-flex align-center flex-center flex-column" t-attf-style="width:50px;position:relative;background-color:{{mod.color || 'white'}};">
               <t t-if="mod.recycled">
                 <span class="text-bold" style="position:absolute;bottom:0;right:0">♲</span>
               </t>
               <t t-foreach="mod.effects" t-as="effect" t-key="effect_index">
-                <div class="text-bold text-larger"><t t-esc="effect"/></div>
+                <div class="text-bold" t-att-class="{'text-larger': effect.length lt 3, 'text-smaller': effect.length gt 7}"><t t-esc="effect"/></div>
               </t>
             </div>
           </t>
@@ -8286,19 +8855,19 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         </div>
       </div>`;
     setup() {
-      this.deck = this.props.scenario.enemyAttackMods;
       this.state = useState({
         visible: []
       });
+      this.game = useGame();
     }
     addCurse() {
-      this.props.scenario.addCurseToEnemies();
+      this.props.scenario.addCurse(this.props.deck);
     }
     addBlessing() {
-      this.props.scenario.addBlessingToEnemies();
+      this.props.scenario.addBlessing(this.props.deck);
     }
     dealCard(n) {
-      const cards = this.deck.deal(n).map((id, index) => {
+      const cards = this.props.deck.deal(n).map((id, index) => {
         if (typeof id === "string") {
           if (id === "curse") {
             return {
@@ -8317,10 +8886,22 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
             };
           }
         }
-        return MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+        return CARDS.find((m) => m.id === id);
       });
+      this.props.deck.filterDiscardPile((e) => e !== "curse" && e !== "blessing");
       this.state.visible = cards;
+      this.game.save();
     }
+  };
+  var AttackModifiers = class extends Component {
+    static props = ["scenario"];
+    static components = { AttackModifier };
+    static template = xml`
+    <t t-foreach="props.scenario.characters" t-as="char" t-key="char.id">
+      <AttackModifier scenario="props.scenario" deck="char.attackMods" descr="char.hero.name"/>
+    </t>
+    <AttackModifier scenario="props.scenario" deck="props.scenario.enemyAttackMods" descr="'Enemy Attack Modifiers'"/>
+    `;
   };
   var ElementPane = class extends Component {
     static props = ["scenario"];

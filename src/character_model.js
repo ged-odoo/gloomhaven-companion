@@ -1,4 +1,5 @@
 import { BaseModel } from "./base_model";
+import { Deck } from "./deck";
 import { Hero } from "./hero_model";
 import { Scenario } from "./scenario_model";
 
@@ -23,6 +24,11 @@ export class Character extends BaseModel {
     xp: { type: "number", label: "XP Gained" },
     gold: { type: "number", label: "Gold Gained" },
     didStart: { type: "boolean" },
+    attackMods: {
+      type: "instance",
+      cls: Deck,
+      // default: ({ hero}) => hero.perks.makeDeck(),
+    },
 
     // statuses
     poisoned: { type: "boolean" },
@@ -37,6 +43,7 @@ export class Character extends BaseModel {
   setup() {
     this.maxHp = this.hero.maxHp;
     this.hp = this.maxHp;
+    this.attackMods = this.hero.perks.makeDeck();
   }
 
   isActive() {

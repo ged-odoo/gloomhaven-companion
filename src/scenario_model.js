@@ -142,16 +142,9 @@ export class Scenario extends BaseModel {
     if (this.darkness > 0) {
       this.darkness--;
     }
-    this.enemyAttackMods.filterDiscardPile(
-      (e) => e !== "curse" && e !== "blessing",
-    );
-    if (
-      this.enemyAttackMods.hasInDiscardPile((id) => {
-        const card = MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
-        return card.recycled;
-      })
-    ) {
-      this.enemyAttackMods.moveDiscarPileToDeck();
+    this.updateAttackMods(this.enemyAttackMods);
+    for (let char of this.characters) {
+      this.updateAttackMods(char.attackMods);
     }
     this.enemyActions.nextRound();
     this.actionSelected = false;
@@ -163,6 +156,18 @@ export class Scenario extends BaseModel {
       enemy.didEnd = false;
     }
     this.activeEntityId = null;
+  }
+
+  updateAttackMods(deck) {
+    deck.filterDiscardPile((e) => e !== "curse" && e !== "blessing");
+    if (
+      deck.hasInDiscardPile((id) => {
+        const card = MONSTER_MODIFIERS_DECK.find((m) => m.id === id);
+        return card && card.recycled;
+      })
+    ) {
+      deck.moveDiscarPileToDeck();
+    }
   }
 
   startCharTurn(id) {
@@ -242,19 +247,19 @@ export class Scenario extends BaseModel {
     this.enemyActions.addType(enemy.type);
   }
 
-  addCurseToEnemies() {
-    const ncurses = this.enemyAttackMods.count((c) => c === "curse");
+  addCurse(deck) {
+    const ncurses = deck.count((c) => c === "curse");
     if (ncurses < 10) {
-      this.enemyAttackMods.addCard("curse");
-      this.enemyAttackMods.shuffle();
+      deck.addCard("curse");
+      deck.shuffle();
     }
   }
 
-  addBlessingToEnemies() {
-    const nBlessings = this.enemyAttackMods.count((c) => c === "blessing");
+  addBlessing(deck) {
+    const nBlessings = deck.count((c) => c === "blessing");
     if (nBlessings < 10) {
-      this.enemyAttackMods.addCard("blessing");
-      this.enemyAttackMods.shuffle();
+      deck.addCard("blessing");
+      deck.shuffle();
     }
   }
 
