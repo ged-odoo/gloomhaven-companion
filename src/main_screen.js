@@ -333,9 +333,9 @@ class AddEnemy extends Component {
       <input class="mx-2 flex-grow" type="number" t-model.number="enemy.visibleId"/>
     </div>
     <div class="d-flex align-center mx-2 my-3" >
-      <label class="text-right" style="width:80px" t-if="!enemy.isBoss">Elite</label>
+      <label class="text-right" for="eliteinput" style="width:80px" t-if="!enemy.isBoss">Elite</label>
       <div class="flex-grow mx-2 d-flex space-between me-2 align-center">
-        <span><input t-if="!enemy.isBoss" type="checkbox" t-model="enemy.isElite"/></span>
+        <span><input id="eliteinput" t-if="!enemy.isBoss" type="checkbox" t-model="enemy.isElite"/></span>
           <button class="button" t-att-class="{ disabled: !enemy.isValid()}" t-on-click="addEnemy">Add</button>
       </div>
     </div>
