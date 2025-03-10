@@ -216,7 +216,7 @@ export const PERKS = {
       arity: 2,
       apply(cards) {
         removeCard(cards, "+0");
-        addCard("+2confusion");
+        addCard(cards, "+2confusion");
       },
     },
     {
@@ -225,7 +225,7 @@ export const PERKS = {
       arity: 1,
       apply(cards) {
         removeCard(cards, "-1");
-        addCard("+0poison");
+        addCard(cards, "+0poison");
       },
     },
     {
@@ -233,7 +233,7 @@ export const PERKS = {
       text: "Ajouter une carte (+2)",
       arity: 3,
       apply(cards) {
-        addCard("+2");
+        addCard(cards, "+2");
       },
     },
     {

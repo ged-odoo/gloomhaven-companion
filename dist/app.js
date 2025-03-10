@@ -5330,7 +5330,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         arity: 2,
         apply(cards) {
           removeCard(cards, "+0");
-          addCard("+2confusion");
+          addCard(cards, "+2confusion");
         }
       },
       {
@@ -5339,7 +5339,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         arity: 1,
         apply(cards) {
           removeCard(cards, "-1");
-          addCard("+0poison");
+          addCard(cards, "+0poison");
         }
       },
       {
@@ -5347,7 +5347,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
         text: "Ajouter une carte (+2)",
         arity: 3,
         apply(cards) {
-          addCard("+2");
+          addCard(cards, "+2");
         }
       },
       {
