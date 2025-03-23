@@ -274,10 +274,10 @@ export class Scenario extends BaseModel {
     const result = [];
     const obj = {};
     for (let e of this.enemies) {
-      if (!obj[e.id]) {
-        obj[e.id] = true;
+      if (!obj[e.type]) {
+        obj[e.type] = true;
         result.push({
-          id: e.id,
+          id: e.type,
           enemyName: e.name,
           card: this.enemyActions.getAction(e.type),
           ncards: this.enemyActions.getEnemyDeck(e.type).length(),
